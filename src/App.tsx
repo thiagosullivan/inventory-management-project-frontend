@@ -1,15 +1,17 @@
 import "./App.css";
-import { Button } from "./components/ui/button";
+import HomeBackground from "../public/home-bg.jpg";
 
 function App() {
   return (
-    <>
-      <h1 className="text-red-500 text-2xl underline">Hello World</h1>
-      <Button>Click me</Button>
-      <Button size="xs" variant="outline">
-        Extra Small
-      </Button>
-    </>
+    <div className="flex items-center">
+      <div className="p-8">
+        <img
+          src={HomeBackground}
+          className="max-w-[815px] h-screen object-cover rounded-4xl"
+        />
+      </div>
+      <div></div>
+    </div>
   );
 }
 
