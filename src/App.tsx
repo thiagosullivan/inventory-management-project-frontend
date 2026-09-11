@@ -1,16 +1,13 @@
+import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import HomeBackground from "../public/home-bg.jpg";
+import Home from "./Pages/Home";
 
 function App() {
   return (
-    <div className="flex items-center">
-      <div className="p-8">
-        <img
-          src={HomeBackground}
-          className="max-w-[815px] h-screen object-cover rounded-4xl"
-        />
-      </div>
-      <div></div>
+    <div>
+      <Routes>
+        <Route path="/" element={<Home />} />
+      </Routes>
     </div>
   );
 }
