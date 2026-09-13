@@ -1,13 +1,13 @@
 import Sidebar from "@/components/Sidebar";
 import { useLogout } from "@/hooks/useLogout";
 
-export default function DashboardPage() {
+export default function StockPage() {
   const logout = useLogout();
 
   return (
-    <div className="flex items-start">
+    <div className="">
       <Sidebar />
-      <h1>Dashboard</h1>
+      <h1>Stock</h1>
 
       <button onClick={logout}>Sair</button>
     </div>

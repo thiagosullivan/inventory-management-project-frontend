@@ -1,7 +1,7 @@
 import LoginForm from "@/components/forms/login-form";
 import HomeBackground from "../../public/home-bg.jpg";
 
-export default function Home() {
+export default function HomePage() {
   return (
     <div className="flex items-center lexend-font">
       <div className="p-8">
