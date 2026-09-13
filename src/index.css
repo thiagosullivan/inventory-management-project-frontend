@@ -90,6 +90,8 @@
   --radius-3xl: calc(var(--radius) * 2.2);
 
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  --color-primary: var(--color-primary);
 }
 
 :root {
@@ -156,6 +158,8 @@
   --sidebar-border: oklch(0.922 0 0);
 
   --sidebar-ring: oklch(0.708 0 0);
+
+  --color-primary: #006ec4;
 }
 
 .dark {
@@ -220,6 +224,8 @@
   --sidebar-border: oklch(1 0 0 / 10%);
 
   --sidebar-ring: oklch(0.556 0 0);
+
+  --color-primary: #1e90ff;
 }
 
 @layer base {
