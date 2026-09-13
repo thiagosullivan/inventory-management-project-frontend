@@ -1,8 +1,11 @@
+export type UserRole = "MANAGER" | "STAFF";
 export interface User {
   id: string;
   email: string;
-  name?: string | null;
+  name: string;
   image?: string | null;
+  role: UserRole;
+  isActive: boolean;
   emailVerified: boolean;
   createdAt: string | Date;
   updatedAt: string | Date;
