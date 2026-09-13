@@ -1,8 +1,8 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
 interface PublicRouteProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 export function PublicRoute({ children }: PublicRouteProps) {
@@ -16,5 +16,5 @@ export function PublicRoute({ children }: PublicRouteProps) {
     return <Navigate to="/dashboard" replace />;
   }
 
-  return <>{children}</>;
+  return children ? <>{children}</> : <Outlet />;
 }
