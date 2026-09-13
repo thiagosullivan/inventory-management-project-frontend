@@ -4,12 +4,15 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { router } from "./routes";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "./components/themeProvider";
+import { TooltipProvider } from "./components/ui/tooltip";
 
 function App() {
   return (
     <AuthProvider>
       <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-        <RouterProvider router={router} />
+        <TooltipProvider>
+          <RouterProvider router={router} />
+        </TooltipProvider>
         <Toaster
           position="top-right"
           toastOptions={{

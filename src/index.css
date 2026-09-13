@@ -129,7 +129,8 @@
 
   --input: oklch(0.922 0 0);
 
-  --ring: oklch(0.708 0 0);
+  /* --ring: oklch(0.708 0 0); */
+  --ring: #006ec4;
 
   --chart-1: oklch(0.87 0 0);
 
@@ -197,7 +198,8 @@
 
   --input: oklch(1 0 0 / 15%);
 
-  --ring: oklch(0.556 0 0);
+  /* --ring: oklch(0.556 0 0); */
+  --ring: #006ec4;
 
   --chart-1: oklch(0.87 0 0);
 
