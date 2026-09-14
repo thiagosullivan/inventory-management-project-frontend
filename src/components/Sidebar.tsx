@@ -106,7 +106,7 @@ export default function Sidebar() {
     <aside className="max-w-[280px] w-full bg-primary/20 rounded-lg h-full flex flex-col justify-between">
       <div className="p-8">
         <Link to="/dashboard" className="mb-8">
-          <img src={getLogo()} className="mb-10" />
+          <img src={getLogo()} className="mb-10 w-full" />
         </Link>
         <nav>
           <ul>
@@ -119,9 +119,10 @@ export default function Sidebar() {
                 <li key={index}>
                   <Link
                     to={item.href}
-                    className={`mb-2.5 p-3 border-l-4 flex items-center font-light ${isActive ? "text-primary border-primary" : "text-foreground border-primary/0"}`}
+                    className={`mb-2.5 p-3 border-l-4 flex items-center tracking-wide rounded-tr-lg rounded-br-lg ${isActive ? "text-primary border-primary bg-primary/5 font-bold" : "text-foreground border-primary/0 font-light"}`}
                   >
-                    <Icon size={24} className="mr-3" /> {item.label}
+                    <Icon size={24} className="mr-3 text-foreground" />{" "}
+                    {item.label}
                   </Link>
                 </li>
               );
