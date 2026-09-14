@@ -21,7 +21,7 @@ export interface DashboardOverviewData {
     totalProducts: number;
     totalUnits: number;
     totalMovements: number;
-    movementsPeriod: string;
+    movementsPeriod: string; // Ex: "last_30_days"
   };
   alerts: {
     lowStock: number;
