@@ -1,33 +1,41 @@
 import { createBrowserRouter } from "react-router-dom";
-import HomePage from "./Pages/Home.tsx";
-import ForgotPasswordPage from "./Pages/ForgotPassword.tsx";
+import HomePage from "./pages/Home.tsx";
+import ForgotPasswordPage from "./pages/ForgotPassword.tsx";
 import { PublicRoute } from "./components/PublicRoute.tsx";
 import { ProtectedRoute } from "./components/ProtectedRoute.tsx";
-import DashboardPage from "./Pages/Dashboard.tsx";
-import ProductsPage from "./Pages/Products.tsx";
+import DashboardPage from "./pages/Dashboard.tsx";
+import ProductsPage from "./pages/Products.tsx";
 import RootLayout from "./components/layouts/RootLayout.tsx";
+import Page404 from "./pages/Page404.tsx";
 
 export const router = createBrowserRouter([
-  // 1. Bloco de Rotas PÚBLICAS
+  // Public
   {
-    element: <PublicRoute />, // Sem "path", serve apenas como segurança
+    element: <PublicRoute />,
     children: [
       { path: "/", element: <HomePage /> },
       { path: "/forgot-password", element: <ForgotPasswordPage /> },
+      // { path: "*", element: <Page404 /> },
     ],
   },
 
-  // 2. Bloco de Rotas PROTEGIDAS (com o Layout do App)
+  // Protected
   {
-    element: <ProtectedRoute />, // Garante que o usuário está logado
+    element: <ProtectedRoute />,
     children: [
       {
-        element: <RootLayout />, // Aplica a Navbar/Sidebar global
+        element: <RootLayout />,
         children: [
           { path: "/dashboard", element: <DashboardPage /> },
           { path: "/products", element: <ProductsPage /> },
         ],
       },
     ],
+  },
+
+  // Error
+  {
+    path: "*",
+    element: <Page404 />,
   },
 ]);
