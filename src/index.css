@@ -92,6 +92,10 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 
   --color-primary: var(--color-primary);
+
+  --color-logo-second: var(--color-logo-second);
+
+  --color-logo-third: var(--color-logo-third);
 }
 
 :root {
@@ -161,6 +165,10 @@
   --sidebar-ring: oklch(0.708 0 0);
 
   --color-primary: #006ec4;
+
+  --color-logo-second: #fe005f;
+
+  --color-logo-third: #feb000;
 }
 
 .dark {
