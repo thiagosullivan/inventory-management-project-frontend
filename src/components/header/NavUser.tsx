@@ -1,4 +1,10 @@
-import { LogOutIcon, ChevronDown, BadgeCheck, BadgeAlert } from "lucide-react";
+import {
+  LogOutIcon,
+  ChevronDown,
+  BadgeCheck,
+  BadgeAlert,
+  Settings,
+} from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { getInitials } from "@/utils/getInitials";
 
@@ -9,10 +15,10 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+} from "../ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { useLogout } from "@/hooks/useLogout";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 export default function NavUser() {
   const logout = useLogout();
@@ -63,7 +69,9 @@ export default function NavUser() {
                 </TooltipContent>
               </Tooltip>
             </div>
-            <DropdownMenuItem>Billing</DropdownMenuItem>
+            <DropdownMenuItem>
+              <Settings /> Account
+            </DropdownMenuItem>
             <DropdownMenuItem>Notifications</DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
