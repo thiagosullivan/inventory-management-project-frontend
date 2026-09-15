@@ -51,7 +51,9 @@ export function MovementLineChart({ data }: MovementLineChartProps) {
   return (
     <Card className="w-full max-w-[70%] min-h-[400px] shadow-lg">
       <CardHeader>
-        <CardTitle>Movimentação dos Últimos 7 Dias</CardTitle>
+        <CardTitle className="font-medium text-lg">
+          Movimentação dos Últimos 7 Dias
+        </CardTitle>
         <CardDescription>
           Comparativo diário entre entradas e saídas
         </CardDescription>
