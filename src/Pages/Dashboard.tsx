@@ -2,13 +2,14 @@ import type { DashboardOverviewResponse } from "@/types/dashboard.types";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { toast } from "sonner";
-import { Package, MoveUpRight, Boxes } from "lucide-react";
 
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/services/api";
+import { MovementLineChart } from "@/components/charts/LineChart";
+import Last30Days from "@/components/Last30Days";
+import { CategoryDonutChart } from "@/components/charts/DonutsChart";
 
 const fetchDashboardOverview = async (): Promise<DashboardOverviewResponse> => {
-  // 🚀 O token agora é injetado automaticamente via interceptor!
   const response = await api.get<DashboardOverviewResponse>(
     "/admin/dashboard/overview",
   );
@@ -42,43 +43,15 @@ export default function DashboardPage() {
   console.log(trends, "trends ");
 
   return (
-    <div className="flex items-start justify-center mx-auto max-w-[1050px] w-full">
+    <div className="flex items-start justify-center mx-auto ">
       {/* <h1>Dashboard</h1> */}
 
-      <div className="border rounded-lg shadow-lg w-full p-5">
-        <h3 className="text-center mb-10 text-xl">
-          {summary.movementsPeriod === "last_30_days" ? "Last 30 Days" : ""}
-        </h3>
-        <div className="flex items-center justify-around">
-          <div className="text-center flex flex-col items-center gap-y-2">
-            <Package color="#0080FC" />
-            <h4 className="uppercase text-base font-bold mb-4">
-              Total Products
-            </h4>
-            <div className="text-3xl text-primary">{summary.totalProducts}</div>
-          </div>
+      <div className="flex flex-col max-w-[1050px] w-full gap-y-8">
+        <Last30Days summary={summary} />
 
-          <div className="block w-px bg-muted-foreground h-24" />
-
-          <div className="text-center flex flex-col items-center gap-y-2">
-            <Boxes color="#FE005F" />
-            <h4 className="uppercase text-base font-bold mb-4">Total Units</h4>
-            <div className="text-3xl text-logo-second">
-              {summary.totalUnits}
-            </div>
-          </div>
-
-          <div className="block w-px bg-muted-foreground h-24" />
-
-          <div className="text-center flex flex-col items-center gap-y-2">
-            <MoveUpRight color="#FEB000" />
-            <h4 className="uppercase text-base font-bold mb-4">
-              Total Movements
-            </h4>
-            <div className="text-3xl text-logo-third">
-              {summary.totalMovements}
-            </div>
-          </div>
+        <div className="flex items-center gap-4">
+          <MovementLineChart data={trends.dailyMovements} />
+          <CategoryDonutChart data={topItems.categoryDistribution} />
         </div>
       </div>
     </div>
