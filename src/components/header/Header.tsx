@@ -1,10 +1,11 @@
 import React from "react";
 import { Search, Bell } from "lucide-react";
-import NavUser from "./NavUser";
 import { useAuth } from "@/contexts/AuthContext";
 import { greeting } from "@/utils/greeting";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import NavUser from "./NavUser";
+import { ModeToggle } from "../modeToggle";
 
 export default function Header() {
   const { user } = useAuth();
@@ -13,7 +14,7 @@ export default function Header() {
   const firstName = user.name ? user.name.split(" ")[0] : "Usuário";
 
   return (
-    <header className="flex justify-between items-center">
+    <header className="flex justify-between items-center mb-12">
       <div className="text-foreground">
         <p className="font-black text-xl">Hello, {firstName} 👋🏻</p>
         <span className="text-muted-foreground text-sm">{greeting}</span>
@@ -34,6 +35,7 @@ export default function Header() {
           <Bell />
         </Button>
         <NavUser />
+        <ModeToggle />
       </div>
     </header>
   );

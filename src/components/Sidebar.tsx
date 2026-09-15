@@ -130,9 +130,6 @@ export default function Sidebar() {
           </ul>
         </nav>
       </div>
-      <footer className="mt-auto border-t border-primary">
-        <ModeToggle />
-      </footer>
     </aside>
   );
 }
