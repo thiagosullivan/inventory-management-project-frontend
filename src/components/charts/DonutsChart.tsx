@@ -13,6 +13,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import type { CategoryDistributionItem } from "@/types/dashboard.types";
+import { getChartColor } from "@/lib/chart-colors";
 
 interface CategoryDonutChartProps {
   data: CategoryDistributionItem[];
@@ -21,15 +22,20 @@ interface CategoryDonutChartProps {
 export function CategoryDonutChart({ data }: CategoryDonutChartProps) {
   const totalProducts = data.reduce((acc, curr) => acc + curr.count, 0);
 
+  // 🔹 Usa categoryId como chave da config e da cor (estável, sem acento)
   const chartData = data.map((item) => ({
     ...item,
-    fill: `var(--color-${item.category})`,
+    fill: `var(--color-${item.categoryId})`,
   }));
 
+  console.log(chartData, "chartData");
+
+  // 🔹 Config usa categoryId como chave, categoryName como label
   const donutChartConfig = data.reduce((config, item, index) => {
-    config[item.category] = {
-      label: item.category,
-      color: `hsl(var(--chart-${(index % 5) + 1}))`,
+    config[item.categoryId] = {
+      label: item.categoryName,
+      // color: `hsl(var(--chart-${(index % 5) + 1}))`,
+      color: getChartColor(index),
     };
     return config;
   }, {} as ChartConfig);
@@ -51,11 +57,12 @@ export function CategoryDonutChart({ data }: CategoryDonutChartProps) {
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
+              wrapperStyle={{ width: "auto", maxWidth: "none" }}
             />
             <Pie
               data={chartData}
               dataKey="count"
-              nameKey="category"
+              nameKey="categoryId" // 🔹 era: "category"
               innerRadius={60}
               strokeWidth={5}
             >
