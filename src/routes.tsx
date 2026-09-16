@@ -2,11 +2,12 @@ import { createBrowserRouter } from "react-router-dom";
 import HomePage from "./pages/Home.tsx";
 import ForgotPasswordPage from "./pages/ForgotPassword.tsx";
 import { PublicRoute } from "./components/PublicRoute.tsx";
-import { ProtectedRoute } from "./components/ProtectedRoute.tsx";
+import { ManagerRoutes, ProtectedRoute } from "./components/ProtectedRoute.tsx";
 import DashboardPage from "./pages/Dashboard.tsx";
 import ProductsPage from "./pages/Products.tsx";
 import RootLayout from "./components/layouts/RootLayout.tsx";
 import Page404 from "./pages/Page404.tsx";
+import AdminPage from "./pages/Admin.tsx";
 
 export const router = createBrowserRouter([
   // Public
@@ -29,6 +30,17 @@ export const router = createBrowserRouter([
           { path: "/dashboard", element: <DashboardPage /> },
           { path: "/products", element: <ProductsPage /> },
         ],
+      },
+    ],
+  },
+
+  // Manager
+  {
+    element: <ManagerRoutes />,
+    children: [
+      {
+        element: <RootLayout />,
+        children: [{ path: "/admin", element: <AdminPage /> }],
       },
     ],
   },
