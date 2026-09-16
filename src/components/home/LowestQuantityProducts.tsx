@@ -44,7 +44,13 @@ export default function LowestQuantityProducts({
           {data.map((product) => (
             <TableRow key={product.id}>
               <TableCell className="w-20 h-20 block">
-                <img src={product.imageUrl ? product.imageUrl : ""} />
+                <img
+                  src={
+                    product.imageUrl === null
+                      ? "https://img.icons8.com/color/1200/no-image.jpg"
+                      : product.imageUrl
+                  }
+                />
               </TableCell>
               <TableCell className="font-medium max-w-[250px] truncate">
                 {product.name}

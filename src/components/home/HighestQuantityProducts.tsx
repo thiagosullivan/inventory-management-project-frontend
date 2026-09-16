@@ -47,7 +47,13 @@ export const HighestQuantityProducts = ({
                 {product.name}
               </TableCell>
               <TableCell className="w-20 h-20 block">
-                <img src={product.imageUrl ? product.imageUrl : ""} />
+                <img
+                  src={
+                    product.imageUrl === null
+                      ? "https://img.icons8.com/color/1200/no-image.jpg"
+                      : product.imageUrl
+                  }
+                />
               </TableCell>
               <TableCell>{product.sku}</TableCell>
               <TableCell className="text-right">{product.quantity}</TableCell>
