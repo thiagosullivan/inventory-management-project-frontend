@@ -3,10 +3,13 @@ export interface ProductQuantityItem {
   name: string;
   sku: string | null;
   quantity: number;
+  imageUrl?: string | null;
+  priceInCents?: number | null;
 }
 
 export interface CategoryDistributionItem {
-  category: string;
+  categoryId: string;
+  categoryName: string;
   count: number;
 }
 
@@ -21,7 +24,7 @@ export interface DashboardOverviewData {
     totalProducts: number;
     totalUnits: number;
     totalMovements: number;
-    movementsPeriod: string; // Ex: "last_30_days"
+    movementsPeriod: string;
   };
   alerts: {
     lowStock: number;
