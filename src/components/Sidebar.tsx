@@ -12,7 +12,6 @@ import {
   UserShield,
 } from "lucide-react";
 
-import { ModeToggle } from "./modeToggle";
 import { useTheme } from "./themeProvider";
 import logoLight from "../../public/logo-light.png";
 import logoDark from "../../public/logo-dark.png";
