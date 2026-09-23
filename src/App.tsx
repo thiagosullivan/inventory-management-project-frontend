@@ -21,12 +21,13 @@ function App() {
         </QueryClientProvider>
         <Toaster
           position="top-right"
-          toastOptions={{
-            style: {
-              background: "#1e90ff",
-              color: "white",
-            },
-          }}
+          // toastOptions={{
+          //   style: {
+          //     background: "#1e90ff",
+          //     color: "white",
+          //   },
+          // }}
+          richColors
         />
       </ThemeProvider>
     </AuthProvider>
