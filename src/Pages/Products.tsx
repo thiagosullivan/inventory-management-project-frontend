@@ -46,15 +46,13 @@ export default function ProductsPage() {
 
   return (
     <section className="flex flex-col items-center justify-center mx-auto gap-6 w-full max-w-5xl px-4 py-8">
-      {/* 🔹 Filtros sempre visíveis — mesmo no empty state */}
-      <ProductFilters />
+      <ProductFilters isLoading={isFetching} />
 
       {needsRedirect ? (
         <div className="text-center text-muted-foreground py-12">
           Carregando produtos...
         </div>
       ) : isEmpty ? (
-        // 🔹 Empty state contextual
         <div className="flex flex-col items-center gap-4 text-center text-muted-foreground py-12">
           {hasActiveFilters ? (
             <>
