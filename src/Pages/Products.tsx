@@ -45,7 +45,7 @@ export default function ProductsPage() {
   const isEmpty = data.products.length === 0;
 
   return (
-    <section className="flex flex-col items-center justify-center mx-auto gap-6 w-full max-w-5xl px-4 py-8">
+    <section className="flex flex-col items-center justify-center mx-auto gap-6 w-full max-w-6xl px-4 py-8">
       <ProductFilters isLoading={isFetching} />
 
       {needsRedirect ? (
