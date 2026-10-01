@@ -1,3 +1,4 @@
+/** Entidade completa — usada na página /categories futuramente. */
 export interface Category {
   id: string;
   name: string;
@@ -6,15 +7,12 @@ export interface Category {
   updatedAt: string;
 }
 
-export interface CategoriesResponseData {
-  categories: Category[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-}
-
-export interface GetCategoriesResponse {
-  success: boolean;
-  data: CategoriesResponseData;
+/**
+ * 🔹 Opção genérica de select.
+ * Formato `{ label, value }` — o que o shadcn/Radix espera.
+ * Reusável em qualquer dropdown (categoria, usuário, localização...).
+ */
+export interface SelectOption {
+  label: string;
+  value: string;
 }
