@@ -1,4 +1,5 @@
 import { BooleanToggle } from "@/filters/BooleanToggle";
+import { CategorySelect } from "@/filters/CategorySelect";
 import { SearchInput } from "@/filters/SearchInput";
 import { TriStateToggle } from "@/filters/TriStateToggle";
 import { useProductQueryParams } from "@/hooks/useProductQueryParams";
@@ -7,11 +8,12 @@ interface ProductFiltersProps {
   isLoading?: boolean;
 }
 
+// 🔹 Barra de filtros da página /products
 export function ProductFilters({ isLoading = false }: ProductFiltersProps) {
   const { filters, setFilter } = useProductQueryParams();
 
   return (
-    <div className="w-full flex flex-col gap-3 sm:flex-row sm:items-center justify-between">
+    <div className="w-full flex flex-wrap items-center gap-3 justify-between">
       <SearchInput
         value={filters.search ?? ""}
         onChange={(v: string) => setFilter("search", v || undefined)}
@@ -19,8 +21,14 @@ export function ProductFilters({ isLoading = false }: ProductFiltersProps) {
         isLoading={isLoading}
         className="sm:max-w-sm"
       />
-      <div className="flex items-center gap-4">
-        <div className="flex items-center gap-3">
+
+      <div className="flex flex-col items-end gap-3">
+        <div className="flex gap-3">
+          <CategorySelect
+            value={filters.categoryId}
+            onChange={(v) => setFilter("categoryId", v)}
+          />
+
           <BooleanToggle
             label="Estoque baixo"
             checked={filters.isLowStock === true}
@@ -28,7 +36,7 @@ export function ProductFilters({ isLoading = false }: ProductFiltersProps) {
           />
 
           <BooleanToggle
-            label="Vencendo (30 dias)"
+            label="Vencendo em 30 dias"
             checked={filters.isExpiring === true}
             onCheckedChange={(v) => setFilter("isExpiring", v)}
           />
