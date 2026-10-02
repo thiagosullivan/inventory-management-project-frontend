@@ -42,7 +42,7 @@ export function SearchInput({
   };
 
   return (
-    <div className={cn("relative w-full", className)}>
+    <div className={cn("relative w-full max-w-[340px]", className)}>
       <Search
         className="absolute top-1/2 -translate-y-1/2 left-4 text-muted-foreground pointer-events-none"
         size={24}
