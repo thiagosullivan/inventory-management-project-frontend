@@ -19,16 +19,7 @@ function App() {
             <RouterProvider router={router} />
           </TooltipProvider>
         </QueryClientProvider>
-        <Toaster
-          position="top-right"
-          // toastOptions={{
-          //   style: {
-          //     background: "#1e90ff",
-          //     color: "white",
-          //   },
-          // }}
-          richColors
-        />
+        <Toaster position="top-right" richColors />
       </ThemeProvider>
     </AuthProvider>
   );
