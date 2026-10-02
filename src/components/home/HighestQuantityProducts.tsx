@@ -34,8 +34,8 @@ export const HighestQuantityProducts = ({
         </TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead>Name</TableHead>
             <TableHead>Image</TableHead>
+            <TableHead>Name</TableHead>
             <TableHead>SKU</TableHead>
             <TableHead className="text-right">Quantity</TableHead>
           </TableRow>
@@ -43,9 +43,6 @@ export const HighestQuantityProducts = ({
         <TableBody>
           {data.map((product) => (
             <TableRow key={product.id}>
-              <TableCell className="font-medium max-w-[250px] truncate">
-                {product.name}
-              </TableCell>
               <TableCell className="w-20 h-20 block">
                 <img
                   src={
@@ -54,6 +51,9 @@ export const HighestQuantityProducts = ({
                       : product.imageUrl
                   }
                 />
+              </TableCell>
+              <TableCell className="font-medium max-w-[250px] truncate">
+                {product.name}
               </TableCell>
               <TableCell>{product.sku}</TableCell>
               <TableCell className="text-right">{product.quantity}</TableCell>
