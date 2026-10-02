@@ -2,6 +2,7 @@ import { BooleanToggle } from "@/filters/BooleanToggle";
 import { CategorySelect } from "@/filters/CategorySelect";
 import { SearchInput } from "@/filters/SearchInput";
 import { TriStateToggle } from "@/filters/TriStateToggle";
+import { UserSelect } from "@/filters/UserSelect";
 import { useProductQueryParams } from "@/hooks/useProductQueryParams";
 
 interface ProductFiltersProps {
@@ -29,6 +30,10 @@ export function ProductFilters({ isLoading = false }: ProductFiltersProps) {
             onChange={(v) => setFilter("categoryId", v)}
           />
 
+          <UserSelect
+            value={filters.createdById}
+            onChange={(v) => setFilter("createdById", v)}
+          />
           <BooleanToggle
             label="Estoque baixo"
             checked={filters.isLowStock === true}
