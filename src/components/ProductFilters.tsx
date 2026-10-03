@@ -1,5 +1,6 @@
 import { BooleanToggle } from "@/filters/BooleanToggle";
 import { CategorySelect } from "@/filters/CategorySelect";
+import { NumberRangeFilter } from "@/filters/NumberRangeFilter";
 import { SearchInput } from "@/filters/SearchInput";
 import { TriStateToggle } from "@/filters/TriStateToggle";
 import { UserSelect } from "@/filters/UserSelect";
@@ -11,7 +12,7 @@ interface ProductFiltersProps {
 
 // 🔹 Barra de filtros da página /products
 export function ProductFilters({ isLoading = false }: ProductFiltersProps) {
-  const { filters, setFilter } = useProductQueryParams();
+  const { filters, setFilter, setFilters } = useProductQueryParams();
 
   return (
     <div className="w-full flex flex-wrap items-center gap-3 justify-between">
@@ -33,6 +34,18 @@ export function ProductFilters({ isLoading = false }: ProductFiltersProps) {
           <UserSelect
             value={filters.createdById}
             onChange={(v) => setFilter("createdById", v)}
+          />
+
+          <NumberRangeFilter
+            minValue={filters.minQuantity}
+            maxValue={filters.maxQuantity}
+            onChange={({ min, max }) => {
+              // 🔹 setFilters atualiza os dois de uma vez (evita 2 re-renders)
+              setFilters({
+                minQuantity: min,
+                maxQuantity: max,
+              });
+            }}
           />
           <BooleanToggle
             label="Estoque baixo"
