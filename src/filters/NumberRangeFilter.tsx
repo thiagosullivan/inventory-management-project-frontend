@@ -100,44 +100,46 @@ export function NumberRangeFilter({
   }, [debouncedMin, debouncedMax]);
 
   return (
-    <div className={cn("flex items-center gap-2", className)}>
-      <Input
-        type="number"
-        inputMode="numeric"
-        min={0}
-        value={minInput}
-        onChange={(e) => setMinInput(e.target.value)}
-        placeholder="Mín"
-        aria-invalid={minInvalid || rangeInvalid}
-        aria-label="Quantidade mínima"
-        className={cn(
-          "no-spinner w-[80px]",
-          (minInvalid || rangeInvalid) &&
-            "border-destructive focus-visible:ring-destructive",
-        )}
-      />
+    <div className={cn("flex flex-col gap-2", className)}>
+      <div className="flex items-center gap-2">
+        <Input
+          type="number"
+          inputMode="numeric"
+          min={0}
+          value={minInput}
+          onChange={(e) => setMinInput(e.target.value)}
+          placeholder="Mín"
+          aria-invalid={minInvalid || rangeInvalid}
+          aria-label="Quantidade mínima"
+          className={cn(
+            "no-spinner w-[80px]",
+            (minInvalid || rangeInvalid) &&
+              "border-destructive focus-visible:ring-destructive",
+          )}
+        />
 
-      <span className="text-muted-foreground text-sm">–</span>
+        <span className="text-muted-foreground text-sm">–</span>
 
-      <Input
-        type="number"
-        inputMode="numeric"
-        min={0}
-        value={maxInput}
-        onChange={(e) => setMaxInput(e.target.value)}
-        placeholder="Máx"
-        aria-invalid={maxInvalid || rangeInvalid}
-        aria-label="Quantidade máxima"
-        className={cn(
-          "no-spinner w-[80px]",
-          (maxInvalid || rangeInvalid) &&
-            "border-destructive focus-visible:ring-destructive",
-        )}
-      />
+        <Input
+          type="number"
+          inputMode="numeric"
+          min={0}
+          value={maxInput}
+          onChange={(e) => setMaxInput(e.target.value)}
+          placeholder="Máx"
+          aria-invalid={maxInvalid || rangeInvalid}
+          aria-label="Quantidade máxima"
+          className={cn(
+            "no-spinner w-[80px]",
+            (maxInvalid || rangeInvalid) &&
+              "border-destructive focus-visible:ring-destructive",
+          )}
+        />
+      </div>
 
       {rangeInvalid && (
         <span className="text-xs text-destructive whitespace-nowrap">
-          Mín &gt; Máx
+          Mínimo não pode ser <br /> maior que o Máximo
         </span>
       )}
     </div>
