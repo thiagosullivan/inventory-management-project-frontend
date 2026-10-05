@@ -61,7 +61,10 @@ export function UserSelect({
     return (
       <Select disabled value={ALL_VALUE}>
         <SelectTrigger className={cn("w-full sm:w-[200px]", className)}>
-          <SelectValue placeholder="Erro ao carregar" />
+          <SelectValue
+            className="text-muted-foreground"
+            placeholder="Erro ao carregar"
+          />
         </SelectTrigger>
       </Select>
     );

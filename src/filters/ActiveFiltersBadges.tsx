@@ -68,7 +68,7 @@ export function ActiveFiltersBadges() {
         variant="ghost"
         size="sm"
         onClick={clearFilters}
-        className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground"
+        className="h-8 px-2 text-xs bg-destructive hover:bg-destructive/70 text-white hover:text-white cursor-pointer"
       >
         Limpar tudo
       </Button>

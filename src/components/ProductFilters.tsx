@@ -1,6 +1,7 @@
 import { ActiveFiltersBadges } from "@/filters/ActiveFiltersBadges";
 import { BooleanToggle } from "@/filters/BooleanToggle";
 import { CategorySelect } from "@/filters/CategorySelect";
+import { FilterShell } from "@/filters/FilterShell";
 import { NumberRangeFilter } from "@/filters/NumberRangeFilter";
 import { SearchInput } from "@/filters/SearchInput";
 import { TriStateToggle } from "@/filters/TriStateToggle";
@@ -16,18 +17,19 @@ export function ProductFilters({ isLoading = false }: ProductFiltersProps) {
   const { filters, setFilter, setFilters } = useProductQueryParams();
 
   return (
-    <div className="w-full flex flex-wrap items-center gap-3 justify-between">
-      <div>
+    <div className="w-full flex flex-wrap items-start gap-3 justify-between">
+      <div className="w-full flex flex-wrap items-start gap-3 justify-between">
         <SearchInput
           value={filters.search ?? ""}
           onChange={(v: string) => setFilter("search", v || undefined)}
           placeholder="Buscar por nome, SKU ou descrição..."
           isLoading={isLoading}
-          className="sm:max-w-sm"
+          className="w-full"
         />
 
-        <div className="flex flex-col items-end gap-3">
-          <div className="flex gap-3">
+        <FilterShell>
+          {/* Insira todos os seus filtros reais aqui apenas UMA vez */}
+          <div className="space-y-4">
             <CategorySelect
               value={filters.categoryId}
               onChange={(v) => setFilter("categoryId", v)}
@@ -37,42 +39,45 @@ export function ProductFilters({ isLoading = false }: ProductFiltersProps) {
               value={filters.createdById}
               onChange={(v) => setFilter("createdById", v)}
             />
+            <div className="flex sm:flex-col sm:max-w-[200px] gap-3">
+              <BooleanToggle
+                label="Estoque baixo"
+                checked={filters.isLowStock === true}
+                onCheckedChange={(v) => setFilter("isLowStock", v)}
+              />
 
-            <NumberRangeFilter
-              minValue={filters.minQuantity}
-              maxValue={filters.maxQuantity}
-              onChange={({ min, max }) => {
-                // 🔹 setFilters atualiza os dois de uma vez (evita 2 re-renders)
-                setFilters({
-                  minQuantity: min,
-                  maxQuantity: max,
-                });
-              }}
+              <BooleanToggle
+                label="Vencendo em 30 dias"
+                checked={filters.isExpiring === true}
+                onCheckedChange={(v) => setFilter("isExpiring", v)}
+              />
+            </div>
+            <TriStateToggle
+              options={[
+                { label: "Todos", value: undefined },
+                { label: "Com validade", value: true },
+                { label: "Sem validade", value: false },
+              ]}
+              value={filters.hasExpiryDate}
+              onChange={(v) => setFilter("hasExpiryDate", v)}
             />
-            <BooleanToggle
-              label="Estoque baixo"
-              checked={filters.isLowStock === true}
-              onCheckedChange={(v) => setFilter("isLowStock", v)}
-            />
-
-            <BooleanToggle
-              label="Vencendo em 30 dias"
-              checked={filters.isExpiring === true}
-              onCheckedChange={(v) => setFilter("isExpiring", v)}
-            />
+            <div>
+              <p className="text-base text-muted-foreground mb-1">Estoque:</p>
+              <NumberRangeFilter
+                minValue={filters.minQuantity}
+                maxValue={filters.maxQuantity}
+                onChange={({ min, max }) => {
+                  setFilters({
+                    minQuantity: min,
+                    maxQuantity: max,
+                  });
+                }}
+              />
+            </div>
           </div>
-
-          <TriStateToggle
-            options={[
-              { label: "Todos", value: undefined },
-              { label: "Com validade", value: true },
-              { label: "Sem validade", value: false },
-            ]}
-            value={filters.hasExpiryDate}
-            onChange={(v) => setFilter("hasExpiryDate", v)}
-          />
-        </div>
+        </FilterShell>
       </div>
+
       <ActiveFiltersBadges />
     </div>
   );
