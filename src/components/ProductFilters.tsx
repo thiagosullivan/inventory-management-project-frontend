@@ -21,10 +21,12 @@ export function ProductFilters({ isLoading = false }: ProductFiltersProps) {
       <div className="w-full flex flex-wrap items-start gap-3 justify-between">
         <SearchInput
           value={filters.search ?? ""}
-          onChange={(v: string) => setFilter("search", v || undefined)}
+          onChange={(v: string) =>
+            setFilter("search", v || undefined, { replace: true })
+          }
           placeholder="Buscar por nome, SKU ou descrição..."
           isLoading={isLoading}
-          className="w-full"
+          className="sm:max-w-sm"
         />
 
         <FilterShell>
