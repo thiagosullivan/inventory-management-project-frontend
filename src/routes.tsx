@@ -8,6 +8,7 @@ import ProductsPage from "./pages/Products.tsx";
 import RootLayout from "./components/layouts/RootLayout.tsx";
 import Page404 from "./pages/Page404.tsx";
 import AdminPage from "./pages/Admin.tsx";
+import CategoriesPage from "./pages/Categories.tsx";
 
 export const router = createBrowserRouter([
   // Public
@@ -29,6 +30,7 @@ export const router = createBrowserRouter([
         children: [
           { path: "/dashboard", element: <DashboardPage /> },
           { path: "/products", element: <ProductsPage /> },
+          { path: "/categories", element: <CategoriesPage /> },
         ],
       },
     ],
