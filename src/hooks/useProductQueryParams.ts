@@ -45,17 +45,17 @@ export function useProductQueryParams() {
     <K extends keyof Omit<ProductFilters, "page" | "limit">>(
       key: K,
       value: ProductFilters[K],
+      options?: { replace?: boolean },
     ) => {
       const next: ProductFilters = {
         ...filters,
         [key]: value,
         page: PRODUCT_DEFAULTS.page, // reset
       };
-      writeFilters(next, false);
+      writeFilters(next, options?.replace ?? false);
     },
     [filters, writeFilters],
   );
-
   /**
    * Atualiza VÁRIOS filtros de uma vez.
    * Sempre reseta page pra 1.
