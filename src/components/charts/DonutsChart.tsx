@@ -28,7 +28,7 @@ export function CategoryDonutChart({ data }: CategoryDonutChartProps) {
     fill: `var(--color-${item.categoryId})`,
   }));
 
-  console.log(chartData, "chartData");
+  // console.log(chartData, "chartData");
 
   // 🔹 Config usa categoryId como chave, categoryName como label
   const donutChartConfig = data.reduce((config, item, index) => {

@@ -1,8 +1,6 @@
-import React from "react";
-import { Search, Bell } from "lucide-react";
+import { Bell } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { greeting } from "@/utils/greeting";
-import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import NavUser from "./NavUser";
 import { ModeToggle } from "../modeToggle";

@@ -26,7 +26,7 @@ interface TableProductsProps {
 }
 
 export function TableProducts({ products }: TableProductsProps) {
-  console.log(products, "PROD");
+  // console.log(products, "PROD");
   return (
     <div className="w-full rounded-md border">
       <Table>

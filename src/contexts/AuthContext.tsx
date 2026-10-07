@@ -3,7 +3,7 @@ import {
   useContext,
   useState,
   useEffect,
-  ReactNode,
+  type ReactNode,
 } from "react";
 import { getSession } from "../services/auth";
 import type { User } from "../types/auth.types";

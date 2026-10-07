@@ -47,9 +47,9 @@ export default function DashboardPage() {
 
   const { summary, topItems, trends } = data.data;
 
-  console.log(summary, "SUMMARY");
-  console.log(topItems, "topItems");
-  console.log(trends, "trends");
+  // console.log(summary, "SUMMARY");
+  // console.log(topItems, "topItems");
+  // console.log(trends, "trends");
 
   return (
     <section className="flex items-start justify-center mx-auto">
