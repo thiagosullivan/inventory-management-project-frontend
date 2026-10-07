@@ -5,6 +5,13 @@ import {
   type ProductSortBy,
   type SortOrder,
 } from "@/types/products.types";
+import {
+  clamp,
+  getBoolean,
+  getBooleanTrueOnly,
+  getNumber,
+  getString,
+} from "@/lib/query-params-helpers";
 
 /**
  * Lê os search params da URL e retorna um objeto ProductFilters tipado.
@@ -86,42 +93,9 @@ export function buildProductSearchParams(
 }
 
 // ============================================================
-// Helpers internos
+// Helpers específicos de produto
+// (dependem de ProductSortBy / SortOrder — não vão pro helper comum)
 // ============================================================
-
-function getString(params: URLSearchParams, key: string): string | undefined {
-  const value = params.get(key);
-  if (!value || value.trim() === "") return undefined;
-  return value;
-}
-
-function getNumber(params: URLSearchParams, key: string): number | undefined {
-  const raw = params.get(key);
-  if (!raw) return undefined;
-  const num = Number(raw);
-  if (Number.isNaN(num)) return undefined;
-  return num;
-}
-
-function getBoolean(params: URLSearchParams, key: string): boolean | undefined {
-  const raw = params.get(key);
-  if (raw === "true") return true;
-  if (raw === "false") return false;
-  return undefined;
-}
-
-/**
- * Só retorna true se o param for literalmente "true".
- * Pra booleanos que o backend só entende como "true" (isExpiring, isLowStock).
- */
-function getBooleanTrueOnly(
-  params: URLSearchParams,
-  key: string,
-): boolean | undefined {
-  const raw = params.get(key);
-  if (raw === "true") return true;
-  return undefined;
-}
 
 function getSortBy(
   params: URLSearchParams,
@@ -141,8 +115,4 @@ function getSortOrder(
   const raw = params.get(key);
   if (raw === "asc" || raw === "desc") return raw;
   return undefined;
-}
-
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(Math.max(value, min), max);
 }
