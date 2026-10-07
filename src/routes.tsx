@@ -9,6 +9,7 @@ import RootLayout from "./components/layouts/RootLayout.tsx";
 import Page404 from "./pages/Page404.tsx";
 import AdminPage from "./pages/Admin.tsx";
 import CategoriesPage from "./pages/Categories.tsx";
+import StockPage from "./pages/Stock.tsx";
 
 export const router = createBrowserRouter([
   // Public
@@ -31,6 +32,7 @@ export const router = createBrowserRouter([
           { path: "/dashboard", element: <DashboardPage /> },
           { path: "/products", element: <ProductsPage /> },
           { path: "/categories", element: <CategoriesPage /> },
+          { path: "/stock", element: <StockPage /> },
         ],
       },
     ],
