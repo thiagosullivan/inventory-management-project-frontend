@@ -1,5 +1,7 @@
 import { ProductFilters } from "@/components/ProductFilters";
+import { LimitSelect } from "@/components/products/LimitSelect";
 import { ProductPagination } from "@/components/products/ProductPagination";
+import { RangeDisplay } from "@/components/products/RangeDisplay";
 import { TableProducts } from "@/components/products/TableProducts";
 import { Button } from "@/components/ui/button";
 import { useProductQueryParams } from "@/hooks/useProductQueryParams";
@@ -8,7 +10,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 
 export default function ProductsPage() {
-  const { filters, setPage, clearFilters, hasActiveFilters } =
+  const { filters, setPage, setLimit, clearFilters, hasActiveFilters } =
     useProductQueryParams();
 
   const { data, isLoading, isFetching, isError } = useQuery({
@@ -68,11 +70,19 @@ export default function ProductsPage() {
       ) : (
         <>
           <TableProducts products={data.products} />
+
+          <LimitSelect value={filters.limit} onChange={setLimit} />
+
           <ProductPagination
             page={data.page}
             totalPages={data.totalPages}
             onPageChange={setPage}
             isFetching={isFetching}
+          />
+          <RangeDisplay
+            page={data.page}
+            limit={data.limit}
+            total={data.total}
           />
         </>
       )}
