@@ -3,22 +3,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 
-import type { DashboardOverviewResponse } from "@/types/dashboard.types";
-
 import { MovementLineChart } from "@/components/charts/LineChart";
 import Last30Days from "@/components/home/Last30Days";
 import { CategoryDonutChart } from "@/components/charts/DonutsChart";
 import { HighestQuantityProducts } from "@/components/home/HighestQuantityProducts";
 import LowestQuantityProducts from "@/components/home/LowestQuantityProducts";
 
-import { api } from "@/services/api";
-
-const fetchDashboardOverview = async (): Promise<DashboardOverviewResponse> => {
-  const response = await api.get<DashboardOverviewResponse>(
-    "/admin/dashboard/overview",
-  );
-  return response.data;
-};
+import { fetchDashboardOverview } from "@/services/dashboard";
 
 export default function DashboardPage() {
   const { data, isLoading, isError } = useQuery({
@@ -42,19 +33,13 @@ export default function DashboardPage() {
   }, [location, navigate]);
 
   if (isLoading) return <div>Carregando indicadores do dashboard...</div>;
-  if (isError || !data?.success)
-    return <div>Erro ao carregar dados do painel.</div>;
+  if (isError || !data) return <div>Erro ao carregar dados do painel.</div>;
 
-  const { summary, topItems, trends } = data.data;
-
-  // console.log(summary, "SUMMARY");
-  // console.log(topItems, "topItems");
-  // console.log(trends, "trends");
+  // 🔹 agora `data` é o DashboardOverviewResponse direto (sem `.data` duplo)
+  const { summary, topItems, trends } = data;
 
   return (
     <section className="flex items-start justify-center mx-auto">
-      {/* <h1>Dashboard</h1> */}
-
       <div className="flex flex-col max-w-[1180px] w-full gap-y-8">
         <Last30Days summary={summary} />
 
