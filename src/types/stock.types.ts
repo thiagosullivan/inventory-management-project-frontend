@@ -86,7 +86,9 @@ export interface StockMetricsResponse {
 export type StockFilters = {
   categoryId?: string;
   location?: string;
+  locationExact?: boolean;
   supplier?: string;
+  supplierExact?: boolean;
 };
 
 export const STOCK_DEFAULTS = {} as const satisfies StockFilters;

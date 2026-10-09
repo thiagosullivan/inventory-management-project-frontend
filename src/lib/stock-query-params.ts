@@ -1,5 +1,5 @@
 import { type StockFilters } from "@/types/stock.types";
-import { getString } from "@/lib/query-params-helpers";
+import { getBooleanTrueOnly, getString } from "@/lib/query-params-helpers";
 
 /**
  * Lê os search params da URL e retorna um objeto StockFilters tipado.
@@ -12,7 +12,9 @@ export function parseStockSearchParams(
   return {
     categoryId: getString(searchParams, "categoryId"),
     location: getString(searchParams, "location"),
+    locationExact: getBooleanTrueOnly(searchParams, "locationExact"),
     supplier: getString(searchParams, "supplier"),
+    supplierExact: getBooleanTrueOnly(searchParams, "supplierExact"),
   };
 }
 
@@ -24,8 +26,17 @@ export function buildStockSearchParams(filters: StockFilters): URLSearchParams {
   const params = new URLSearchParams();
 
   if (filters.categoryId) params.set("categoryId", filters.categoryId);
-  if (filters.location) params.set("location", filters.location);
-  if (filters.supplier) params.set("supplier", filters.supplier);
+
+  if (filters.location) {
+    params.set("location", filters.location);
+    // 🔹 Só serializa o modificador se o filtro base existe
+    if (filters.locationExact === true) params.set("locationExact", "true");
+  }
+
+  if (filters.supplier) {
+    params.set("supplier", filters.supplier);
+    if (filters.supplierExact === true) params.set("supplierExact", "true");
+  }
 
   return params;
 }
