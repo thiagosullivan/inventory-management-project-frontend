@@ -59,7 +59,7 @@ export default function ProductsPage() {
           {hasActiveFilters ? (
             <>
               <p>Nenhum produto encontrado com esses filtros.</p>
-              <Button variant="outline" onClick={clearFilters}>
+              <Button variant="destructive" onClick={clearFilters}>
                 Limpar filtros
               </Button>
             </>
