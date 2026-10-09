@@ -37,6 +37,7 @@ export function StockAlertsSections({ details }: StockAlertsSectionsProps) {
         variant="destructive"
         showExpiryDate
         emptyMessage="Nenhum produto vencido"
+        seeAllHref="/products?isExpired=true"
         icon="calendar"
       />
 
@@ -46,6 +47,7 @@ export function StockAlertsSections({ details }: StockAlertsSectionsProps) {
         items={details.productsOutOfStock}
         variant="destructive"
         emptyMessage="Nenhum produto sem estoque"
+        seeAllHref="/products?maxQuantity=0"
         icon="package"
       />
     </div>
