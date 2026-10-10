@@ -22,6 +22,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { getChartColor } from "@/lib/chart-colors";
+import { useStockQueryParams } from "@/hooks/useStockQueryParams";
 import type { StockMetricsResponse } from "@/types/stock.types";
 
 interface StockDistributionChartsProps {
@@ -32,6 +33,43 @@ export function StockDistributionCharts({
   distribution,
 }: StockDistributionChartsProps) {
   const { byCategory, byLocation, bySupplier } = distribution;
+  const { filters, setFilters } = useStockQueryParams();
+
+  // 🔹 Handler genérico: se o valor já está filtrado, limpa; senão, aplica.
+  const handleCategoryClick = (categoryId: string) => {
+    if (filters.categoryId === categoryId) {
+      setFilters({ categoryId: undefined });
+    } else {
+      setFilters({ categoryId });
+    }
+  };
+
+  const handleLocationClick = (location: string) => {
+    if (filters.location === location && filters.locationExact) {
+      setFilters({ location: undefined, locationExact: undefined });
+    } else {
+      setFilters({ location, locationExact: true });
+    }
+  };
+
+  const handleSupplierClick = (supplier: string) => {
+    if (filters.supplier === supplier && filters.supplierExact) {
+      setFilters({ supplier: undefined, supplierExact: undefined });
+    } else {
+      setFilters({ supplier, supplierExact: true });
+    }
+  };
+
+  // 🔹 Esmaece se há filtro EXATO ativo e este item não é ele (case-insensitive).
+  // Filtro de texto (contains) NÃO esmaece — é busca, não filtro visual.
+  const isDimmed = (
+    activeValue: string | undefined,
+    exact: boolean | undefined,
+    itemValue: string,
+  ): boolean => {
+    if (!activeValue || !exact) return false;
+    return activeValue.toLowerCase() !== itemValue.toLowerCase();
+  };
 
   // ===== Donut de categoria =====
   const totalUnits = byCategory.reduce((acc, curr) => acc + curr.totalUnits, 0);
@@ -39,6 +77,9 @@ export function StockDistributionCharts({
   const categoryChartData = byCategory.map((item) => ({
     ...item,
     fill: `var(--color-${item.categoryId})`,
+    // 🔹 Se há filtro de categoria ativo e este item não é ele, esmaece
+    opacity:
+      filters.categoryId && filters.categoryId !== item.categoryId ? 0.35 : 1,
   }));
 
   const categoryChartConfig = byCategory.reduce((config, item, index) => {
@@ -53,6 +94,10 @@ export function StockDistributionCharts({
   const locationChartData = byLocation.map((item, index) => ({
     ...item,
     fill: `var(--color-loc-${index})`,
+    // 🔹 Esmaece se há filtro de location ativo e este não é ele
+    opacity: isDimmed(filters.location, filters.locationExact, item.location)
+      ? 0.35
+      : 1,
   }));
 
   const locationChartConfig = byLocation.reduce((config, item, index) => {
@@ -67,6 +112,10 @@ export function StockDistributionCharts({
   const supplierChartData = bySupplier.map((item, index) => ({
     ...item,
     fill: `var(--color-sup-${index})`,
+    // 🔹 Esmaece se há filtro de supplier ativo e este não é ele
+    opacity: isDimmed(filters.supplier, filters.supplierExact, item.supplier)
+      ? 0.35
+      : 1,
   }));
 
   const supplierChartConfig = bySupplier.reduce((config, item, index) => {
@@ -111,6 +160,11 @@ export function StockDistributionCharts({
                   nameKey="categoryId"
                   innerRadius={60}
                   strokeWidth={5}
+                  onClick={(data) => {
+                    const item = data?.payload ?? data;
+                    if (item?.categoryId) handleCategoryClick(item.categoryId);
+                  }}
+                  style={{ cursor: "pointer" }}
                 >
                   <Label
                     content={({ viewBox }) => {
@@ -187,7 +241,15 @@ export function StockDistributionCharts({
                     content={<ChartTooltipContent hideLabel />}
                     wrapperStyle={{ width: "auto", maxWidth: "none" }}
                   />
-                  <Bar dataKey="totalUnits" radius={4} />
+                  <Bar
+                    dataKey="totalUnits"
+                    radius={4}
+                    onClick={(data) => {
+                      const item = data?.payload ?? data;
+                      if (item?.location) handleLocationClick(item.location);
+                    }}
+                    style={{ cursor: "pointer" }}
+                  />
                 </BarChart>
               </ChartContainer>
             )}
@@ -233,7 +295,15 @@ export function StockDistributionCharts({
                     content={<ChartTooltipContent hideLabel />}
                     wrapperStyle={{ width: "auto", maxWidth: "none" }}
                   />
-                  <Bar dataKey="totalUnits" radius={4} />
+                  <Bar
+                    dataKey="totalUnits"
+                    radius={4}
+                    onClick={(data) => {
+                      const item = data?.payload ?? data;
+                      if (item?.supplier) handleSupplierClick(item.supplier);
+                    }}
+                    style={{ cursor: "pointer" }}
+                  />
                 </BarChart>
               </ChartContainer>
             )}
