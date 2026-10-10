@@ -30,6 +30,7 @@ export function parseProductSearchParams(
     hasExpiryDate: getBoolean(searchParams, "hasExpiryDate"),
     isExpiring: getBooleanTrueOnly(searchParams, "isExpiring"),
     isLowStock: getBooleanTrueOnly(searchParams, "isLowStock"),
+    isExpired: getBooleanTrueOnly(searchParams, "isExpired"),
     createdById: getString(searchParams, "createdById"),
     sortBy: getSortBy(searchParams, "sortBy"),
     sortOrder: getSortOrder(searchParams, "sortOrder"),
@@ -69,6 +70,7 @@ export function buildProductSearchParams(
 
   if (filters.isExpiring === true) params.set("isExpiring", "true");
   if (filters.isLowStock === true) params.set("isLowStock", "true");
+  if (filters.isExpired === true) params.set("isExpired", "true");
 
   if (filters.createdById) params.set("createdById", filters.createdById);
 

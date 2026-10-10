@@ -137,6 +137,7 @@ export function useProductQueryParams() {
       filters.hasExpiryDate !== undefined ||
       filters.isExpiring !== undefined ||
       filters.isLowStock !== undefined ||
+      filters.isExpired !== undefined ||
       filters.createdById,
     );
   }, [filters]);

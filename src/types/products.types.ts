@@ -58,6 +58,7 @@ export type ProductFilters = {
   hasExpiryDate?: boolean;
   isExpiring?: boolean;
   isLowStock?: boolean;
+  isExpired?: boolean;
   createdById?: string;
   sortBy?: ProductSortBy;
   sortOrder?: SortOrder;
