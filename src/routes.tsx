@@ -10,6 +10,7 @@ import Page404 from "./pages/Page404.tsx";
 import AdminPage from "./pages/Admin.tsx";
 import CategoriesPage from "./pages/Categories.tsx";
 import StockPage from "./pages/Stock.tsx";
+import AddProducts from "./pages/AddProducts.tsx";
 
 export const router = createBrowserRouter([
   // Public
@@ -31,6 +32,7 @@ export const router = createBrowserRouter([
         children: [
           { path: "/dashboard", element: <DashboardPage /> },
           { path: "/products", element: <ProductsPage /> },
+          { path: "/products/add-product", element: <AddProducts /> },
           { path: "/categories", element: <CategoriesPage /> },
           { path: "/stock", element: <StockPage /> },
         ],
