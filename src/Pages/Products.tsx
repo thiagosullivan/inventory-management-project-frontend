@@ -8,6 +8,7 @@ import { useProductQueryParams } from "@/hooks/useProductQueryParams";
 import { fetchProducts } from "@/services/products";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 
 export default function ProductsPage() {
   const { filters, setPage, setLimit, clearFilters, hasActiveFilters } =
