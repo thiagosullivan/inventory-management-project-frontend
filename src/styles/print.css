@@ -1,0 +1,62 @@
+/* ============================================================
+   Impressão de etiqueta — 60mm × 40mm centralizada em A4.
+   Quando a térmica chegar, basta ajustar @page e o tamanho.
+   ============================================================ */
+
+@media print {
+  /* Esconde tudo… */
+  body * {
+    visibility: hidden;
+  }
+
+  /* …exceto a etiqueta */
+  .print-label,
+  .print-label * {
+    visibility: visible;
+  }
+
+  .print-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60mm;
+    height: 40mm;
+    padding: 3mm;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1mm;
+    background: #fff;
+    color: #000;
+    border: none;
+    page-break-inside: avoid;
+  }
+
+  .print-label__name {
+    font-size: 9pt;
+    font-weight: 700;
+    line-height: 1.1;
+    text-align: center;
+    word-break: break-word;
+    margin: 0;
+    max-width: 100%;
+  }
+
+  .print-label__meta {
+    font-size: 7pt;
+    font-family: ui-monospace, monospace;
+    margin: 0;
+  }
+
+  .print-label__barcode svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+}
