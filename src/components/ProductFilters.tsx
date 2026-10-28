@@ -7,6 +7,8 @@ import { SearchInput } from "@/filters/SearchInput";
 import { TriStateToggle } from "@/filters/TriStateToggle";
 import { UserSelect } from "@/filters/UserSelect";
 import { useProductQueryParams } from "@/hooks/useProductQueryParams";
+import { Button } from "./ui/button";
+import { Link } from "react-router-dom";
 
 interface ProductFiltersProps {
   isLoading?: boolean;
@@ -29,55 +31,68 @@ export function ProductFilters({ isLoading = false }: ProductFiltersProps) {
           className="sm:max-w-sm"
         />
 
-        <FilterShell>
-          {/* Insira todos os seus filtros reais aqui apenas UMA vez */}
-          <div className="space-y-4">
-            <CategorySelect
-              value={filters.categoryId}
-              onChange={(v) => setFilter("categoryId", v)}
-            />
-
-            <UserSelect
-              value={filters.createdById}
-              onChange={(v) => setFilter("createdById", v)}
-            />
-            <div className="flex sm:flex-col sm:max-w-[200px] gap-3">
-              <BooleanToggle
-                label="Estoque baixo"
-                checked={filters.isLowStock === true}
-                onCheckedChange={(v) => setFilter("isLowStock", v)}
+        <div className="flex gap-3 items-center">
+          <Button
+            render={(props) => (
+              <Link
+                {...props}
+                to="/products/new"
+                className="p-2 bg-primary text-white text-sm rounded-lg hover:bg-blue-700 inline-flex items-center"
+              >
+                Adicionar Produto
+              </Link>
+            )}
+          />
+          <FilterShell>
+            {/* Insira todos os seus filtros reais aqui apenas UMA vez */}
+            <div className="space-y-4">
+              <CategorySelect
+                value={filters.categoryId}
+                onChange={(v) => setFilter("categoryId", v)}
               />
 
-              <BooleanToggle
-                label="Vencendo em 30 dias"
-                checked={filters.isExpiring === true}
-                onCheckedChange={(v) => setFilter("isExpiring", v)}
+              <UserSelect
+                value={filters.createdById}
+                onChange={(v) => setFilter("createdById", v)}
               />
-            </div>
-            <TriStateToggle
-              options={[
-                { label: "Todos", value: undefined },
-                { label: "Com validade", value: true },
-                { label: "Sem validade", value: false },
-              ]}
-              value={filters.hasExpiryDate}
-              onChange={(v) => setFilter("hasExpiryDate", v)}
-            />
-            <div>
-              <p className="text-base text-muted-foreground mb-1">Estoque:</p>
-              <NumberRangeFilter
-                minValue={filters.minQuantity}
-                maxValue={filters.maxQuantity}
-                onChange={({ min, max }) => {
-                  setFilters({
-                    minQuantity: min,
-                    maxQuantity: max,
-                  });
-                }}
+              <div className="flex sm:flex-col sm:max-w-[200px] gap-3">
+                <BooleanToggle
+                  label="Estoque baixo"
+                  checked={filters.isLowStock === true}
+                  onCheckedChange={(v) => setFilter("isLowStock", v)}
+                />
+
+                <BooleanToggle
+                  label="Vencendo em 30 dias"
+                  checked={filters.isExpiring === true}
+                  onCheckedChange={(v) => setFilter("isExpiring", v)}
+                />
+              </div>
+              <TriStateToggle
+                options={[
+                  { label: "Todos", value: undefined },
+                  { label: "Com validade", value: true },
+                  { label: "Sem validade", value: false },
+                ]}
+                value={filters.hasExpiryDate}
+                onChange={(v) => setFilter("hasExpiryDate", v)}
               />
+              <div>
+                <p className="text-base text-muted-foreground mb-1">Estoque:</p>
+                <NumberRangeFilter
+                  minValue={filters.minQuantity}
+                  maxValue={filters.maxQuantity}
+                  onChange={({ min, max }) => {
+                    setFilters({
+                      minQuantity: min,
+                      maxQuantity: max,
+                    });
+                  }}
+                />
+              </div>
             </div>
-          </div>
-        </FilterShell>
+          </FilterShell>
+        </div>
       </div>
 
       <ActiveFiltersBadges />
