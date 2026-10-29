@@ -39,3 +39,26 @@ export function ManagerRoutes({ children }: ProtectedRouteProps) {
 
   return children ? <>{children}</> : <Outlet />;
 }
+
+/**
+ * Restringe a rota ao Almoxarifado (STAFF do setor isWarehouse) ou MANAGER.
+ * Outros setores são redirecionados pro dashboard com sinal de acesso negado.
+ *
+ * Deve ser aninhado DENTRO do ProtectedRoute (que já garante auth).
+ */
+export function WarehouseOnlyRoute({ children }: ProtectedRouteProps) {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <div>Carregando...</div>;
+  }
+
+  const canAccess =
+    user?.role === "MANAGER" || user?.sector?.isWarehouse === true;
+
+  if (!canAccess) {
+    return <Navigate to="/dashboard" replace state={{ accessDenied: true }} />;
+  }
+
+  return children ? <>{children}</> : <Outlet />;
+}
