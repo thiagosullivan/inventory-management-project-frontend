@@ -1,4 +1,5 @@
 import { buildProductSearchParams } from "@/lib/product-query-params";
+import type { ApiEnvelope } from "@/lib/api-envelope";
 import type {
   CreateMovementPayload,
   CreateProductPayload,
@@ -13,15 +14,7 @@ import type {
 } from "@/types/products.types";
 import { api } from "./api";
 
-interface ApiEnvelope<T> {
-  success: boolean;
-  data: T;
-}
-
-interface GetProductsApiResponse {
-  success: boolean;
-  data: ProductsResponseData;
-}
+type GetProductsApiResponse = ApiEnvelope<ProductsResponseData>;
 
 // =============================
 // Lista
@@ -87,6 +80,17 @@ export async function deleteProduct(id: string): Promise<void> {
 export async function fetchNextBarcode(): Promise<{ barcode: string }> {
   const response = await api.get<ApiEnvelope<{ barcode: string }>>(
     "/admin/products/barcode/next",
+  );
+  return response.data.data;
+}
+
+// =============================
+// Barcode → produto
+// =============================
+
+export async function fetchProductByBarcode(barcode: string): Promise<Product> {
+  const response = await api.get<ApiEnvelope<Product>>(
+    `/admin/products/barcode/${encodeURIComponent(barcode)}`,
   );
   return response.data.data;
 }
