@@ -18,7 +18,7 @@ export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: product, isLoading, isError } = useProduct(id);
-  const { user } = useAuth(); // ajuste pro seu hook real
+  const { user } = useAuth();
 
   const [movementOpen, setMovementOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
@@ -45,14 +45,14 @@ export default function ProductDetailPage() {
   }
 
   const isManager = user?.role === "MANAGER";
-  const isCreator = user?.id === product.createdById;
-  const canEdit = isManager || isCreator;
+  const isWarehouseUser = user?.sector?.isWarehouse === true;
+  const canManage = isManager || isWarehouseUser;
 
   return (
     <section className="flex flex-col mx-auto gap-6 w-full max-w-5xl px-4 py-8">
       <ProductDetailHeader
         product={product}
-        canEdit={canEdit}
+        canEdit={canManage}
         onMovement={() => setMovementOpen(true)}
         onPrint={() => setPrintOpen(true)}
         onEdit={() => setEditOpen(true)}
@@ -82,13 +82,15 @@ export default function ProductDetailPage() {
         </TabsContent>
       </Tabs>
 
-      <CreateMovementDialog
-        open={movementOpen}
-        onOpenChange={setMovementOpen}
-        productId={product.id}
-        productName={product.name}
-        currentQuantity={product.quantity}
-      />
+      {canManage && (
+        <CreateMovementDialog
+          open={movementOpen}
+          onOpenChange={setMovementOpen}
+          productId={product.id}
+          productName={product.name}
+          currentQuantity={product.quantity}
+        />
+      )}
 
       <EditProductDialog
         open={editOpen}
