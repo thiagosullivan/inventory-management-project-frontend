@@ -360,19 +360,29 @@ function RequestDetailsBody({ requestId }: { requestId: string }) {
                   ? "Setor do pedido indisponível."
                   : undefined
               }
+              className="cursor-pointer hover:bg-primary hover:text-white duration-200"
             >
               <Truck size={16} className="mr-2" />
               Criar remessa
             </Button>
           )}
           {canRefuse && (
-            <Button type="button" variant="outline" onClick={openRefuse}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={openRefuse}
+              className="cursor-pointer hover:bg-red-500 hover:text-white duration-200"
+            >
               <X size={16} className="mr-2" />
               Recusar
             </Button>
           )}
           {canFinalize && (
-            <Button type="button" onClick={openFinalize}>
+            <Button
+              type="button"
+              onClick={openFinalize}
+              className="cursor-pointer"
+            >
               <CheckCircle2 size={16} className="mr-2" />
               Finalizar
             </Button>
@@ -382,7 +392,7 @@ function RequestDetailsBody({ requestId }: { requestId: string }) {
               type="button"
               variant="ghost"
               onClick={openCancel}
-              className="text-destructive"
+              className="text-destructive cursor-pointer"
             >
               <Ban size={16} className="mr-2" />
               Cancelar pedido

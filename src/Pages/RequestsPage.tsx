@@ -96,7 +96,7 @@ export default function RequestsPage() {
           </p>
         </div>
         {canCreate && (
-          <Button onClick={() => setCreateOpen(true)}>
+          <Button onClick={() => setCreateOpen(true)} className="py-5">
             <Plus size={16} className="mr-2" />
             Novo pedido
           </Button>
@@ -188,6 +188,7 @@ export default function RequestsPage() {
                       size="sm"
                       onClick={() => setDetailsId(r.id)}
                       title="Ver detalhes"
+                      className="cursor-pointer hover:text-primary"
                     >
                       <Eye size={16} />
                     </Button>

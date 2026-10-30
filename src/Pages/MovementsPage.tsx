@@ -161,7 +161,7 @@ export default function MovementsPage() {
           </p>
         </div>
         {canCreate && (
-          <Button onClick={() => setCreateOpen(true)}>
+          <Button onClick={() => setCreateOpen(true)} className="py-5">
             <Plus size={16} className="mr-2" />
             Nova remessa
           </Button>
@@ -337,6 +337,7 @@ export default function MovementsPage() {
                       size="sm"
                       onClick={() => setDetailsId(t.id)}
                       title="Ver detalhes"
+                      className="cursor-pointer hover:text-primary"
                     >
                       <Eye size={16} />
                     </Button>
@@ -349,6 +350,7 @@ export default function MovementsPage() {
                           disabled={confirmMutation.isPending}
                           onClick={() => confirmMutation.mutate(t.id)}
                           title="Confirmar"
+                          className="cursor-pointer hover:text-green-400"
                         >
                           <Check size={16} />
                         </Button>
@@ -359,6 +361,7 @@ export default function MovementsPage() {
                           disabled={refuseMutation.isPending}
                           onClick={() => refuseMutation.mutate(t.id)}
                           title="Recusar"
+                          className="cursor-pointer hover:text-red-500"
                         >
                           <X size={16} />
                         </Button>
@@ -374,6 +377,7 @@ export default function MovementsPage() {
                           setCancelReason("");
                         }}
                         title="Cancelar"
+                        className="cursor-pointer hover:text-red-500"
                       >
                         <Ban size={16} />
                       </Button>
