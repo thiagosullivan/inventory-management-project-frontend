@@ -79,6 +79,7 @@ export interface MovementResponse {
   supplier: string | null;
   fromSectorId: string | null;
   toSectorId: string | null;
+  transferId: string | null;
   createdById: string;
   createdAt: string;
   updatedAt: string;
