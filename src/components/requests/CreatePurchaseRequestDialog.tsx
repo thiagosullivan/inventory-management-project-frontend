@@ -18,6 +18,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { usePurchaseRequestCatalog } from "@/hooks/usePurchaseRequestCatalog";
 import { useCreatePurchaseRequest } from "@/hooks/usePurchaseRequestMutations";
 import type { CatalogProduct } from "@/types/purchaseRequests.types";
+import { normalizeText } from "@/lib/normalize-text";
 
 export interface CreatePurchaseRequestDialogProps {
   open: boolean;
@@ -79,14 +80,14 @@ function CreatePurchaseRequestForm({
   const catalog = useMemo(() => catalogQuery.data ?? [], [catalogQuery.data]);
 
   const filteredCatalog = useMemo(() => {
-    const term = searchInput.trim().toLowerCase();
+    const term = normalizeText(searchInput);
     if (!term) return [];
     return catalog
       .filter((p) => {
         if (lines.some((l) => l.productId === p.id)) return false;
         return (
-          p.name.toLowerCase().includes(term) ||
-          p.sku.toLowerCase().includes(term) ||
+          normalizeText(p.name).includes(term) ||
+          normalizeText(p.sku).includes(term) ||
           p.barcode.toLowerCase().includes(term)
         );
       })

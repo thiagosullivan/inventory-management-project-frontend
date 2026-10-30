@@ -36,6 +36,7 @@ import { getApiErrorCode } from "@/lib/api-error";
 import type { SectorOption } from "@/types/sectors.types";
 import type { Product } from "@/types/products.types";
 import { toast } from "sonner";
+import { normalizeText } from "@/lib/normalize-text";
 
 export interface CreateTransferDialogProps {
   open: boolean;
@@ -180,14 +181,14 @@ function CreateTransferForm({
   const catalog = useMemo(() => catalogQuery.data ?? [], [catalogQuery.data]);
 
   const filteredCatalog = useMemo(() => {
-    const term = searchInput.trim().toLowerCase();
+    const term = normalizeText(searchInput);
     if (!term) return [];
     return catalog
       .filter((p) => {
         if (lines.some((l) => l.productId === p.id)) return false;
         return (
-          p.name.toLowerCase().includes(term) ||
-          p.sku.toLowerCase().includes(term) ||
+          normalizeText(p.name).includes(term) ||
+          normalizeText(p.sku).includes(term) ||
           p.barcode.toLowerCase().includes(term)
         );
       })
