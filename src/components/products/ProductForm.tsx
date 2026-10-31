@@ -28,6 +28,12 @@ import type {
 } from "@/types/products.types";
 import { centsToInputValue, parseBRLToCents } from "@/utils/currency";
 
+import { X, Upload } from "lucide-react";
+import imageCompression from "browser-image-compression";
+import { UploadButton } from "@/lib/uploadthing";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+
 // =============================
 // Schema
 // =============================
@@ -155,6 +161,7 @@ export function ProductForm({
   onSubmitEdit,
   isSubmitting,
 }: ProductFormProps) {
+  const navigate = useNavigate();
   const schema = mode === "create" ? createSchema : editSchema;
 
   const form = useForm<FormValues>({
@@ -166,7 +173,7 @@ export function ProductForm({
       imageUrl: product?.imageUrl ?? "",
       priceInCents: centsToInputValue(product?.priceInCents),
       quantity: product ? String(product.quantity) : "0",
-      minStock: product?.minStock != null ? String(product.minStock) : "5",
+      minStock: product?.minStock != null ? String(product.minStock) : "",
       maxStock: product?.maxStock != null ? String(product.maxStock) : "",
       expiryDate: product?.expiryDate ? product.expiryDate.slice(0, 10) : "",
       batchNumber: product?.batchNumber ?? "",
@@ -300,25 +307,89 @@ export function ProductForm({
             <Controller
               name="imageUrl"
               control={form.control}
-              render={({ field, fieldState }) => (
-                <Field
-                  data-invalid={fieldState.invalid}
-                  className="md:col-span-2"
-                >
-                  <FieldLabel htmlFor="product-image">URL da imagem</FieldLabel>
-                  <Input
-                    {...field}
-                    id="product-image"
-                    type="url"
-                    aria-invalid={fieldState.invalid}
-                    placeholder="https://..."
-                    autoComplete="off"
-                  />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
+              render={({ field, fieldState }) => {
+                const currentUrl = field.value?.trim();
+                return (
+                  <Field
+                    data-invalid={fieldState.invalid}
+                    className="md:col-span-2"
+                  >
+                    <FieldLabel>Imagem do produto</FieldLabel>
+
+                    <div className="flex items-center gap-4">
+                      {currentUrl ? (
+                        <div className="relative shrink-0">
+                          <img
+                            src={currentUrl}
+                            alt="Preview do produto"
+                            className="h-[60px] w-[60px] rounded object-cover border"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => field.onChange("")}
+                            className="absolute -top-2 -right-2 rounded-full bg-destructive text-white p-0.5 hover:bg-destructive/90"
+                            aria-label="Remover imagem"
+                          >
+                            <X size={12} />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="h-[60px] w-[60px] shrink-0 rounded border border-dashed flex items-center justify-center text-muted-foreground">
+                          <Upload size={20} />
+                        </div>
+                      )}
+
+                      <UploadButton
+                        endpoint="imageUploader"
+                        onBeforeUploadBegin={async (files) => {
+                          const compressed = await Promise.all(
+                            files.map((file) =>
+                              imageCompression(file, {
+                                maxWidthOrHeight: 400,
+                                maxSizeMB: 0.2,
+                                useWebWorker: true,
+                                fileType: "image/webp",
+                              }),
+                            ),
+                          );
+                          return compressed;
+                        }}
+                        onClientUploadComplete={(res) => {
+                          if (res?.[0]?.ufsUrl) {
+                            field.onChange(res[0].ufsUrl);
+                          }
+                        }}
+                        onUploadError={(error) => {
+                          console.error("Erro no upload:", error);
+                          toast.error("Falha ao enviar imagem.");
+                        }}
+                        appearance={{
+                          button:
+                            "bg-primary text-primary-foreground hover:bg-primary/90 text-sm px-4 py-2 rounded-md ut-uploading:cursor-not-allowed",
+                          allowedContent: "hidden",
+                        }}
+                        content={{
+                          button({ ready, isUploading }) {
+                            if (isUploading) return "Enviando...";
+                            if (!ready) return "Preparando...";
+                            return currentUrl
+                              ? "Trocar imagem"
+                              : "Escolher imagem";
+                          },
+                        }}
+                      />
+                    </div>
+
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                    <FieldDescription>
+                      A imagem será comprimida automaticamente (máx. 200KB)
+                      antes do envio.
+                    </FieldDescription>
+                  </Field>
+                );
+              }}
             />
           </div>
 
@@ -601,7 +672,19 @@ export function ProductForm({
 
       {/* Submit */}
       <div className="flex justify-end gap-2 pt-2">
-        <Button type="submit" form="product-form" disabled={isSubmitting}>
+        <Button
+          variant="outline"
+          onClick={() => navigate("/products")}
+          className="cursor-pointer py-5"
+        >
+          Cancelar
+        </Button>
+        <Button
+          type="submit"
+          form="product-form"
+          disabled={isSubmitting}
+          className="cursor-pointer py-5"
+        >
           {isSubmitting
             ? "Salvando..."
             : mode === "create"
