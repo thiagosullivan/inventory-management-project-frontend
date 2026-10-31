@@ -43,6 +43,7 @@ export interface CreateTransferDialogProps {
   onOpenChange: (open: boolean) => void;
   purchaseRequestId?: string | null;
   destinationOptions: SectorOption[];
+  onSuccess?: () => void;
 }
 
 interface LineItem {
@@ -52,7 +53,6 @@ interface LineItem {
   sku: string;
   quantity: number;
   imageUrl: string | null;
-  /** quando vem de pedido, guarda a quantidade pedida pra aviso de estoque */
   quantityOrdered?: number;
 }
 
@@ -115,6 +115,7 @@ function CreateTransferForm({
   onOpenChange,
   purchaseRequestId = null,
   destinationOptions,
+  onSuccess,
 }: CreateTransferDialogProps) {
   const isFromRequest = !!purchaseRequestId;
 
@@ -301,6 +302,7 @@ function CreateTransferForm({
         })),
       });
       onOpenChange(false);
+      onSuccess?.();
     } catch {
       // toast já disparado no hook
     }
@@ -334,13 +336,13 @@ function CreateTransferForm({
         </DialogTitle>
         <DialogDescription>
           {isFromRequest ? (
-            <p>
+            <div>
               Vinculada ao pedido{" "}
               <strong className="font-mono uppercase">
                 {purchaseRequestId?.slice(0, 8)}
               </strong>
               .
-            </p>
+            </div>
           ) : (
             <p>Remessa avulsa (sem pedido).</p>
           )}
