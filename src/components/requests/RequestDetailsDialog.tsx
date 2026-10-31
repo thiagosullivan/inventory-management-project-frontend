@@ -1,6 +1,6 @@
 // src/components/requests/RequestDetailsDialog.tsx
 import { useState } from "react";
-import { Truck, X, CheckCircle2, Ban } from "lucide-react";
+import { Truck, X, CheckCircle2, Ban, ImageOff } from "lucide-react";
 
 import {
   Dialog,
@@ -202,7 +202,8 @@ function RequestDetailsBody({ requestId }: { requestId: string }) {
             Detalhes do pedido
           </DialogTitle>
           <DialogDescription>
-            Pedido <span className="font-mono">{requestId.slice(0, 8)}</span>
+            Pedido{" "}
+            <span className="font-mono uppercase">{requestId.slice(0, 8)}</span>
           </DialogDescription>
         </DialogHeader>
         <p className="text-sm text-muted-foreground">Carregando pedido...</p>
@@ -218,7 +219,8 @@ function RequestDetailsBody({ requestId }: { requestId: string }) {
             Detalhes do pedido
           </DialogTitle>
           <DialogDescription>
-            Pedido <span className="font-mono">{requestId.slice(0, 8)}</span>
+            Pedido{" "}
+            <span className="font-mono uppercase">{requestId.slice(0, 8)}</span>
           </DialogDescription>
         </DialogHeader>
         <p className="text-sm text-destructive">
@@ -239,7 +241,8 @@ function RequestDetailsBody({ requestId }: { requestId: string }) {
           Detalhes do pedido
         </DialogTitle>
         <DialogDescription>
-          ID <span className="font-mono">{request.id.slice(0, 8)}</span>
+          ID{" "}
+          <span className="font-mono uppercase">{request.id.slice(0, 8)}</span>
         </DialogDescription>
       </DialogHeader>
 
@@ -320,6 +323,7 @@ function RequestDetailsBody({ requestId }: { requestId: string }) {
           <table className="w-full text-sm">
             <thead className="text-left border-b">
               <tr>
+                <th className="px-3 py-2 font-semibold"></th>
                 <th className="px-3 py-2 font-semibold">Produto</th>
                 <th className="px-3 py-2 font-semibold">SKU</th>
                 <th className="px-3 py-2 font-semibold">Barcode</th>
@@ -329,6 +333,15 @@ function RequestDetailsBody({ requestId }: { requestId: string }) {
             <tbody>
               {items.map((it) => (
                 <tr key={it.id} className="border-t">
+                  <td className="px-3 py-2">
+                    {it.product.imageUrl ? (
+                      <img src={it.product.imageUrl} className="w-15 h-15" />
+                    ) : (
+                      <div className="w-15 h-15 flex items-center justify-center border border-gray-300 rounded-md">
+                        <ImageOff />
+                      </div>
+                    )}
+                  </td>
                   <td className="px-3 py-2">{it.product.name}</td>
                   <td className="px-3 py-2 font-mono text-xs">
                     {it.product.sku}

@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
+import { ImageOff } from "lucide-react";
 
 interface LowestQuantityProductsProps {
   data: ProductQuantityItem[];
@@ -44,13 +45,13 @@ export default function LowestQuantityProducts({
           {data.map((product) => (
             <TableRow key={product.id}>
               <TableCell className="w-20 h-20 block">
-                <img
-                  src={
-                    product.imageUrl === null
-                      ? "https://img.icons8.com/color/1200/no-image.jpg"
-                      : product.imageUrl
-                  }
-                />
+                {product.imageUrl ? (
+                  <img src={product.imageUrl} />
+                ) : (
+                  <div className="w-15 h-15 flex items-center justify-center border border-gray-300 rounded-md">
+                    <ImageOff />
+                  </div>
+                )}
               </TableCell>
               <TableCell className="font-medium max-w-[250px] truncate">
                 {product.name}

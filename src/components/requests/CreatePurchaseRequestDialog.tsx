@@ -1,6 +1,6 @@
 // src/components/requests/CreatePurchaseRequestDialog.tsx
 import { useMemo, useState } from "react";
-import { Plus, Search, Trash2 } from "lucide-react";
+import { ImageOff, Plus, Search, Trash2 } from "lucide-react";
 
 import {
   Dialog,
@@ -145,7 +145,7 @@ function CreatePurchaseRequestForm({
   return (
     <>
       <DialogHeader>
-        <DialogTitle className="text-base font-bold text-primary">
+        <DialogTitle className="text-base font-bold text-primary cursor-pointer">
           Novo pedido
         </DialogTitle>
         <DialogDescription>
@@ -187,11 +187,12 @@ function CreatePurchaseRequestForm({
                 >
                   <div className="min-w-0 flex items-center">
                     {p.imageUrl ? (
-                      <img src={p.imageUrl} className="w-16 h-16 block" />
+                      <img src={p.imageUrl} className="w-16 h-16 block mr-2" />
                     ) : (
-                      <></>
+                      <div className="w-15 h-15 flex items-center justify-center border border-gray-300 rounded-md mr-2">
+                        <ImageOff />
+                      </div>
                     )}
-
                     <div>
                       <span className="block truncate text-sm font-medium">
                         {p.name}
@@ -220,15 +221,17 @@ function CreatePurchaseRequestForm({
             Nenhum item adicionado.
           </p>
         ) : (
-          <ul className="divide-y">
+          <ul className="divide-y overflow-y-scroll max-h-[210px]">
             {lines.map((l) => (
               <li key={l.productId} className="p-3 space-y-2">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex items-center">
                     {l.imageUrl ? (
-                      <img src={l.imageUrl} className="w-16 h-16 block" />
+                      <img src={l.imageUrl} className="w-16 h-16 block mr-2" />
                     ) : (
-                      <></>
+                      <div className="w-15 h-15 flex items-center justify-center border border-gray-300 rounded-md mr-2">
+                        <ImageOff />
+                      </div>
                     )}
                     <div>
                       <p className="truncate text-sm font-medium">{l.name}</p>
@@ -237,33 +240,34 @@ function CreatePurchaseRequestForm({
                       </p>
                     </div>
                   </div>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => removeLine(l.productId)}
-                    title="Remover item"
-                    className="cursor-pointer hover:text-red-500"
-                  >
-                    <Trash2 size={16} />
-                  </Button>
-                </div>
-
-                <div className="flex flex-col gap-1">
-                  <Label htmlFor={`qty-${l.productId}`} className="text-xs">
-                    Quantidade
-                  </Label>
-                  <Input
-                    id={`qty-${l.productId}`}
-                    type="number"
-                    min={1}
-                    inputMode="numeric"
-                    value={l.quantity}
-                    onChange={(e) =>
-                      setLineQuantity(l.productId, e.target.value)
-                    }
-                    className="w-28"
-                  />
+                  <div className="flex items-center gap-x-3">
+                    <div className="flex flex-col gap-1">
+                      <Label htmlFor={`qty-${l.productId}`} className="text-xs">
+                        Quantidade
+                      </Label>
+                      <Input
+                        id={`qty-${l.productId}`}
+                        type="number"
+                        min={1}
+                        inputMode="numeric"
+                        value={l.quantity}
+                        onChange={(e) =>
+                          setLineQuantity(l.productId, e.target.value)
+                        }
+                        className="w-15"
+                      />
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeLine(l.productId)}
+                      title="Remover item"
+                      className="cursor-pointer hover:text-red-500"
+                    >
+                      <Trash2 size={16} />
+                    </Button>
+                  </div>
                 </div>
               </li>
             ))}
@@ -298,7 +302,12 @@ function CreatePurchaseRequestForm({
         >
           Cancelar
         </Button>
-        <Button type="button" onClick={handleSubmit} disabled={!canSubmit}>
+        <Button
+          type="button"
+          onClick={handleSubmit}
+          disabled={!canSubmit}
+          className="cursor-pointer"
+        >
           {createMutation.isPending ? "Enviando..." : "Criar pedido"}
         </Button>
       </DialogFooter>

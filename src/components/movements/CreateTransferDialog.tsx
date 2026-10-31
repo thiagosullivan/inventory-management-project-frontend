@@ -1,7 +1,7 @@
 // src/components/movements/CreateTransferDialog.tsx
 import { useMemo, useRef, useState } from "react";
 import { useQueries } from "@tanstack/react-query";
-import { Plus, Search, Trash2 } from "lucide-react";
+import { ImageOff, Plus, Search, Trash2 } from "lucide-react";
 
 import {
   Dialog,
@@ -51,6 +51,7 @@ interface LineItem {
   name: string;
   sku: string;
   quantity: number;
+  imageUrl: string | null;
   /** quando vem de pedido, guarda a quantidade pedida pra aviso de estoque */
   quantityOrdered?: number;
 }
@@ -76,6 +77,7 @@ function productToLine(p: Product, quantity = 1): LineItem {
     barcode: p.barcode,
     name: p.name,
     sku: p.sku,
+    imageUrl: p.imageUrl,
     quantity,
   };
 }
@@ -125,6 +127,7 @@ function CreateTransferForm({
     if (!isFromRequest) return [];
     const items = requestQuery.data?.items;
     if (!items) return [];
+
     return items.map((it) => ({
       productId: it.productId,
       barcode: it.product.barcode,
@@ -132,9 +135,10 @@ function CreateTransferForm({
       sku: it.product.sku,
       quantity: it.quantity,
       quantityOrdered: it.quantity,
+      imageUrl: it.product.imageUrl,
     }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // snapshot intencional — key remonta quando muda pedido
+  }, []);
 
   const [toSectorId, setToSectorId] = useState("");
   const [reason, setReason] = useState("");
@@ -204,6 +208,7 @@ function CreateTransferForm({
         barcode: p.barcode,
         name: p.name,
         sku: p.sku,
+        imageUrl: p.imageUrl,
         quantity: 1,
       }),
     );
@@ -328,9 +333,17 @@ function CreateTransferForm({
           Nova remessa
         </DialogTitle>
         <DialogDescription>
-          {isFromRequest
-            ? `Vinculada ao pedido ${purchaseRequestId?.slice(0, 8)}.`
-            : "Remessa avulsa (sem pedido)."}
+          {isFromRequest ? (
+            <p>
+              Vinculada ao pedido{" "}
+              <strong className="font-mono uppercase">
+                {purchaseRequestId?.slice(0, 8)}
+              </strong>
+              .
+            </p>
+          ) : (
+            <p>Remessa avulsa (sem pedido).</p>
+          )}
         </DialogDescription>
       </DialogHeader>
 
@@ -349,7 +362,10 @@ function CreateTransferForm({
             onValueChange={(v) => setToSectorId(v ?? "")}
           >
             <SelectTrigger id="transfer-toSector" className="w-full">
-              <SelectValue placeholder="Selecione o setor destino" />
+              <SelectValue placeholder="Selecione o setor destino">
+                {destinationOptions.find((s) => s.value === toSectorId)
+                  ?.label ?? "Selecione o setor destino"}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {destinationOptions.map((s) => (
@@ -359,9 +375,9 @@ function CreateTransferForm({
               ))}
             </SelectContent>
           </Select>
-          <FieldDescription>
+          {/* <FieldDescription>
             Apenas setores ativos (exceto Almoxarifado).
-          </FieldDescription>
+          </FieldDescription> */}
         </Field>
 
         <Field>
@@ -427,14 +443,23 @@ function CreateTransferForm({
                   onClick={() => handleManualAdd(p.id)}
                   className="w-full flex items-center justify-between gap-2 px-2 py-2 text-left hover:bg-muted"
                 >
-                  <span className="min-w-0">
-                    <span className="block truncate text-sm font-medium">
-                      {p.name}
-                    </span>
-                    <span className="block truncate text-xs text-muted-foreground">
-                      {p.sku} · {p.barcode}
-                      {p.isOutOfStock ? " · sem estoque" : ""}
-                    </span>
+                  <span className="min-w-0 flex items-center gap-x-2">
+                    {p.imageUrl ? (
+                      <img src={p.imageUrl} className="w-15 h-15" />
+                    ) : (
+                      <div className="w-15 h-15 flex items-center justify-center border border-gray-300 rounded-md">
+                        <ImageOff />
+                      </div>
+                    )}
+                    <div>
+                      <span className="block truncate text-sm font-medium">
+                        {p.name}
+                      </span>
+                      <span className="block truncate text-xs text-muted-foreground">
+                        {p.sku} · {p.barcode}
+                        {p.isOutOfStock ? " · sem estoque" : ""}
+                      </span>
+                    </div>
                   </span>
                   <Plus size={16} className="shrink-0" />
                 </button>
@@ -454,7 +479,7 @@ function CreateTransferForm({
             Nenhum item adicionado.
           </p>
         ) : (
-          <ul className="divide-y">
+          <ul className="divide-y overflow-y-scroll max-h-[210px]">
             {lines.map((l) => {
               const available = availableByProductId.get(l.productId);
               const overOrdered =
@@ -463,61 +488,75 @@ function CreateTransferForm({
                 l.quantityOrdered > available;
               const noStock = available === 0;
               return (
-                <li key={l.productId} className="p-3 space-y-2">
+                <li key={l.productId} className="py-5 px-3 space-y-2 relative">
                   <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-medium">{l.name}</p>
-                      <p className="truncate text-xs text-muted-foreground">
-                        {l.sku} · {l.barcode}
-                      </p>
-                    </div>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeLine(l.productId)}
-                      title="Remover item"
-                    >
-                      <Trash2 size={16} />
-                    </Button>
-                  </div>
-
-                  <div className="flex flex-wrap items-end gap-3">
-                    <div className="flex flex-col gap-1">
-                      <Label htmlFor={`qty-${l.productId}`} className="text-xs">
-                        Quantidade
-                      </Label>
-                      <Input
-                        id={`qty-${l.productId}`}
-                        type="number"
-                        min={1}
-                        inputMode="numeric"
-                        value={l.quantity}
-                        onChange={(e) =>
-                          setLineQuantity(l.productId, e.target.value)
-                        }
-                        className="w-28"
-                      />
-                    </div>
-
-                    {l.quantityOrdered !== undefined && (
-                      <div className="text-xs text-muted-foreground">
-                        Pedido: <strong>{l.quantityOrdered}</strong>
-                        {available !== undefined && (
-                          <>
-                            {" "}
-                            · Estoque: <strong>{available}</strong>
-                          </>
-                        )}
+                    <div className="min-w-0 flex items-center gap-x-2">
+                      {l.imageUrl ? (
+                        <img src={l.imageUrl} className="w-10 h-10" />
+                      ) : (
+                        <div className="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-md">
+                          <ImageOff />
+                        </div>
+                      )}
+                      <div>
+                        <p className="truncate text-sm font-medium">{l.name}</p>
+                        <p className="truncate text-xs text-muted-foreground">
+                          {l.sku} · {l.barcode}
+                        </p>
                       </div>
-                    )}
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-3">
+                      <div className="flex items-center gap-x-3">
+                        {l.quantityOrdered !== undefined && (
+                          <div className="text-xs text-muted-foreground text-end">
+                            <p>
+                              Pedido: <strong>{l.quantityOrdered}</strong>
+                            </p>
+                            {available !== undefined && (
+                              <p>
+                                Estoque: <strong>{available}</strong>
+                              </p>
+                            )}
+                          </div>
+                        )}
+                        <div className="flex flex-col gap-1">
+                          <Label
+                            htmlFor={`qty-${l.productId}`}
+                            className="text-xs"
+                          >
+                            Quantidade
+                          </Label>
+                          <Input
+                            id={`qty-${l.productId}`}
+                            type="number"
+                            min={1}
+                            inputMode="numeric"
+                            value={l.quantity}
+                            onChange={(e) =>
+                              setLineQuantity(l.productId, e.target.value)
+                            }
+                            className="w-15"
+                          />
+                        </div>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeLine(l.productId)}
+                        title="Remover item"
+                        className="cursor-pointer hover:text-red-500 "
+                      >
+                        <Trash2 size={16} />
+                      </Button>
+                    </div>
                   </div>
 
                   {overOrdered && !noStock && (
                     <p className="text-xs text-amber-800">
                       Quantidade pedida maior que o estoque atual do
-                      Almoxarifado — o backend pode recusar por estoque
-                      insuficiente.
+                      Almoxarifado.
                     </p>
                   )}
                   {noStock && (

@@ -1,4 +1,4 @@
-import { MoreHorizontalIcon } from "lucide-react";
+import { ImageOff, MoreHorizontalIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -54,11 +54,7 @@ export function TableProducts({ products }: TableProductsProps) {
                 <TableCell>
                   {product.imageUrl ? (
                     <img
-                      src={
-                        product.imageUrl === null
-                          ? "https://img.icons8.com/color/1200/no-image.jpg"
-                          : product.imageUrl
-                      }
+                      src={product.imageUrl}
                       alt={product.name}
                       className="h-15 w-15 rounded-md object-cover"
                       onError={(e) => {
@@ -66,14 +62,9 @@ export function TableProducts({ products }: TableProductsProps) {
                       }}
                     />
                   ) : (
-                    <img
-                      src="https://img.icons8.com/color/1200/no-image.jpg"
-                      alt={product.name}
-                      className="h-15 w-15 rounded-md object-cover"
-                      onError={(e) => {
-                        e.currentTarget.style.display = "none";
-                      }}
-                    />
+                    <div className="w-15 h-15 flex items-center justify-center border border-gray-300 rounded-md">
+                      <ImageOff />
+                    </div>
                   )}
                 </TableCell>
                 <TableCell>

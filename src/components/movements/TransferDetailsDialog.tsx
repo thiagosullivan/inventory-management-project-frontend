@@ -10,6 +10,7 @@ import {
 import { useTransfer } from "@/hooks/useTransfer";
 import { formatDateTime } from "@/lib/format-date";
 import type { TransferStatus } from "@/types/transfers.types";
+import { ImageOff } from "lucide-react";
 
 const STATUS_LABEL: Record<TransferStatus, string> = {
   PENDENTE: "Pendente",
@@ -39,6 +40,7 @@ export function TransferDetailsDialog({
   const query = useTransfer(transferId);
   const transfer = query.data;
   const items = transfer?.items ?? [];
+  console.log(items, "ITEMS 1");
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -80,16 +82,16 @@ export function TransferDetailsDialog({
         {transfer && (
           <div className="space-y-4">
             {/* Status + setores */}
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <span className="text-lg">
+                <strong>{transfer.fromSector?.name ?? "—"}</strong>
+                {" → "}
+                <strong>{transfer.toSector?.name ?? "—"}</strong>
+              </span>
               <span
                 className={`inline-block rounded border px-2 py-0.5 text-xs font-semibold ${STATUS_CLASS[transfer.status]}`}
               >
                 {STATUS_LABEL[transfer.status]}
-              </span>
-              <span className="text-sm">
-                <strong>{transfer.fromSector?.name ?? "—"}</strong>
-                {" → "}
-                <strong>{transfer.toSector?.name ?? "—"}</strong>
               </span>
             </div>
 
@@ -175,6 +177,7 @@ export function TransferDetailsDialog({
                 <table className="w-full text-sm">
                   <thead className="text-left border-b">
                     <tr>
+                      <th className="px-3 py-2 font-semibold"></th>
                       <th className="px-3 py-2 font-semibold">Produto</th>
                       <th className="px-3 py-2 font-semibold">SKU</th>
                       <th className="px-3 py-2 font-semibold">Barcode</th>
@@ -186,6 +189,18 @@ export function TransferDetailsDialog({
                   <tbody>
                     {items.map((it) => (
                       <tr key={it.id} className="border-t">
+                        <td className="px-3 py-2">
+                          {it.product.imageUrl ? (
+                            <img
+                              src={it.product.imageUrl}
+                              className="w-15 h-15"
+                            />
+                          ) : (
+                            <div className="w-15 h-15 flex items-center justify-center border border-gray-300 rounded-md">
+                              <ImageOff />
+                            </div>
+                          )}
+                        </td>
                         <td className="px-3 py-2">{it.product.name}</td>
                         <td className="px-3 py-2 font-mono text-xs">
                           {it.product.sku}
