@@ -99,17 +99,52 @@ export interface PurchaseRequestItemResponse {
 }
 
 // =============================
-// Transfer ref (dentro do pedido)
+// Transfer ref — shape do LIST (leve)
 // =============================
+
+export type TransferStatusRef =
+  | "PENDENTE"
+  | "CONCLUIDO"
+  | "CANCELADO"
+  | "RECUSADO";
 
 export interface PurchaseRequestTransferRef {
   id: string;
-  status: "PENDENTE" | "CONCLUIDO" | "CANCELADO" | "RECUSADO";
+  status: TransferStatusRef;
   createdAt: string;
   confirmedAt: string | null;
   refusedAt: string | null;
   cancelledAt: string | null;
   _count?: { items: number };
+}
+
+// =============================
+// Transfer ref — shape do DETAIL (com itens + autor)
+// =============================
+
+export interface PurchaseRequestTransferItemRef {
+  id: string;
+  quantity: number;
+  product: {
+    id: string;
+    name: string;
+    sku: string;
+    barcode: string;
+    imageUrl: string | null;
+  };
+}
+
+export interface PurchaseRequestTransferDetailRef {
+  id: string;
+  status: TransferStatusRef;
+  reason: string | null;
+  cancelReason: string | null;
+  createdAt: string;
+  confirmedAt: string | null;
+  refusedAt: string | null;
+  cancelledAt: string | null;
+  createdBy: PurchaseRequestUserRef | null;
+  items: PurchaseRequestTransferItemRef[];
 }
 
 // =============================
@@ -149,4 +184,15 @@ export interface PurchaseRequestsListResponse {
   page: number;
   limit: number;
   totalPages: number;
+}
+
+// =============================
+// Response — DETAIL (getById)
+// =============================
+
+export interface PurchaseRequestDetailResponse extends Omit<
+  PurchaseRequestResponse,
+  "transfers"
+> {
+  transfers: PurchaseRequestTransferDetailRef[];
 }

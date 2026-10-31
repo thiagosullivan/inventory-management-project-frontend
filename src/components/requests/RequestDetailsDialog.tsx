@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { CreateTransferDialog } from "@/components/movements/CreateTransferDialog";
 import { usePurchaseRequest } from "@/hooks/usePurchaseRequest";
@@ -25,6 +26,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { formatDateTime } from "@/lib/format-date";
 import type { SectorOption } from "@/types/sectors.types";
 import type { PurchaseRequestStatus } from "@/types/purchaseRequests.types";
+import { RequestTransfersList } from "./RequestTransfersList";
 
 export interface RequestDetailsDialogProps {
   requestId: string | null;
@@ -63,6 +65,7 @@ export function RequestDetailsDialog(props: RequestDetailsDialogProps) {
           <RequestDetailsBody
             key={props.requestId}
             requestId={props.requestId}
+            onOpenChange={props.onOpenChange}
           />
         )}
         {props.open && !props.requestId && (
@@ -84,10 +87,17 @@ export function RequestDetailsDialog(props: RequestDetailsDialogProps) {
 // Corpo (só monta quando open + requestId)
 // =============================
 
-function RequestDetailsBody({ requestId }: { requestId: string }) {
+function RequestDetailsBody({
+  requestId,
+  onOpenChange,
+}: {
+  requestId: string;
+  onOpenChange: (open: boolean) => void;
+}) {
   const { user } = useAuth();
   const query = usePurchaseRequest(requestId);
   const request = query.data;
+  console.log(request, "REQ");
 
   const refuseMutation = useRefusePurchaseRequest();
   const finalizeMutation = useFinalizePurchaseRequest();
@@ -188,6 +198,11 @@ function RequestDetailsBody({ requestId }: { requestId: string }) {
     } catch {
       // toast do hook
     }
+  }
+
+  function handleTransferCreated() {
+    setTransferOpen(false);
+    onOpenChange(false); // 🔹 fecha o dialog pai também
   }
 
   // =============================
@@ -311,53 +326,73 @@ function RequestDetailsBody({ requestId }: { requestId: string }) {
       </dl>
 
       {/* Itens */}
-      <div className="rounded border">
-        <div className="bg-muted/50 px-3 py-2 text-xs font-semibold uppercase tracking-wide">
-          Itens ({itemsCount})
-        </div>
-        {items.length === 0 ? (
-          <p className="px-3 py-4 text-center text-sm text-muted-foreground">
-            Sem itens.
-          </p>
-        ) : (
-          <table className="w-full text-sm">
-            <thead className="text-left border-b">
-              <tr>
-                <th className="px-3 py-2 font-semibold"></th>
-                <th className="px-3 py-2 font-semibold">Produto</th>
-                <th className="px-3 py-2 font-semibold">SKU</th>
-                <th className="px-3 py-2 font-semibold">Barcode</th>
-                <th className="px-3 py-2 font-semibold text-right">Qtd</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((it) => (
-                <tr key={it.id} className="border-t">
-                  <td className="px-3 py-2">
-                    {it.product.imageUrl ? (
-                      <img src={it.product.imageUrl} className="w-15 h-15" />
-                    ) : (
-                      <div className="w-15 h-15 flex items-center justify-center border border-gray-300 rounded-md">
-                        <ImageOff />
-                      </div>
-                    )}
-                  </td>
-                  <td className="px-3 py-2">{it.product.name}</td>
-                  <td className="px-3 py-2 font-mono text-xs">
-                    {it.product.sku}
-                  </td>
-                  <td className="px-3 py-2 font-mono text-xs">
-                    {it.product.barcode}
-                  </td>
-                  <td className="px-3 py-2 text-right font-mono">
-                    {it.quantity}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+      <Tabs defaultValue="items">
+        <TabsList>
+          <TabsTrigger value="items">
+            Itens do pedido ({itemsCount})
+          </TabsTrigger>
+          <TabsTrigger value="transfers">
+            Remessas ({transfersCount})
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="items">
+          <div className="rounded border">
+            <div className="bg-muted/50 px-3 py-2 text-xs font-semibold uppercase tracking-wide">
+              Itens ({itemsCount})
+            </div>
+            {items.length === 0 ? (
+              <p className="px-3 py-4 text-center text-sm text-muted-foreground">
+                Sem itens.
+              </p>
+            ) : (
+              <table className="w-full text-sm">
+                <thead className="text-left border-b">
+                  <tr>
+                    <th className="px-3 py-2 font-semibold"></th>
+                    <th className="px-3 py-2 font-semibold">Produto</th>
+                    <th className="px-3 py-2 font-semibold">SKU</th>
+                    <th className="px-3 py-2 font-semibold">Barcode</th>
+                    <th className="px-3 py-2 font-semibold text-right">Qtd</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {items.map((it) => (
+                    <tr key={it.id} className="border-t">
+                      <td className="px-3 py-2">
+                        {it.product.imageUrl ? (
+                          <img
+                            src={it.product.imageUrl}
+                            className="w-15 h-15"
+                          />
+                        ) : (
+                          <div className="w-15 h-15 flex items-center justify-center border border-gray-300 rounded-md">
+                            <ImageOff />
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-3 py-2">{it.product.name}</td>
+                      <td className="px-3 py-2 font-mono text-xs">
+                        {it.product.sku}
+                      </td>
+                      <td className="px-3 py-2 font-mono text-xs">
+                        {it.product.barcode}
+                      </td>
+                      <td className="px-3 py-2 text-right font-mono">
+                        {it.quantity}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="transfers">
+          <RequestTransfersList transfers={request.transfers} />
+        </TabsContent>
+      </Tabs>
 
       {/* Ações */}
       {(canRefuse || canFinalize || canCancel || canCreateTransfer) && (
@@ -421,6 +456,7 @@ function RequestDetailsBody({ requestId }: { requestId: string }) {
           onOpenChange={setTransferOpen}
           purchaseRequestId={request.id}
           destinationOptions={requestDestinationOptions}
+          onSuccess={handleTransferCreated}
         />
       )}
 
@@ -457,6 +493,7 @@ function RequestDetailsBody({ requestId }: { requestId: string }) {
               variant="outline"
               onClick={() => setRefuseOpen(false)}
               disabled={refuseMutation.isPending}
+              className="cursor-pointer"
             >
               Voltar
             </Button>
@@ -466,6 +503,7 @@ function RequestDetailsBody({ requestId }: { requestId: string }) {
               disabled={
                 refuseMutation.isPending || refusalReason.trim().length === 0
               }
+              className="cursor-pointer"
             >
               {refuseMutation.isPending ? "Recusando..." : "Confirmar recusa"}
             </Button>
@@ -507,6 +545,7 @@ function RequestDetailsBody({ requestId }: { requestId: string }) {
               variant="outline"
               onClick={() => setFinalizeOpen(false)}
               disabled={finalizeMutation.isPending}
+              className="cursor-pointer"
             >
               Voltar
             </Button>
@@ -514,6 +553,7 @@ function RequestDetailsBody({ requestId }: { requestId: string }) {
               type="button"
               onClick={submitFinalize}
               disabled={finalizeMutation.isPending}
+              className="cursor-pointer"
             >
               {finalizeMutation.isPending ? "Finalizando..." : "Confirmar"}
             </Button>
@@ -538,14 +578,16 @@ function RequestDetailsBody({ requestId }: { requestId: string }) {
               variant="outline"
               onClick={() => setCancelOpen(false)}
               disabled={cancelMutation.isPending}
+              className="cursor-pointer bg-gray-100 hover:bg-gray-200"
             >
               Voltar
             </Button>
             <Button
               type="button"
+              variant="outline"
               onClick={submitCancel}
               disabled={cancelMutation.isPending}
-              className="text-destructive"
+              className="text-destructive bg-red-100 cursor-pointer hover:text-red-500"
             >
               {cancelMutation.isPending
                 ? "Cancelando..."

@@ -5,6 +5,7 @@ import type {
   CatalogProduct,
   CreatePurchaseRequestData,
   FinalizePurchaseRequestData,
+  PurchaseRequestDetailResponse,
   PurchaseRequestFilters,
   PurchaseRequestResponse,
   PurchaseRequestsListResponse,
@@ -56,8 +57,8 @@ export async function fetchPurchaseRequests(
 
 export async function fetchPurchaseRequestById(
   id: string,
-): Promise<PurchaseRequestResponse> {
-  const response = await api.get<ApiEnvelope<PurchaseRequestResponse>>(
+): Promise<PurchaseRequestDetailResponse> {
+  const response = await api.get<ApiEnvelope<PurchaseRequestDetailResponse>>(
     `/admin/purchase-requests/${id}`,
   );
   return response.data.data;
