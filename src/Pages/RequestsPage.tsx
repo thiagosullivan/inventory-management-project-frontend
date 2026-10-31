@@ -96,7 +96,10 @@ export default function RequestsPage() {
           </p>
         </div>
         {canCreate && (
-          <Button onClick={() => setCreateOpen(true)} className="py-5">
+          <Button
+            onClick={() => setCreateOpen(true)}
+            className="py-5 cursor-pointer"
+          >
             <Plus size={16} className="mr-2" />
             Novo pedido
           </Button>
@@ -165,7 +168,7 @@ export default function RequestsPage() {
               )}
             {rows.map((r: PurchaseRequestResponse) => (
               <tr key={r.id} className="border-t">
-                <td className="px-4 py-3 font-mono text-xs">
+                <td className="px-4 py-3 font-mono text-xs uppercase">
                   {r.id.slice(0, 8)}
                 </td>
                 <td className="px-4 py-3">{r.sector?.name ?? "—"}</td>

@@ -30,7 +30,7 @@ export function FilterShell({ children }: FilterShellProps) {
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const triggerElement = (
-    <Button variant="outline" className="gap-2">
+    <Button variant="outline" className="gap-2 cursor-pointer min-h-9">
       <SlidersHorizontal className="h-4 w-4" />
       Filtros
     </Button>
@@ -42,7 +42,7 @@ export function FilterShell({ children }: FilterShellProps) {
         <SheetTrigger render={triggerElement} />
         <SheetContent side="right" className="w-[400px]" disableBlur>
           <SheetHeader>
-            <SheetTitle>Filtros sheet</SheetTitle>
+            <SheetTitle>Filtros</SheetTitle>
             <SheetDescription>Refine a sua busca abaixo.</SheetDescription>
           </SheetHeader>
           <div className="flex flex-col">
@@ -54,7 +54,7 @@ export function FilterShell({ children }: FilterShellProps) {
                 variant="default"
                 size="lg"
                 onClick={clearFilters}
-                className="h-12 w-full px-2 text-xs text-white hover:text-foreground"
+                className="h-12 w-full px-2 text-xs text-white hover:text-foreground cursor-pointer"
               >
                 Limpar tudo
               </Button>
@@ -62,7 +62,7 @@ export function FilterShell({ children }: FilterShellProps) {
                 variant="outline"
                 size="lg"
                 onClick={() => setOpen(!open)}
-                className="h-12 w-full px-2 text-xs text-muted-foreground hover:text-foreground"
+                className="h-12 w-full px-2 text-xs text-muted-foreground hover:text-foreground cursor-pointer"
               >
                 Fechar Filtro
               </Button>

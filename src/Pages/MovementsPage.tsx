@@ -161,7 +161,10 @@ export default function MovementsPage() {
           </p>
         </div>
         {canCreate && (
-          <Button onClick={() => setCreateOpen(true)} className="py-5">
+          <Button
+            onClick={() => setCreateOpen(true)}
+            className="py-5 cursor-pointer"
+          >
             <Plus size={16} className="mr-2" />
             Nova remessa
           </Button>
@@ -271,7 +274,7 @@ export default function MovementsPage() {
         <table className="w-full text-sm">
           <thead className="bg-muted/50 text-left">
             <tr>
-              <th className="px-4 py-3 font-semibold">ID</th>
+              <th className="px-4 py-3 font-semibold">Pedido</th>
               <th className="px-4 py-3 font-semibold">Destino</th>
               <th className="px-4 py-3 font-semibold">Itens</th>
               <th className="px-4 py-3 font-semibold">Status</th>
@@ -314,8 +317,8 @@ export default function MovementsPage() {
               )}
             {rows.map((t) => (
               <tr key={t.id} className="border-t">
-                <td className="px-4 py-3 font-mono text-xs">
-                  {t.id.slice(0, 8)}
+                <td className="px-4 py-3 font-mono text-xs uppercase">
+                  {t.purchaseRequestId?.slice(0, 8)}
                 </td>
                 <td className="px-4 py-3">{t.toSector?.name ?? "—"}</td>
                 <td className="px-4 py-3">
@@ -462,6 +465,7 @@ export default function MovementsPage() {
           </div>
           <DialogFooter>
             <Button
+              className="cursor-pointer"
               type="button"
               variant="outline"
               onClick={() => {
@@ -473,6 +477,7 @@ export default function MovementsPage() {
               Voltar
             </Button>
             <Button
+              className="cursor-pointer"
               type="button"
               disabled={
                 cancelMutation.isPending || cancelReason.trim().length === 0

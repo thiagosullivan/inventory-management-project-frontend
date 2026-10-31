@@ -51,18 +51,22 @@ export function TransferDetailsDialog({
           </DialogTitle>
           <DialogDescription>
             {transferId ? (
-              <>
-                ID <span className="font-mono">{transferId.slice(0, 8)}</span>
+              <div className="flex items-center gap-x-2">
+                <div className="flex items-center gap-x-1">
+                  <strong>ID:</strong>
+                  <span className="font-light uppercase">
+                    {transferId.slice(0, 8)}
+                  </span>
+                </div>
                 {transfer?.purchaseRequestId && (
-                  <>
-                    {" "}
-                    · pedido{" "}
-                    <span className="font-mono">
+                  <div className="flex items-center gap-x-1">
+                    <strong>Pedido:</strong>
+                    <span className="font-light uppercase">
                       {transfer.purchaseRequestId.slice(0, 8)}
                     </span>
-                  </>
+                  </div>
                 )}
-              </>
+              </div>
             ) : (
               "Nenhuma remessa selecionada."
             )}

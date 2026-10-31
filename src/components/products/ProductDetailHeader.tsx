@@ -21,10 +21,6 @@ interface ProductDetailHeaderProps {
   onDelete: () => void;
 }
 
-/**
- * Cabeçalho de /products/:id.
- * "Voltar" usa navigate(-1) com fallback pra /products (se não há histórico).
- */
 export function ProductDetailHeader({
   product,
   canEdit,
@@ -36,8 +32,6 @@ export function ProductDetailHeader({
   const navigate = useNavigate();
 
   function handleBack() {
-    // navigate(-1) volta pro histórico. Se o usuário abriu o link direto
-    // (deep link), não há histórico → /products.
     if (window.history.length > 1) {
       navigate(-1);
     } else {
@@ -48,7 +42,12 @@ export function ProductDetailHeader({
   return (
     <div className="flex flex-col gap-4 w-full">
       <div className="flex items-center gap-2">
-        <Button variant="ghost" size="sm" onClick={handleBack}>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleBack}
+          className="cursor-pointer"
+        >
           <ArrowLeft className="h-4 w-4 mr-1" />
           Voltar
         </Button>
@@ -92,7 +91,11 @@ export function ProductDetailHeader({
 
         {/* Ações */}
         <div className="flex gap-2">
-          <Button variant="outline" onClick={onPrint}>
+          <Button
+            variant="outline"
+            onClick={onPrint}
+            className="cursor-pointer"
+          >
             <Printer className="h-4 w-4 mr-1" />
             Etiqueta
           </Button>
@@ -105,14 +108,22 @@ export function ProductDetailHeader({
                 if (v === "delete") onDelete();
               }}
             >
-              <SelectTrigger className="w-9 h-9 p-0 justify-center">
-                <SelectValue placeholder={<MoreHorizontal />} />
+              <SelectTrigger className="w-12 h-12 p-0 justify-center cursor-pointer">
+                <SelectValue
+                  placeholder={
+                    <div className="pl-2">
+                      <MoreHorizontal />
+                    </div>
+                  }
+                />
               </SelectTrigger>
               <SelectContent align="end">
-                <SelectItem value="edit">Editar</SelectItem>
+                <SelectItem value="edit" className="cursor-pointer">
+                  Editar
+                </SelectItem>
                 <SelectItem
                   value="delete"
-                  className="text-destructive focus:text-destructive"
+                  className="text-destructive focus:text-destructive cursor-pointer"
                 >
                   Deletar
                 </SelectItem>

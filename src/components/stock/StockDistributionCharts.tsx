@@ -127,7 +127,7 @@ export function StockDistributionCharts({
   }, {} as ChartConfig);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 w-full">
       {/* ===== Donut de categoria (full width) ===== */}
       <Card className="flex flex-col shadow-lg">
         <CardHeader className="items-center pb-0">
