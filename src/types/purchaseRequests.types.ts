@@ -9,7 +9,8 @@ export type PurchaseRequestStatus =
   | "EM_ATENDIMENTO"
   | "ATENDIDO"
   | "RECUSADO"
-  | "CANCELADO";
+  | "CANCELADO"
+  | "TODOS";
 
 // =============================
 // Payloads

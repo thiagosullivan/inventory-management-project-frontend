@@ -24,6 +24,7 @@ import type {
 } from "@/types/purchaseRequests.types";
 
 const STATUS_LABEL: Record<PurchaseRequestStatus, string> = {
+  TODOS: "Todos",
   PENDENTE: "Pendente",
   EM_ATENDIMENTO: "Em atendimento",
   ATENDIDO: "Atendido",
@@ -32,6 +33,7 @@ const STATUS_LABEL: Record<PurchaseRequestStatus, string> = {
 };
 
 const STATUS_CLASS: Record<PurchaseRequestStatus, string> = {
+  TODOS: "",
   PENDENTE: "bg-amber-100 text-amber-900 border-amber-300",
   EM_ATENDIMENTO: "bg-sky-100 text-sky-900 border-sky-300",
   ATENDIDO: "bg-emerald-100 text-emerald-900 border-emerald-300",

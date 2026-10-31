@@ -5,11 +5,20 @@ import type {
   PurchaseRequestStatus,
 } from "@/types/purchaseRequests.types";
 
-export const PURCHASE_REQUEST_STATUS_VALUES: readonly PurchaseRequestStatus[] =
-  ["PENDENTE", "EM_ATENDIMENTO", "ATENDIDO", "RECUSADO", "CANCELADO"] as const;
+export type PurchaseRequestStatusFilter = PurchaseRequestStatus | "TODOS";
+
+export const PURCHASE_REQUEST_STATUS_VALUES: readonly PurchaseRequestStatusFilter[] =
+  [
+    "TODOS",
+    "PENDENTE",
+    "EM_ATENDIMENTO",
+    "ATENDIDO",
+    "RECUSADO",
+    "CANCELADO",
+  ] as const;
 
 export const PURCHASE_REQUEST_DEFAULTS = {
-  status: "PENDENTE" as PurchaseRequestStatus,
+  status: "TODOS" as PurchaseRequestStatusFilter,
   page: 1,
   limit: 10,
 } as const;
@@ -21,15 +30,15 @@ export const PURCHASE_REQUEST_DEFAULTS = {
 export function parsePurchaseRequestFilters(
   params: URLSearchParams,
 ): PurchaseRequestFilters & {
-  status: PurchaseRequestStatus;
+  status: PurchaseRequestStatusFilter;
   page: number;
   limit: number;
 } {
   const rawStatus = getString(params, "status");
-  const status =
+  const status: PurchaseRequestStatusFilter =
     rawStatus &&
     (PURCHASE_REQUEST_STATUS_VALUES as readonly string[]).includes(rawStatus)
-      ? (rawStatus as PurchaseRequestStatus)
+      ? (rawStatus as PurchaseRequestStatusFilter)
       : PURCHASE_REQUEST_DEFAULTS.status;
 
   const rawPage = getNumber(params, "page");
@@ -49,7 +58,7 @@ export function parsePurchaseRequestFilters(
     sectorId: getString(params, "sectorId"),
     dateFrom: getString(params, "dateFrom"),
     dateTo: getString(params, "dateTo"),
-    sortBy: undefined, // fixo nesta fase
+    sortBy: undefined,
     sortOrder: undefined,
     page,
     limit,
@@ -61,12 +70,19 @@ export function parsePurchaseRequestFilters(
 // =============================
 
 export function serializePurchaseRequestFilters(
-  filters: PurchaseRequestFilters,
+  filters: PurchaseRequestFilters & { status?: PurchaseRequestStatusFilter },
 ): URLSearchParams {
   const params = new URLSearchParams();
 
-  if (filters.status && filters.status !== PURCHASE_REQUEST_DEFAULTS.status)
+  // 🔹 "TODOS" é o default → omite da URL
+  if (
+    filters.status &&
+    filters.status !== "TODOS" &&
+    filters.status !== PURCHASE_REQUEST_DEFAULTS.status
+  ) {
     params.set("status", filters.status);
+  }
+
   if (filters.sectorId) params.set("sectorId", filters.sectorId);
   if (filters.dateFrom) params.set("dateFrom", filters.dateFrom);
   if (filters.dateTo) params.set("dateTo", filters.dateTo);
