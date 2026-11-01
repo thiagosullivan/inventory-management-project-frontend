@@ -18,6 +18,7 @@ import ProductNewPage from "./pages/ProductNewPage.tsx";
 import ProductDetailPage from "./pages/ProductDetailPage.tsx";
 import MovementsPage from "./pages/MovementsPage.tsx";
 import RequestsPage from "./pages/RequestsPage.tsx";
+import AccountSuspended from "./pages/AccountSuspended.tsx";
 
 export const router = createBrowserRouter([
   // Public
@@ -26,7 +27,7 @@ export const router = createBrowserRouter([
     children: [
       { path: "/", element: <HomePage /> },
       { path: "/forgot-password", element: <ForgotPasswordPage /> },
-      { path: "/account-suspended", element: <div>Conta suspensa</div> },
+      { path: "/account-suspended", element: <AccountSuspended /> },
     ],
   },
 
