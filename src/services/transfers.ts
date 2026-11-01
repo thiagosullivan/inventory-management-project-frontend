@@ -4,6 +4,7 @@ import type { ApiEnvelope } from "@/lib/api-envelope";
 import type {
   CancelTransferData,
   CreateTransferData,
+  RefuseTransferData,
   TransferFilters,
   TransferResponse,
   TransfersListResponse,
@@ -74,9 +75,13 @@ export async function confirmTransfer(id: string): Promise<TransferResponse> {
   return response.data.data;
 }
 
-export async function refuseTransfer(id: string): Promise<TransferResponse> {
+export async function refuseTransfer(
+  id: string,
+  payload: RefuseTransferData,
+): Promise<TransferResponse> {
   const response = await api.patch<ApiEnvelope<TransferResponse>>(
     `/admin/transfers/${id}/refuse`,
+    payload,
   );
   return response.data.data;
 }

@@ -40,17 +40,7 @@ export function RequestTransfersList({ transfers }: RequestTransfersListProps) {
         <li key={t.id} className="rounded border">
           {/* Cabeçalho da remessa */}
           <div className="bg-muted/50 px-3 py-2 flex flex-wrap items-center justify-between gap-2">
-            <div className="flex items-center gap-x-2 text-end">
-              <span
-                className={`inline-block rounded border px-2 py-0.5 text-xs font-semibold ${STATUS_CLASS[t.status]}`}
-              >
-                {STATUS_LABEL[t.status]}
-              </span>
-              <span className="font-mono text-xs uppercase text-muted-foreground font-bold">
-                #{t.id.slice(0, 8)}
-              </span>
-            </div>
-            <div className="text-end">
+            <div className="text-start">
               <div className="flex items-center gap-x-2">
                 <p className="text-xs font-bold text-primary">
                   Criada:{" "}
@@ -58,24 +48,24 @@ export function RequestTransfersList({ transfers }: RequestTransfersListProps) {
                     {formatDateTime(t.createdAt)}
                   </span>
                 </p>
-                {t.createdBy && (
+                {/* {t.createdBy && (
                   <div className="text-xs text-muted-foreground">
                     por{" "}
                     <strong className="text-primary">
                       {t.createdBy.name ?? t.createdBy.email}
                     </strong>
                   </div>
-                )}
+                )} */}
               </div>
               {t.confirmedAt && (
                 <p className="text-xs text-muted-foreground">
-                  <span className="text-green-600">Confirmada</span> em{" "}
-                  {formatDateTime(t.confirmedAt)}
+                  <span className="text-green-600 font-bold">Confirmada</span>{" "}
+                  em {formatDateTime(t.confirmedAt)}
                 </p>
               )}
               {t.refusedAt && (
                 <p className="text-xs text-muted-foreground">
-                  <span className="text-red-600">Recusada</span> em{" "}
+                  <span className="text-red-600 font-bold">Recusada</span> em{" "}
                   {formatDateTime(t.refusedAt)}
                 </p>
               )}
@@ -85,17 +75,29 @@ export function RequestTransfersList({ transfers }: RequestTransfersListProps) {
                 </span>
               )}
             </div>
+            <div className="flex items-center flex-col justify-center gap-y-2 text-end">
+              <span
+                className={`inline-block rounded border px-2 py-0.5 text-xs font-semibold ${STATUS_CLASS[t.status]}`}
+              >
+                {STATUS_LABEL[t.status]}
+              </span>
+              <span className="font-mono text-xs uppercase text-muted-foreground font-bold">
+                #{t.id.slice(0, 8)}
+              </span>
+            </div>
           </div>
 
           {/* Motivos */}
-          {t.reason && (
-            <p className="px-3 pt-2 text-xs text-muted-foreground">
-              Motivo: “{t.reason}”
+          {t.refusalReason && (
+            <p className="px-3 pt-2 text-xs text-red-700">
+              Motivo da recusa:{" "}
+              <span className="text-muted-foreground">“{t.refusalReason}”</span>
             </p>
           )}
           {t.cancelReason && (
             <p className="px-3 pt-2 text-xs text-red-700">
-              Cancelamento: “{t.cancelReason}”
+              Motivo do cancelamento:{" "}
+              <span className="text-muted-foreground">“{t.cancelReason}”</span>
             </p>
           )}
 

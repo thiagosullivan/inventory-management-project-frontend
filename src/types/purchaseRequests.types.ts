@@ -139,6 +139,7 @@ export interface PurchaseRequestTransferDetailRef {
   id: string;
   status: TransferStatusRef;
   reason: string | null;
+  refusalReason: string | null;
   cancelReason: string | null;
   createdAt: string;
   confirmedAt: string | null;

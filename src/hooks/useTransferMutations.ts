@@ -9,6 +9,7 @@ import {
 import type {
   CancelTransferData,
   CreateTransferData,
+  RefuseTransferData,
 } from "@/types/transfers.types";
 import {
   type QueryClient,
@@ -56,8 +57,14 @@ export function useConfirmTransfer() {
 export function useRefuseTransfer() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => refuseTransfer(id),
-    onSuccess: (_data, id) => {
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: RefuseTransferData; // 🔹 novo
+    }) => refuseTransfer(id, payload),
+    onSuccess: (_data, { id }) => {
       invalidateTransferViews(qc, id);
       toast.success("Remessa recusada. Estoque devolvido ao Almoxarifado.");
     },

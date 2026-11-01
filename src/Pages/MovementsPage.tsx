@@ -16,6 +16,7 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -52,6 +53,8 @@ const STATUS_CLASS: Record<TransferStatus, string> = {
   CANCELADO: "bg-zinc-200 text-zinc-800 border-zinc-300",
   RECUSADO: "bg-red-100 text-red-900 border-red-300",
 };
+
+const MAX_NOTE = 500;
 
 function formatDate(value: string | null | undefined): string {
   if (!value) return "—";
@@ -90,10 +93,18 @@ export default function MovementsPage() {
 
   const [detailsId, setDetailsId] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
+
+  // Cancelamento
   const [cancelTarget, setCancelTarget] = useState<TransferResponse | null>(
     null,
   );
   const [cancelReason, setCancelReason] = useState("");
+
+  // Recusa
+  const [refuseTarget, setRefuseTarget] = useState<TransferResponse | null>(
+    null,
+  );
+  const [refusalReason, setRefusalReason] = useState("");
 
   // =============================
   // URL helpers
@@ -129,9 +140,57 @@ export default function MovementsPage() {
     return isManager || t.toSectorId === user?.sectorId;
   }
 
+  // Cancelamento: mantido o padrão (isManager) —
+  // se quiser Almoxarifado também, troque por (isManager || isWarehouseUser)
   function canCancel(t: TransferResponse): boolean {
     if (t.status !== "PENDENTE") return false;
-    return isManager || isWarehouseUser;
+    return isManager;
+  }
+
+  // =============================
+  // Handlers
+  // =============================
+
+  function openRefuse(t: TransferResponse) {
+    setRefuseTarget(t);
+    setRefusalReason("");
+  }
+
+  function openCancel(t: TransferResponse) {
+    setCancelTarget(t);
+    setCancelReason("");
+  }
+
+  function submitRefuse() {
+    if (!refuseTarget || refusalReason.trim().length === 0) return;
+    refuseMutation.mutate(
+      {
+        id: refuseTarget.id,
+        payload: { refusalReason: refusalReason.trim() },
+      },
+      {
+        onSuccess: () => {
+          setRefuseTarget(null);
+          setRefusalReason("");
+        },
+      },
+    );
+  }
+
+  function submitCancel() {
+    if (!cancelTarget || cancelReason.trim().length === 0) return;
+    cancelMutation.mutate(
+      {
+        id: cancelTarget.id,
+        payload: { cancelReason: cancelReason.trim() },
+      },
+      {
+        onSuccess: () => {
+          setCancelTarget(null);
+          setCancelReason("");
+        },
+      },
+    );
   }
 
   // =============================
@@ -362,7 +421,7 @@ export default function MovementsPage() {
                           variant="ghost"
                           size="sm"
                           disabled={refuseMutation.isPending}
-                          onClick={() => refuseMutation.mutate(t.id)}
+                          onClick={() => openRefuse(t)}
                           title="Recusar"
                           className="cursor-pointer hover:text-red-500"
                         >
@@ -375,10 +434,7 @@ export default function MovementsPage() {
                         type="button"
                         variant="ghost"
                         size="sm"
-                        onClick={() => {
-                          setCancelTarget(t);
-                          setCancelReason("");
-                        }}
+                        onClick={() => openCancel(t)}
                         title="Cancelar"
                         className="cursor-pointer hover:text-red-500"
                       >
@@ -428,7 +484,7 @@ export default function MovementsPage() {
         destinationOptions={destinationOptions}
       />
 
-      {/* Detalhes (stub até Etapa 7) */}
+      {/* Detalhes */}
       <TransferDetailsDialog
         transferId={detailsId}
         open={detailsId !== null}
@@ -437,7 +493,70 @@ export default function MovementsPage() {
         }}
       />
 
-      {/* Cancelamento com motivo */}
+      {/* ---- Dialog: recusar ---- */}
+      <Dialog
+        open={refuseTarget !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setRefuseTarget(null);
+            setRefusalReason("");
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-[420px]">
+          <DialogHeader>
+            <DialogTitle className="text-base font-bold text-primary">
+              Recusar remessa
+            </DialogTitle>
+            <DialogDescription>
+              O motivo é obrigatório e ficará registrado. O estoque será
+              devolvido ao Almoxarifado.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-1">
+            <Label htmlFor="refuse-reason">Motivo da recusa *</Label>
+            <Input
+              id="refuse-reason"
+              value={refusalReason}
+              onChange={(e) =>
+                setRefusalReason(e.target.value.slice(0, MAX_NOTE))
+              }
+              maxLength={MAX_NOTE}
+              placeholder="Ex.: itens faltando, produto danificado"
+              autoComplete="off"
+            />
+            <p className="text-xs text-muted-foreground text-right">
+              {refusalReason.length}/{MAX_NOTE}
+            </p>
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setRefuseTarget(null);
+                setRefusalReason("");
+              }}
+              disabled={refuseMutation.isPending}
+              className="cursor-pointer"
+            >
+              Voltar
+            </Button>
+            <Button
+              type="button"
+              onClick={submitRefuse}
+              disabled={
+                refuseMutation.isPending || refusalReason.trim().length === 0
+              }
+              className="cursor-pointer"
+            >
+              {refuseMutation.isPending ? "Recusando..." : "Confirmar recusa"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ---- Dialog: cancelar ---- */}
       <Dialog
         open={cancelTarget !== null}
         onOpenChange={(open) => {
@@ -452,16 +571,26 @@ export default function MovementsPage() {
             <DialogTitle className="text-base font-bold text-primary">
               Cancelar remessa
             </DialogTitle>
+            <DialogDescription>
+              O motivo é obrigatório e ficará registrado. O estoque será
+              devolvido ao Almoxarifado.
+            </DialogDescription>
           </DialogHeader>
-          <div className="space-y-2">
+          <div className="space-y-1">
             <Label htmlFor="cancel-reason">Motivo do cancelamento *</Label>
             <Input
               id="cancel-reason"
               value={cancelReason}
-              onChange={(e) => setCancelReason(e.target.value)}
+              onChange={(e) =>
+                setCancelReason(e.target.value.slice(0, MAX_NOTE))
+              }
+              maxLength={MAX_NOTE}
               placeholder="Ex.: item errado, pedido cancelado"
               autoComplete="off"
             />
+            <p className="text-xs text-muted-foreground text-right">
+              {cancelReason.length}/{MAX_NOTE}
+            </p>
           </div>
           <DialogFooter>
             <Button
@@ -482,21 +611,7 @@ export default function MovementsPage() {
               disabled={
                 cancelMutation.isPending || cancelReason.trim().length === 0
               }
-              onClick={() => {
-                if (!cancelTarget) return;
-                cancelMutation.mutate(
-                  {
-                    id: cancelTarget.id,
-                    payload: { cancelReason: cancelReason.trim() },
-                  },
-                  {
-                    onSuccess: () => {
-                      setCancelTarget(null);
-                      setCancelReason("");
-                    },
-                  },
-                );
-              }}
+              onClick={submitCancel}
             >
               {cancelMutation.isPending
                 ? "Cancelando..."

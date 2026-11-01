@@ -30,6 +30,10 @@ export interface CancelTransferData {
   cancelReason: string; // obrigatório (auditoria)
 }
 
+export interface RefuseTransferData {
+  refusalReason: string; // 🔹 obrigatório (auditoria)
+}
+
 // =============================
 // Filtros
 // =============================
@@ -94,6 +98,7 @@ export interface TransferResponse {
   purchaseRequestId: string | null;
   status: TransferStatus;
   reason: string | null;
+  refusalReason: string | null; // 🔹 NOVO
   cancelReason: string | null;
   createdById: string;
   confirmedById: string | null;
