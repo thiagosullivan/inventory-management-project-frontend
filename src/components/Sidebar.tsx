@@ -24,7 +24,6 @@ interface MenuItemsProps {
   icon: LucideIcon;
   href: string;
   onlyManager?: boolean;
-  /** Se true, só aparece pra STAFF do Almoxarifado ou MANAGER. */
   warehouseOnly?: boolean;
 }
 
@@ -33,6 +32,7 @@ const MenuList: MenuItemsProps[] = [
     label: "Dashboard",
     icon: LayoutDashboard,
     href: "/dashboard",
+    warehouseOnly: true,
   },
   {
     label: "Products",
@@ -47,39 +47,44 @@ const MenuList: MenuItemsProps[] = [
     warehouseOnly: true,
   },
   {
-    label: "Movimentações",
-    icon: ArrowLeftRight,
-    href: "/movements",
-  },
-  {
     label: "Pedidos",
     icon: ClipboardList,
     href: "/requests",
   },
   {
+    label: "Movimentações",
+    icon: ArrowLeftRight,
+    href: "/movements",
+  },
+  {
     label: "History",
     icon: ListClock,
     href: "/history",
+    warehouseOnly: true,
   },
   {
     label: "Categories",
     icon: ListSortDescending,
     href: "/categories",
+    warehouseOnly: true,
   },
   {
     label: "Activity",
     icon: Activity,
     href: "/activity",
+    warehouseOnly: true,
   },
   {
     label: "Alerts",
     icon: Megaphone,
     href: "/alerts",
+    warehouseOnly: true,
   },
   {
     label: "Products Resolve",
     icon: PartyPopper,
     href: "/products-resolve",
+    warehouseOnly: true,
   },
   {
     label: "Admin",

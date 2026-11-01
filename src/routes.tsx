@@ -36,8 +36,6 @@ export const router = createBrowserRouter([
       {
         element: <RootLayout />,
         children: [
-          { path: "/dashboard", element: <DashboardPage /> },
-          { path: "/categories", element: <CategoriesPage /> },
           { path: "/movements", element: <MovementsPage /> },
           { path: "/requests", element: <RequestsPage /> },
 
@@ -45,6 +43,8 @@ export const router = createBrowserRouter([
           {
             element: <WarehouseOnlyRoute />,
             children: [
+              { path: "/dashboard", element: <DashboardPage /> },
+              { path: "/categories", element: <CategoriesPage /> },
               { path: "/products", element: <ProductsPage /> },
               { path: "/products/new", element: <ProductNewPage /> },
               { path: "/products/:id", element: <ProductDetailPage /> },

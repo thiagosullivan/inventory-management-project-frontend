@@ -57,7 +57,7 @@ export function WarehouseOnlyRoute({ children }: ProtectedRouteProps) {
     user?.role === "MANAGER" || user?.sector?.isWarehouse === true;
 
   if (!canAccess) {
-    return <Navigate to="/dashboard" replace state={{ accessDenied: true }} />;
+    return <Navigate to="/requests" replace state={{ accessDenied: true }} />;
   }
 
   return children ? <>{children}</> : <Outlet />;
