@@ -51,7 +51,7 @@ export function StockAlertSection({
   const isEmpty = items.length === 0;
 
   return (
-    <Card>
+    <Card className="max-h-[270px] overflow-y-auto [&::-webkit-scrollbar-button]:hidden">
       <CardHeader className="flex flex-row items-start justify-between gap-4 space-y-0">
         <div className="flex items-start gap-3">
           <Icon className="h-5 w-5 text-muted-foreground mt-0.5" />
