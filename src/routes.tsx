@@ -29,19 +29,25 @@ export const router = createBrowserRouter([
     ],
   },
 
-  // Protected
+  // Protected (qualquer logado, com RootLayout)
   {
     element: <ProtectedRoute />,
     children: [
+      // páginas acessíveis a qualquer logado
       {
         element: <RootLayout />,
         children: [
           { path: "/movements", element: <MovementsPage /> },
           { path: "/requests", element: <RequestsPage /> },
+        ],
+      },
 
-          // 🔒 Só Almoxarifado/MANAGER
+      // 🔒 Só Almoxarifado/MANAGER (guard antes do layout)
+      {
+        element: <WarehouseOnlyRoute />,
+        children: [
           {
-            element: <WarehouseOnlyRoute />,
+            element: <RootLayout />,
             children: [
               { path: "/dashboard", element: <DashboardPage /> },
               { path: "/categories", element: <CategoriesPage /> },
@@ -53,16 +59,16 @@ export const router = createBrowserRouter([
           },
         ],
       },
-    ],
-  },
 
-  // Manager
-  {
-    element: <ManagerRoutes />,
-    children: [
+      // 🔒 Só MANAGER
       {
-        element: <RootLayout />,
-        children: [{ path: "/admin", element: <AdminPage /> }],
+        element: <ManagerRoutes />,
+        children: [
+          {
+            element: <RootLayout />,
+            children: [{ path: "/admin", element: <AdminPage /> }],
+          },
+        ],
       },
     ],
   },

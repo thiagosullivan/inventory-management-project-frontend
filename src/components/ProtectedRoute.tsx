@@ -5,6 +5,10 @@ interface ProtectedRouteProps {
   children?: React.ReactNode;
 }
 
+// ============================================================
+// Qualquer usuário logado e ativo
+// ============================================================
+
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { user, loading } = useAuth();
   const location = useLocation();
@@ -13,17 +17,22 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     return <div>Carregando...</div>;
   }
 
-  // user not logged
+  // não logado → volta pra home, guardando a origem
   if (!user) {
     return <Navigate to="/" state={{ from: location }} replace />;
   }
 
-  // user deactivated
-  if (user.isActive === false)
+  // usuário desativado
+  if (user.isActive === false) {
     return <Navigate to="/account-suspended" replace />;
+  }
 
   return children ? <>{children}</> : <Outlet />;
 }
+
+// ============================================================
+// Somente MANAGER
+// ============================================================
 
 export function ManagerRoutes({ children }: ProtectedRouteProps) {
   const { user, loading } = useAuth();
@@ -32,17 +41,28 @@ export function ManagerRoutes({ children }: ProtectedRouteProps) {
     return <div>Carregando...</div>;
   }
 
-  // user is not a manager
-  if (user?.role !== "MANAGER") {
-    return <Navigate to="/dashboard" replace state={{ accessDenied: true }} />;
+  // defensivo: sem user, volta pra raiz
+  if (!user) {
+    return <Navigate to="/" replace />;
+  }
+
+  if (user.role !== "MANAGER") {
+    // STAFF não pode /admin → manda pro destino padrão dele
+    const fallback =
+      user.sector?.isWarehouse === true ? "/dashboard" : "/requests";
+    return <Navigate to={fallback} replace state={{ accessDenied: true }} />;
   }
 
   return children ? <>{children}</> : <Outlet />;
 }
 
+// ============================================================
+// Almoxarifado (STAFF isWarehouse) ou MANAGER
+// ============================================================
+
 /**
  * Restringe a rota ao Almoxarifado (STAFF do setor isWarehouse) ou MANAGER.
- * Outros setores são redirecionados pro dashboard com sinal de acesso negado.
+ * Outros setores são redirecionados pro /requests com sinal de acesso negado.
  *
  * Deve ser aninhado DENTRO do ProtectedRoute (que já garante auth).
  */
@@ -53,8 +73,14 @@ export function WarehouseOnlyRoute({ children }: ProtectedRouteProps) {
     return <div>Carregando...</div>;
   }
 
-  const canAccess =
-    user?.role === "MANAGER" || user?.sector?.isWarehouse === true;
+  // defensivo
+  if (!user) {
+    return <Navigate to="/" replace />;
+  }
+
+  // 🔹 `sector` pode faltar em estado legado/cache — não quebra
+  const isWarehouse = user.sector?.isWarehouse === true;
+  const canAccess = user.role === "MANAGER" || isWarehouse;
 
   if (!canAccess) {
     return <Navigate to="/requests" replace state={{ accessDenied: true }} />;
