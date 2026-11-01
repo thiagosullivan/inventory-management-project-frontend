@@ -2,6 +2,12 @@ import type { SectorRef } from "./sectors.types";
 
 export type UserRole = "MANAGER" | "STAFF";
 
+export interface Sector {
+  id: string;
+  name: string;
+  isWarehouse: boolean;
+}
+
 export interface User {
   id: string;
   email: string;
@@ -11,7 +17,7 @@ export interface User {
   isActive: boolean;
   emailVerified: boolean;
   sectorId: string;
-  sector?: SectorRef;
+  sector: SectorRef;
   createdAt: string | Date;
   updatedAt: string | Date;
 }

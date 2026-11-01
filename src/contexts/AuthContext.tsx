@@ -5,7 +5,7 @@ import {
   useEffect,
   type ReactNode,
 } from "react";
-import { getSession } from "../services/auth";
+import { getMe } from "../services/auth";
 import type { User } from "../types/auth.types";
 
 interface AuthContextType {
@@ -21,9 +21,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getSession()
-      .then((session) => setUser(session?.user ?? null))
-      .finally(() => setLoading(false));
+    let cancelled = false;
+
+    getMe()
+      .then((me) => {
+        if (!cancelled) setUser(me);
+      })
+      .catch((err) => {
+        console.error("Falha ao carregar sessão:", err);
+        if (!cancelled) setUser(null);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return (

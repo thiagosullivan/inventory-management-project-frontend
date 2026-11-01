@@ -11,7 +11,7 @@ import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
 import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
-import { signIn } from "../../services/auth";
+import { getMe, signIn } from "../../services/auth";
 
 const formSchema = z.object({
   email: z
@@ -42,15 +42,28 @@ export default function LoginForm() {
     setIsSubmitting(true);
 
     try {
-      const session = await signIn({
+      await signIn({
         email: data.email,
         password: data.password,
         rememberMe: data.rememberMe,
       });
 
-      setUser(session.user);
+      // 🔹 hidrata com /me (traz sector)
+      const me = await getMe();
+
+      if (!me) {
+        throw new Error("Não foi possível carregar o perfil do usuário.");
+      }
+
+      setUser(me);
       toast.success("Login realizado!");
-      navigate("/dashboard");
+
+      // 🔹 redireciona conforme acesso
+      const isWarehouse = me.sector?.isWarehouse === true;
+      const isManager = me.role === "MANAGER";
+      navigate(isManager || isWarehouse ? "/dashboard" : "/requests", {
+        replace: true,
+      });
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Erro ao fazer login";
