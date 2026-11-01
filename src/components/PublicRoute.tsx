@@ -12,8 +12,21 @@ export function PublicRoute({ children }: PublicRouteProps) {
     return <div>Carregando...</div>;
   }
 
+  // 🔹 user desativado logado → deixa a página de suspensão cuidar
+  if (user && user.isActive === false) {
+    return <Navigate to="/account-suspended" replace />;
+  }
+
   if (user) {
-    return <Navigate to="/dashboard" replace />;
+    // 🔹 redireciona conforme acesso (evita double-redirect)
+    const isWarehouse = user.sector?.isWarehouse === true;
+    const isManager = user.role === "MANAGER";
+    return (
+      <Navigate
+        to={isManager || isWarehouse ? "/dashboard" : "/requests"}
+        replace
+      />
+    );
   }
 
   return children ? <>{children}</> : <Outlet />;

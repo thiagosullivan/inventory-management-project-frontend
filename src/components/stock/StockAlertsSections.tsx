@@ -7,7 +7,7 @@ interface StockAlertsSectionsProps {
 
 export function StockAlertsSections({ details }: StockAlertsSectionsProps) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
       <StockAlertSection
         title="Estoque baixo"
         description="Produtos com quantidade igual ou abaixo do mínimo"
