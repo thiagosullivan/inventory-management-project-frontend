@@ -154,10 +154,11 @@ function CategoryFormContent({
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={isPending}
+            className="cursor-pointer"
           >
             Cancelar
           </Button>
-          <Button type="submit" disabled={isPending}>
+          <Button className="cursor-pointer" type="submit" disabled={isPending}>
             {isPending
               ? "Salvando..."
               : isEditing

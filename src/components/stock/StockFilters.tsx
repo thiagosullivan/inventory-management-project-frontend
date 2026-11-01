@@ -41,7 +41,12 @@ export function StockFilters({ isLoading = false }: StockFiltersProps) {
         />
 
         {hasActiveFilters && (
-          <Button variant="destructive" size="sm" onClick={clearFilters}>
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={clearFilters}
+            className="cursor-pointer"
+          >
             Limpar filtros
           </Button>
         )}

@@ -62,6 +62,7 @@ export function DeleteProductDialog({
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={mutation.isPending}
+            className="cursor-pointer"
           >
             Cancelar
           </Button>
@@ -69,6 +70,7 @@ export function DeleteProductDialog({
             variant="destructive"
             onClick={handleDelete}
             disabled={mutation.isPending}
+            className="cursor-pointer"
           >
             {mutation.isPending ? "Deletando..." : "Deletar"}
           </Button>

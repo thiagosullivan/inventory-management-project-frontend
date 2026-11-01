@@ -37,6 +37,7 @@ export function BarcodeField({ value, mode }: BarcodeFieldProps) {
             variant="outline"
             onClick={() => preview.refetch()}
             disabled={preview.isFetching}
+            className="cursor-pointer"
           >
             {preview.isFetching
               ? "Gerando..."

@@ -83,7 +83,7 @@ export function TransferDetailsDialog(props: TransferDetailsDialogProps) {
 
 function TransferDetailsBody({
   transferId,
-  onOpenChange,
+  // onOpenChange,
   onActionSuccess,
 }: {
   transferId: string;
@@ -112,7 +112,7 @@ function TransferDetailsBody({
   // =============================
 
   const isManager = user?.role === "MANAGER";
-  const isWarehouseUser = user?.sector?.isWarehouse === true;
+  // const isWarehouseUser = user?.sector?.isWarehouse === true;
 
   const canConfirmOrRefuse =
     !!transfer &&

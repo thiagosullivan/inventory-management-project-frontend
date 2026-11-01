@@ -25,7 +25,6 @@ export function DeleteCategoryDialog({
   const [error, setError] = useState<string | null>(null);
   const deleteMutation = useDeleteCategory();
 
-  // 🔹 Limpa o erro sempre que reabrir
   useEffect(() => {
     if (open) setError(null);
   }, [open]);
@@ -82,6 +81,7 @@ export function DeleteCategoryDialog({
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={deleteMutation.isPending}
+            className="cursor-pointer"
           >
             Cancelar
           </Button>
@@ -90,6 +90,7 @@ export function DeleteCategoryDialog({
             variant="destructive"
             onClick={handleConfirm}
             disabled={deleteMutation.isPending}
+            className="cursor-pointer"
           >
             {deleteMutation.isPending ? "Deletando..." : "Deletar"}
           </Button>

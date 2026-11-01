@@ -271,6 +271,7 @@ export function CreateMovementDialog({
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={mutation.isPending}
+            className="cursor-pointer"
           >
             Cancelar
           </Button>
@@ -278,6 +279,7 @@ export function CreateMovementDialog({
             type="submit"
             form="movement-form"
             disabled={mutation.isPending}
+            className="cursor-pointer"
           >
             {mutation.isPending ? "Salvando..." : "Confirmar"}
           </Button>

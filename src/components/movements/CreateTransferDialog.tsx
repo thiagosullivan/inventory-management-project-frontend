@@ -579,6 +579,7 @@ function CreateTransferForm({
           variant="outline"
           onClick={() => onOpenChange(false)}
           disabled={createMutation.isPending}
+          className="cursor-pointer"
         >
           Cancelar
         </Button>

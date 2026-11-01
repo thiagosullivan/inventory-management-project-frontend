@@ -41,7 +41,11 @@ export function ProductCreatedDialog({
         </DialogHeader>
 
         <DialogFooter className="flex-col sm:flex-row gap-2">
-          <Button variant="outline" onClick={() => onPrintLabel(product)}>
+          <Button
+            variant="outline"
+            onClick={() => onPrintLabel(product)}
+            className="cursor-pointer"
+          >
             Imprimir etiqueta
           </Button>
           <Button
@@ -50,6 +54,7 @@ export function ProductCreatedDialog({
               onOpenChange(false);
               navigate(`/products/${product.id}`);
             }}
+            className="cursor-pointer"
           >
             Ver produto
           </Button>
@@ -58,6 +63,7 @@ export function ProductCreatedDialog({
               onOpenChange(false);
               navigate("/products");
             }}
+            className="cursor-pointer"
           >
             Fechar
           </Button>

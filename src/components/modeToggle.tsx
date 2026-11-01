@@ -7,7 +7,7 @@ export function ModeToggle() {
 
   return (
     <Button
-      className="w-12 h-12 bg-muted-foreground/30 text-foreground"
+      className="w-12 h-12 bg-muted-foreground/30 text-foreground cursor-pointer"
       onClick={() => setTheme(theme === "light" ? "dark" : "light")}
     >
       {theme === "light" ? (

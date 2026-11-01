@@ -129,8 +129,6 @@ export function TableCategories({
                       </DropdownMenuContent>
                     </DropdownMenu>
                   ) : (
-                    // 🔹 Se não pode modificar, não mostra o menu
-                    // (evita dropdown com items desabilitados)
                     <span className="text-xs text-muted-foreground">—</span>
                   )}
                 </TableCell>

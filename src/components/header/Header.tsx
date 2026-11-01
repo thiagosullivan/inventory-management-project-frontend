@@ -29,7 +29,7 @@ export default function Header() {
             size={24}
           />
         </div> */}
-        <Button className="w-12 h-12 bg-muted-foreground/30 text-foreground">
+        <Button className="w-12 h-12 bg-muted-foreground/30 text-foreground cursor-pointer">
           <Bell />
         </Button>
         <NavUser />

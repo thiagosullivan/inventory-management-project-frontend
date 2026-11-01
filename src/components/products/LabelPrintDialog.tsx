@@ -71,10 +71,16 @@ export function LabelPrintDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={handleClose}>
+          <Button
+            variant="outline"
+            onClick={handleClose}
+            className="cursor-pointer"
+          >
             Fechar
           </Button>
-          <Button onClick={handlePrint}>Imprimir</Button>
+          <Button onClick={handlePrint} className="cursor-pointer">
+            Imprimir
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -461,6 +461,7 @@ export default function MovementsPage() {
             size="sm"
             disabled={page <= 1}
             onClick={() => goToPage(page - 1)}
+            className="cursor-pointer"
           >
             Anterior
           </Button>
@@ -470,6 +471,7 @@ export default function MovementsPage() {
             size="sm"
             disabled={page >= totalPages}
             onClick={() => goToPage(page + 1)}
+            className="cursor-pointer"
           >
             Próxima
           </Button>
