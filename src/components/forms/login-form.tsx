@@ -48,19 +48,22 @@ export default function LoginForm() {
         rememberMe: data.rememberMe,
       });
 
-      // 🔹 hidrata com /me (traz sector)
-      const me = await getMe();
+      const result = await getMe();
 
-      if (!me) {
+      if (result.status === "inactive") {
+        navigate("/account-suspended", { replace: true });
+        return;
+      }
+
+      if (result.status !== "ok") {
         throw new Error("Não foi possível carregar o perfil do usuário.");
       }
 
-      setUser(me);
+      setUser(result.user);
       toast.success("Login realizado!");
 
-      // 🔹 redireciona conforme acesso
-      const isWarehouse = me.sector?.isWarehouse === true;
-      const isManager = me.role === "MANAGER";
+      const isWarehouse = result.user.sector?.isWarehouse === true;
+      const isManager = result.user.role === "MANAGER";
       navigate(isManager || isWarehouse ? "/dashboard" : "/requests", {
         replace: true,
       });

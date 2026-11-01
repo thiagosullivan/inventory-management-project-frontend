@@ -24,12 +24,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let cancelled = false;
 
     getMe()
-      .then((me) => {
-        if (!cancelled) setUser(me);
-      })
-      .catch((err) => {
-        console.error("Falha ao carregar sessão:", err);
-        if (!cancelled) setUser(null);
+      .then((result) => {
+        if (cancelled) return;
+
+        if (result.status === "ok") {
+          setUser(result.user);
+          return;
+        }
+
+        if (result.status === "inactive") {
+          // 🔹 user desativado: stub pra o ProtectedRoute redirecionar
+          setUser({ isActive: false } as User);
+          return;
+        }
+
+        // unauthenticated
+        setUser(null);
       })
       .finally(() => {
         if (!cancelled) setLoading(false);

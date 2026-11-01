@@ -26,6 +26,7 @@ export const router = createBrowserRouter([
     children: [
       { path: "/", element: <HomePage /> },
       { path: "/forgot-password", element: <ForgotPasswordPage /> },
+      { path: "/account-suspended", element: <div>Conta suspensa</div> },
     ],
   },
 

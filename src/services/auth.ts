@@ -39,28 +39,32 @@ export async function signIn({
   return data as AuthSessionResponse;
 }
 
+export type MeResult =
+  | { status: "ok"; user: User }
+  | { status: "unauthenticated" }
+  | { status: "inactive" };
+
 /**
  * Busca o usuário logado com `sector` incluso.
  * Endpoint próprio do backend: GET /me
  */
-export async function getMe(): Promise<User | null> {
-  try {
-    const response = await fetch(`${API_URL}/me`, {
-      method: "GET",
-      credentials: "include",
-    });
+export async function getMe(): Promise<MeResult> {
+  const response = await fetch(`${API_URL}/me`, {
+    method: "GET",
+    credentials: "include",
+  });
 
-    if (response.status === 401) return null; // não logado
-    if (!response.ok) return null;
+  if (response.status === 401) return { status: "unauthenticated" };
+  if (response.status === 403) return { status: "inactive" };
+  if (!response.ok) return { status: "unauthenticated" };
 
-    const data = (await response.json().catch(() => null)) as {
-      user: User;
-    } | null;
+  const data = (await response.json().catch(() => null)) as {
+    user: User;
+  } | null;
 
-    return data?.user ?? null;
-  } catch {
-    return null;
-  }
+  return data?.user
+    ? { status: "ok", user: data.user }
+    : { status: "unauthenticated" };
 }
 
 /**
