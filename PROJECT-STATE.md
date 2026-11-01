@@ -1,12 +1,12 @@
-Inventory Management — Estado do Projeto
-Última atualização: 28/10/2026 (4ª atualização — backend da Fase 6 concluído)
-Última fase concluída: Fase 5 + 4.6 (frontend — /products/new + /products/:id + JsBarcode + modal + impressão) ✅
-Fase em andamento: Fase 6 (setores + pedidos + remessas) 🚧 — backend 100% concluído, frontend pendente
-Próxima etapa: frontend da Fase 6 — /movements + /requests
+Última atualização: 31/10/2026 (5ª atualização — Fase 6 + Fase 6.75 concluídas)
+Última fase concluída: Fase 6 (setores + pedidos + remessas — backend + frontend) ✅ + Fase 6.75 (upload de imagem de produto — UploadThing + compressão) ✅
+Fase em andamento: Fase 6.5 (histórico + relatórios R1 + R2) 🚧
+Próxima etapa: /history + /reports/requests + /reports/consumption
+
 Redesenho de 28/10/2026: o modelo multi-setores com StockBySector foi abandonado. O Almoxarifado é o ponto 0 único — só ele tem estoque (Product.quantity volta a ser coluna). Os outros setores só pedem (PurchaseRequest) e confirmam recebimento (Transfer).
 Módulo de pedidos (PurchaseRequest) entra na Fase 6.
 Relatórios R1 (auditoria de pedidos) e R2 (consumo mensal) ficam pra Fase 6.5, junto com /history.
-Upload de imagem de produto (UploadThing + compressão) fica pra Fase 6.75.
+Upload de imagem de produto (UploadThing + compressão) foi concluído na Fase 6.75. ✅
 
 1. Stack
    Backend
