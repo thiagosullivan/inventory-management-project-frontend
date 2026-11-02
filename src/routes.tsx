@@ -22,12 +22,13 @@ import AccountSuspended from "./pages/AccountSuspended.tsx";
 
 export const router = createBrowserRouter([
   // Public
+  { path: "/account-suspended", element: <AccountSuspended /> },
+
   {
     element: <PublicRoute />,
     children: [
       { path: "/", element: <HomePage /> },
       { path: "/forgot-password", element: <ForgotPasswordPage /> },
-      { path: "/account-suspended", element: <AccountSuspended /> },
     ],
   },
 
