@@ -142,7 +142,6 @@ export function TableProducts({ products }: TableProductsProps) {
         product={productToDelete}
         onDeleted={() => navigate("/products")}
       />
-      ;
     </div>
   );
 }
