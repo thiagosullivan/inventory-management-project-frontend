@@ -236,14 +236,16 @@ export default function HistoryPage() {
           {formatDateTime(m.createdAt)}
         </td>
         <td className="px-4 py-3">
-          <span
-            className={`inline-block rounded border px-2 py-0.5 text-xs font-semibold ${STATUS_CLASS[m.status]}`}
-          >
-            {STATUS_LABEL[m.status]}
-          </span>
-          <span className="ml-2 text-xs text-muted-foreground">
-            {TYPE_LABEL[m.type]}
-          </span>
+          <div className="flex flex-col items-center gap-y-1 w-fit">
+            <span
+              className={`inline-block w-fit rounded border px-2 py-0.5 text-xs font-semibold ${STATUS_CLASS[m.status]}`}
+            >
+              {STATUS_LABEL[m.status]}
+            </span>
+            <span className="text-sm text-muted-foreground">
+              {TYPE_LABEL[m.type]}
+            </span>
+          </div>
         </td>
         <td className="px-4 py-3">
           <div className="flex flex-col">
