@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import type { HistoryMovementRef } from "@/types/history.types";
+import { useNavigate } from "react-router-dom";
 
 const TYPE_LABEL: Record<HistoryMovementRef["type"], string> = {
   ENTRADA: "Entrada",
@@ -54,6 +55,7 @@ export function MovementDetailsDialog({
   open,
   onOpenChange,
 }: MovementDetailsDialogProps) {
+  const navigate = useNavigate();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[480px]">
@@ -113,6 +115,12 @@ export function MovementDetailsDialog({
         )}
 
         <DialogFooter>
+          <Button
+            onClick={() => navigate(`/products/${movement?.product.id}`)}
+            className="cursor-pointer"
+          >
+            Ver Produto
+          </Button>
           <Button
             type="button"
             variant="outline"
