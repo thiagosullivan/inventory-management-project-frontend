@@ -71,7 +71,7 @@ export function ProductHistoryTab({ productId }: ProductHistoryTabProps) {
                 {entry.oldQuantity} → {entry.newQuantity}
               </span>
 
-              <span className="text-sm text-muted-foreground truncate max-w-md">
+              <span className="text-sm text-muted-foreground max-w-md">
                 {reason}
               </span>
 
