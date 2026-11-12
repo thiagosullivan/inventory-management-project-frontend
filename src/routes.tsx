@@ -19,6 +19,7 @@ import ProductDetailPage from "./pages/ProductDetailPage.tsx";
 import MovementsPage from "./pages/MovementsPage.tsx";
 import RequestsPage from "./pages/RequestsPage.tsx";
 import AccountSuspended from "./pages/AccountSuspended.tsx";
+import HistoryPage from "./pages/HistoryPage.tsx";
 
 export const router = createBrowserRouter([
   // Public
@@ -42,6 +43,7 @@ export const router = createBrowserRouter([
         children: [
           { path: "/movements", element: <MovementsPage /> },
           { path: "/requests", element: <RequestsPage /> },
+          { path: "/history", element: <HistoryPage /> },
         ],
       },
 
