@@ -106,10 +106,7 @@ export default function MovementsPage() {
   );
   const [refusalReason, setRefusalReason] = useState("");
 
-  // =============================
   // URL helpers
-  // =============================
-
   function updateFilters(patch: Partial<typeof filters>) {
     const next = { ...filters, ...patch };
     // ao mudar filtro (não paginação), volta pra página 1
@@ -131,25 +128,19 @@ export default function MovementsPage() {
     });
   }
 
-  // =============================
   // Ações por linha
-  // =============================
-
   function canConfirmOrRefuse(t: TransferResponse): boolean {
     if (t.status !== "PENDENTE") return false;
     return isManager || t.toSectorId === user?.sectorId;
   }
 
-  // Cancelamento: mantido o padrão (isManager) —
   // se quiser Almoxarifado também, troque por (isManager || isWarehouseUser)
   function canCancel(t: TransferResponse): boolean {
     if (t.status !== "PENDENTE") return false;
     return isManager;
   }
 
-  // =============================
   // Handlers
-  // =============================
 
   function openRefuse(t: TransferResponse) {
     setRefuseTarget(t);
@@ -193,9 +184,7 @@ export default function MovementsPage() {
     );
   }
 
-  // =============================
   // Dados derivados
-  // =============================
 
   const data = transfersQuery.data;
   const rows = data?.transfers ?? [];
@@ -377,7 +366,9 @@ export default function MovementsPage() {
             {rows.map((t) => (
               <tr key={t.id} className="border-t">
                 <td className="px-4 py-3 font-mono text-xs uppercase">
-                  {t.purchaseRequestId?.slice(0, 8)}
+                  {t.purchaseRequestId
+                    ? t.purchaseRequestId?.slice(0, 8)
+                    : "Sem pedido vinculado"}
                 </td>
                 <td className="px-4 py-3">{t.toSector?.name ?? "—"}</td>
                 <td className="px-4 py-3">
