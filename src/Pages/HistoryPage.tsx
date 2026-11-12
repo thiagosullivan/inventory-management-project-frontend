@@ -1,6 +1,6 @@
 // src/pages/HistoryPage.tsx
 import { useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { ChevronDown, ChevronRight, Eye } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -114,6 +114,30 @@ function sectorsSummary(m: HistoryMovementRef): string {
   const from = m.fromSector?.name ?? "—";
   const to = m.toSector?.name ?? "—";
   return `${from} → ${to}`;
+}
+
+/**
+ * 🔹 Wrapper animado para o painel de expandir.
+ * Truque CSS: grid-template-rows 0fr → 1fr anima a altura sem precisar
+ * medir o conteúdo. O filho precisa ter `overflow-hidden` e `min-h-0`.
+ */
+function CollapsiblePanel({
+  open,
+  children,
+}: {
+  open: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      className={[
+        "grid transition-all duration-300 ease-out",
+        open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
+      ].join(" ")}
+    >
+      <div className="overflow-hidden min-h-0">{children}</div>
+    </div>
+  );
 }
 
 // =============================
@@ -249,7 +273,9 @@ export default function HistoryPage() {
         </td>
         <td className="px-4 py-3">
           <div className="flex flex-col">
-            <span className="font-medium">{m.product.name}</span>
+            <Link className="font-medium" to={`/products/${m.product.id}`}>
+              {m.product.name}
+            </Link>
             <span className="text-xs font-mono text-muted-foreground">
               {m.product.sku}
             </span>
@@ -368,7 +394,79 @@ export default function HistoryPage() {
             </div>
           </td>
         </tr>
-        {isOpen && movements.map((m) => renderMovementRow(m, 1))}
+        {/* {isOpen && movements.map((m) => renderMovementRow(m, 1))} */}
+
+        {/* 🔹 Sub-lista animada, com visual próprio (separado da tabela) */}
+        <tr className="border-t">
+          <td colSpan={7} className="p-0 bg-transparent">
+            <CollapsiblePanel open={isOpen}>
+              <div className="bg-muted/60 border-y border-dashed px-6 py-5">
+                <p className="text-xs font-semibold uppercase text-muted-foreground mb-2">
+                  Movimentações desta remessa ({movementsCount})
+                </p>
+
+                <ul className="flex flex-col gap-2">
+                  {movements.map((m) => (
+                    <li
+                      key={m.id}
+                      className="flex flex-wrap items-center justify-between gap-3 rounded-md border bg-background px-3 py-2 text-xs"
+                    >
+                      <div className="flex flex-col min-w-[160px]">
+                        <span className="font-medium">{m.product.name}</span>
+                        <span className="font-mono text-muted-foreground">
+                          {m.product.sku}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`inline-block rounded border px-2 py-0.5 text-[11px] font-semibold ${STATUS_CLASS[m.status]}`}
+                        >
+                          {STATUS_LABEL[m.status]}
+                        </span>
+                        <span className="text-muted-foreground">
+                          {TYPE_LABEL[m.type]}
+                        </span>
+                      </div>
+
+                      <div className="text-muted-foreground">
+                        {sectorsSummary(m)}
+                      </div>
+
+                      <div
+                        className={`font-mono ${m.quantity < 0 ? "text-red-600" : "text-emerald-700"}`}
+                      >
+                        {m.quantity}
+                      </div>
+
+                      <div className="flex flex-col text-right">
+                        <span>{m.createdBy.name ?? "—"}</span>
+                        <span className="text-muted-foreground">
+                          {formatCents(m.unitPriceInCents)}
+                        </span>
+                      </div>
+
+                      <div className="text-muted-foreground whitespace-nowrap">
+                        {formatDateTime(m.createdAt)}
+                      </div>
+
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setMovementDetail(m)}
+                        title="Ver detalhes"
+                        className="cursor-pointer hover:text-primary"
+                      >
+                        <Eye size={14} />
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </CollapsiblePanel>
+          </td>
+        </tr>
       </>
     );
   }
