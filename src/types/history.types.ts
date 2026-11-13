@@ -5,13 +5,19 @@
 // =============================
 
 export type MovementType = "ENTRADA" | "SAIDA" | "AJUSTE" | "TRANSFERENCIA";
-export type MovementStatus = "PENDENTE" | "CONCLUIDO" | "CANCELADO";
+export type MovementStatus =
+  | "PENDENTE"
+  | "CONCLUIDO"
+  | "CANCELADO"
+  | "RECUSADO";
+
 export type TransferStatus =
   | "PENDENTE"
   | "CONCLUIDO"
   | "CANCELADO"
   | "RECUSADO";
 
+export type HistoryStatusFilter = MovementStatus | TransferStatus;
 export type HistoryEventType = "MOVEMENT" | "TRANSFER";
 export type HistorySortOrder = "asc" | "desc";
 
@@ -21,7 +27,7 @@ export type HistorySortOrder = "asc" | "desc";
 
 export interface HistoryFilters {
   type?: MovementType;
-  status?: MovementStatus;
+  status?: HistoryStatusFilter;
   createdById?: string;
   productId?: string;
   dateFrom?: string; // ISO

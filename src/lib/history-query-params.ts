@@ -2,6 +2,7 @@
 import type {
   HistoryFilters,
   HistorySortOrder,
+  HistoryStatusFilter,
   MovementStatus,
   MovementType,
 } from "@/types/history.types";
@@ -26,6 +27,13 @@ export const MOVEMENT_STATUS_VALUES: MovementStatus[] = [
   "CANCELADO",
 ];
 
+export const HISTORY_STATUS_VALUES: HistoryStatusFilter[] = [
+  "PENDENTE",
+  "CONCLUIDO",
+  "CANCELADO",
+  "RECUSADO",
+];
+
 export function parseHistoryFilters(
   searchParams: URLSearchParams,
 ): HistoryFilters {
@@ -37,8 +45,8 @@ export function parseHistoryFilters(
   }
 
   const status = searchParams.get("status");
-  if (status && MOVEMENT_STATUS_VALUES.includes(status as MovementStatus)) {
-    filters.status = status as MovementStatus;
+  if (status && HISTORY_STATUS_VALUES.includes(status as HistoryStatusFilter)) {
+    filters.status = status as HistoryStatusFilter;
   }
 
   const createdById = searchParams.get("createdById");

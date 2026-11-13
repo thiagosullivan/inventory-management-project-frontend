@@ -20,7 +20,7 @@ import { TransferDetailsDialog } from "@/components/movements/TransferDetailsDia
 import { MovementDetailsDialog } from "@/components/history/MovementDetailsDialog";
 import {
   HISTORY_DEFAULTS,
-  MOVEMENT_STATUS_VALUES,
+  HISTORY_STATUS_VALUES,
   MOVEMENT_TYPE_VALUES,
   parseHistoryFilters,
   serializeHistoryFilters,
@@ -29,6 +29,7 @@ import type {
   HistoryEvent,
   HistoryFilters,
   HistoryMovementRef,
+  HistoryStatusFilter,
   MovementStatus,
   MovementType,
 } from "@/types/history.types";
@@ -48,12 +49,14 @@ const STATUS_LABEL: Record<MovementStatus, string> = {
   PENDENTE: "Pendente",
   CONCLUIDO: "Concluído",
   CANCELADO: "Cancelado",
+  RECUSADO: "Recusado",
 };
 
 const STATUS_CLASS: Record<MovementStatus, string> = {
   PENDENTE: "bg-amber-100 text-amber-900 border-amber-300",
   CONCLUIDO: "bg-emerald-100 text-emerald-900 border-emerald-300",
   CANCELADO: "bg-zinc-200 text-zinc-800 border-zinc-300",
+  RECUSADO: "bg-red-100 text-red-900 border-red-300",
 };
 
 const TRANSFER_STATUS_LABEL: Record<
@@ -233,6 +236,19 @@ export default function HistoryPage() {
     }
   }
 
+  const hasActiveFilters =
+    filters.type !== undefined ||
+    filters.status !== undefined ||
+    filters.dateFrom !== undefined ||
+    filters.dateTo !== undefined ||
+    filters.search !== undefined ||
+    filters.hasTransfer !== undefined;
+
+  function clearFilters() {
+    setSearchInput("");
+    setSearchParams(new URLSearchParams(), { replace: true });
+  }
+
   // =============================
   // Dados derivados
   // =============================
@@ -325,12 +341,14 @@ export default function HistoryPage() {
             {formatDateTime(transfer.createdAt)}
           </td>
           <td className="px-4 py-3">
-            <span
-              className={`inline-block rounded border px-2 py-0.5 text-xs font-semibold ${TRANSFER_STATUS_CLASS[transfer.status]}`}
-            >
-              {TRANSFER_STATUS_LABEL[transfer.status]}
-            </span>
-            <span className="ml-2 text-xs text-muted-foreground">Remessa</span>
+            <div className="flex flex-col items-center gap-y-1 w-fit">
+              <span
+                className={`inline-block rounded border px-2 py-0.5 text-xs font-semibold ${TRANSFER_STATUS_CLASS[transfer.status]}`}
+              >
+                {TRANSFER_STATUS_LABEL[transfer.status]}
+              </span>
+              <span className="text-xs text-muted-foreground">Remessa</span>
+            </div>
           </td>
           <td className="px-4 py-3">
             <div className="flex flex-col">
@@ -418,7 +436,7 @@ export default function HistoryPage() {
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-col items-center gap-y-1 w-fit">
                         <span
                           className={`inline-block rounded border px-2 py-0.5 text-[11px] font-semibold ${STATUS_CLASS[m.status]}`}
                         >
@@ -487,8 +505,8 @@ export default function HistoryPage() {
       </header>
 
       {/* Filtros */}
-      <div className="flex flex-wrap items-end gap-4">
-        <div className="flex flex-col gap-1 min-w-[200px] flex-1">
+      <div className="flex flex-wrap items-end gap-3">
+        <div className="flex flex-col gap-1 max-w-[260px] min-w-[160px] flex-1">
           <Label htmlFor="filter-search">Buscar</Label>
           <Input
             id="filter-search"
@@ -499,7 +517,7 @@ export default function HistoryPage() {
           />
         </div>
 
-        <div className="flex flex-col gap-1 min-w-[160px]">
+        <div className="flex flex-col gap-1 min-w-[110px]">
           <Label htmlFor="filter-event">Eventos</Label>
           <Select
             value={eventMode}
@@ -521,7 +539,7 @@ export default function HistoryPage() {
           </Select>
         </div>
 
-        <div className="flex flex-col gap-1 min-w-[140px]">
+        <div className="flex flex-col gap-1 min-w-[110px]">
           <Label htmlFor="filter-type">Tipo</Label>
           <Select
             value={filters.type ?? ALL_VALUE}
@@ -555,27 +573,32 @@ export default function HistoryPage() {
             onValueChange={(v) => {
               if (v === null) return;
               updateFilters({
-                status: v === ALL_VALUE ? undefined : (v as MovementStatus),
+                status:
+                  v === ALL_VALUE ? undefined : (v as HistoryStatusFilter),
               });
             }}
           >
             <SelectTrigger id="filter-status">
               <SelectValue placeholder="Todos">
-                {filters.status ? STATUS_LABEL[filters.status] : "Todos"}
+                {filters.status
+                  ? filters.status === "RECUSADO"
+                    ? "Recusado"
+                    : STATUS_LABEL[filters.status]
+                  : "Todos"}
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value={ALL_VALUE}>Todos</SelectItem>
-              {MOVEMENT_STATUS_VALUES.map((s) => (
+              {HISTORY_STATUS_VALUES.map((s) => (
                 <SelectItem key={s} value={s}>
-                  {STATUS_LABEL[s]}
+                  {s === "RECUSADO" ? "Recusado" : STATUS_LABEL[s]}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
 
-        <div className="flex flex-col gap-1 min-w-[160px]">
+        <div className="flex flex-col gap-1 min-w-[140px]">
           <Label htmlFor="filter-dateFrom">De</Label>
           <Input
             id="filter-dateFrom"
@@ -590,7 +613,7 @@ export default function HistoryPage() {
           />
         </div>
 
-        <div className="flex flex-col gap-1 min-w-[160px]">
+        <div className="flex flex-col gap-1 min-w-[140px]">
           <Label htmlFor="filter-dateTo">Até</Label>
           <Input
             id="filter-dateTo"
@@ -603,6 +626,21 @@ export default function HistoryPage() {
               });
             }}
           />
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <span className="text-transparent text-sm select-none" aria-hidden>
+            &nbsp;
+          </span>
+          <Button
+            type="button"
+            onClick={clearFilters}
+            disabled={!hasActiveFilters}
+            className="cursor-pointer"
+            title="Limpar todos os filtros"
+          >
+            Limpar filtros
+          </Button>
         </div>
       </div>
 
