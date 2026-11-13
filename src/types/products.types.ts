@@ -102,6 +102,12 @@ export interface StockHistoryMovementRef {
   quantity: number;
   unitPriceInCents: number | null;
   supplier: string | null;
+  status: MovementStatus;
+  reason: string | null;
+  transferId: string | null;
+  createdAt: string;
+  fromSector: { id: string; name: string; isWarehouse: boolean } | null;
+  toSector: { id: string; name: string; isWarehouse: boolean } | null;
 }
 
 export interface StockHistoryEntry {
