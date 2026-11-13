@@ -1,3 +1,4 @@
+// src/components/products/ProductDetailHeader.tsx
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, MoreHorizontal, Package, Printer } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +18,7 @@ interface ProductDetailHeaderProps {
   canEdit: boolean;
   onMovement: () => void;
   onPrint: () => void;
+  onPrintSheet: () => void; // 🔹 novo
   onEdit: () => void;
   onDelete: () => void;
 }
@@ -26,6 +28,7 @@ export function ProductDetailHeader({
   canEdit,
   onMovement,
   onPrint,
+  onPrintSheet,
   onEdit,
   onDelete,
 }: ProductDetailHeaderProps) {
@@ -98,6 +101,15 @@ export function ProductDetailHeader({
           >
             <Printer className="h-4 w-4 mr-1" />
             Etiqueta
+          </Button>
+          <Button
+            variant="outline"
+            onClick={onPrintSheet}
+            className="cursor-pointer"
+          >
+            {/* <FileText className="h-4 w-4 mr-1" /> */}
+            <Printer className="h-4 w-4 mr-1" />
+            Ficha
           </Button>
           <Button onClick={onMovement} className="cursor-pointer">
             Movimentar

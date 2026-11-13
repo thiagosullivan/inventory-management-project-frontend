@@ -152,4 +152,65 @@
     padding: 0 !important;
     height: 4mm;
   }
+
+  /* ============================================================
+     Ficha do produto
+     ============================================================ */
+
+  body.printing-list .print-product {
+    display: flex;
+    flex-direction: column;
+    gap: 6mm;
+  }
+
+  body.printing-list .print-section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  body.printing-list .print-section__title {
+    font-size: 12pt;
+    font-weight: 700;
+    margin: 0 0 3mm 0;
+    padding-bottom: 1.5mm;
+    border-bottom: 1pt solid #000;
+  }
+
+  body.printing-list .print-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3mm 6mm;
+    margin-bottom: 3mm;
+  }
+
+  body.printing-list .print-field {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  body.printing-list .print-field--full {
+    grid-column: 1 / -1;
+    margin-top: 3mm;
+  }
+
+  body.printing-list .print-field__label {
+    font-size: 7.5pt;
+    text-transform: uppercase;
+    letter-spacing: 0.3pt;
+    color: #555;
+    margin-bottom: 0.5mm;
+  }
+
+  body.printing-list .print-field__value {
+    font-size: 9pt;
+    color: #000;
+    white-space: pre-wrap;
+  }
+
+  body.printing-list .print-empty {
+    font-size: 8.5pt;
+    color: #777;
+    font-style: italic;
+    margin: 0;
+  }
 }
