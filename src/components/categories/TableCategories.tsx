@@ -108,7 +108,7 @@ export function TableCategories({
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="size-8"
+                            className="size-8 cursor-pointer"
                           >
                             <MoreHorizontalIcon />
                             <span className="sr-only">Abrir menu</span>
@@ -116,13 +116,17 @@ export function TableCategories({
                         }
                       />
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => onEdit?.(category)}>
+                        <DropdownMenuItem
+                          onClick={() => onEdit?.(category)}
+                          className="cursor-pointer"
+                        >
                           Editar
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                           variant="destructive"
                           onClick={() => onDelete?.(category)}
+                          className="cursor-pointer"
                         >
                           Deletar
                         </DropdownMenuItem>

@@ -155,9 +155,15 @@ export default function ProductDetailPage() {
 
       <Tabs defaultValue="details" className="w-full">
         <TabsList>
-          <TabsTrigger value="details">Detalhes</TabsTrigger>
-          <TabsTrigger value="movements">Movimentações</TabsTrigger>
-          <TabsTrigger value="history">Histórico</TabsTrigger>
+          <TabsTrigger value="details" className="cursor-pointer">
+            Detalhes
+          </TabsTrigger>
+          <TabsTrigger value="movements" className="cursor-pointer">
+            Movimentações
+          </TabsTrigger>
+          <TabsTrigger value="history" className="cursor-pointer">
+            Histórico
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="details" className="mt-4">

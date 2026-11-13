@@ -50,7 +50,7 @@ export function ProductMovementsTab({
   return (
     <div className="space-y-3">
       <div className="flex justify-end">
-        <Button size="sm" onClick={onNewMovement}>
+        <Button size="sm" onClick={onNewMovement} className="cursor-pointer">
           <Plus className="h-4 w-4 mr-1" />
           Nova movimentação
         </Button>
