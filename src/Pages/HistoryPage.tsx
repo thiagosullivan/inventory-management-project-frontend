@@ -384,12 +384,8 @@ export default function HistoryPage() {
 
   function handlePrintClick() {
     if (total === 0) return;
-    // Pula dialog se cabe em uma página
-    if (total <= limit) {
-      setIncludeTransferMovements(false);
-      startPrintCurrent();
-      return;
-    }
+    // 🔹 Sempre abre o dialog — o checkbox "incluir movimentações" é
+    //    escolha do usuário, mesmo quando cabe em uma página.
     setPrintDialogOpen(true);
   }
 
