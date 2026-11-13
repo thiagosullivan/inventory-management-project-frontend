@@ -1,6 +1,6 @@
 // src/components/movements/TransferDetailsDialog.tsx
 import { useState } from "react";
-import { Ban, Check, ImageOff, X } from "lucide-react";
+import { Ban, Check, Copy, ImageOff, X } from "lucide-react";
 
 import {
   Dialog,
@@ -23,6 +23,7 @@ import {
 } from "@/hooks/useTransferMutations";
 import { formatDateTime } from "@/lib/format-date";
 import type { TransferStatus } from "@/types/transfers.types";
+import { toast } from "sonner";
 
 const STATUS_LABEL: Record<TransferStatus, string> = {
   PENDENTE: "Pendente",
@@ -37,6 +38,36 @@ const STATUS_CLASS: Record<TransferStatus, string> = {
   CANCELADO: "bg-zinc-200 text-zinc-800 border-zinc-300",
   RECUSADO: "bg-red-100 text-red-900 border-red-300",
 };
+
+// =============================
+// CopyId — mostra o ID completo + botão copiar
+// =============================
+
+function CopyId({ label, value }: { label?: string; value: string }) {
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(value);
+      toast.success("ID copiado");
+    } catch {
+      toast.error("Não foi possível copiar o ID");
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-x-1">
+      {label && <strong>{label}:</strong>}
+      <span className="font-mono uppercase text-xs break-all">{value}</span>
+      <button
+        type="button"
+        onClick={handleCopy}
+        title="Copiar ID"
+        className="inline-flex items-center justify-center h-5 w-5 rounded hover:bg-muted cursor-pointer ml-1"
+      >
+        <Copy size={12} />
+      </button>
+    </div>
+  );
+}
 
 const MAX_NOTE = 500;
 
@@ -232,7 +263,7 @@ function TransferDetailsBody({
         <DialogTitle className="text-base font-bold text-primary">
           Detalhes da remessa
         </DialogTitle>
-        <DialogDescription>
+        {/* <DialogDescription>
           <div className="flex items-center gap-x-2">
             <div className="flex items-center gap-x-1">
               <strong>ID:</strong>
@@ -247,6 +278,14 @@ function TransferDetailsBody({
                   {transfer.purchaseRequestId.slice(0, 8)}
                 </span>
               </div>
+            )}
+          </div>
+        </DialogDescription> */}
+        <DialogDescription>
+          <div className="flex flex-col gap-y-1">
+            <CopyId label="ID" value={transfer.id} />
+            {transfer.purchaseRequestId && (
+              <CopyId label="Pedido" value={transfer.purchaseRequestId} />
             )}
           </div>
         </DialogDescription>
