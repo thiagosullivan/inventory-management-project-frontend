@@ -1,29 +1,17 @@
+// src/components/products/ProductHistoryTab.tsx
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/format-date";
 import { useProductHistory } from "@/hooks/useProductHistory";
-import type { MovementType } from "@/types/products.types";
+import {
+  getHistoryEventKind,
+  HISTORY_EVENT_BADGE,
+  HISTORY_EVENT_LABEL,
+} from "@/lib/stock-history-badge";
 
 interface ProductHistoryTabProps {
   productId: string;
 }
-
-const TYPE_LABEL: Record<MovementType, string> = {
-  ENTRADA: "Entrada",
-  SAIDA: "Saída",
-  AJUSTE: "Ajuste",
-  TRANSFERENCIA: "Transferência",
-};
-
-const TYPE_BADGE: Record<
-  MovementType,
-  "default" | "destructive" | "outline" | "secondary"
-> = {
-  ENTRADA: "default",
-  SAIDA: "destructive",
-  AJUSTE: "secondary",
-  TRANSFERENCIA: "outline",
-};
 
 export function ProductHistoryTab({ productId }: ProductHistoryTabProps) {
   const { data, isLoading, isError } = useProductHistory(productId);
@@ -53,19 +41,17 @@ export function ProductHistoryTab({ productId }: ProductHistoryTabProps) {
   return (
     <div className="space-y-2">
       {data.history.map((entry) => {
-        // 🔹 reason do StockHistory tem prioridade; fallback pro tipo do Movement
-        const reason =
-          entry.reason?.trim() ||
-          (entry.movement ? TYPE_LABEL[entry.movement.type] : "—");
+        const kind = getHistoryEventKind(entry);
+        const badgeVariant = HISTORY_EVENT_BADGE[kind];
+        const badgeLabel = HISTORY_EVENT_LABEL[kind];
+
+        // reason do StockHistory tem prioridade; fallback pro label do tipo
+        const reason = entry.reason?.trim() || badgeLabel;
 
         return (
           <Card key={entry.id}>
             <CardContent className="flex flex-wrap items-center gap-3 py-3">
-              {entry.movement && (
-                <Badge variant={TYPE_BADGE[entry.movement.type]}>
-                  {TYPE_LABEL[entry.movement.type]}
-                </Badge>
-              )}
+              <Badge variant={badgeVariant}>{badgeLabel}</Badge>
 
               <span className="text-sm font-mono">
                 {entry.oldQuantity} → {entry.newQuantity}
