@@ -22,6 +22,7 @@ const STATUS_LABEL: Record<HistoryMovementRef["status"], string> = {
   PENDENTE: "Pendente",
   CONCLUIDO: "Concluído",
   CANCELADO: "Cancelado",
+  RECUSADO: "Recusado",
 };
 
 function formatDateTime(value: string): string {

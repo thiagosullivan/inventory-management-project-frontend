@@ -1,7 +1,9 @@
 // src/pages/HistoryPage.tsx
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { Link, useSearchParams } from "react-router-dom";
-import { ChevronDown, ChevronRight, Eye } from "lucide-react";
+import { ChevronDown, ChevronRight, Eye, Printer } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +18,7 @@ import {
 
 import { useDebounce } from "@/hooks/useDebounce";
 import { useHistory } from "@/hooks/useHistory";
+import { fetchHistory } from "@/services/history";
 import { TransferDetailsDialog } from "@/components/movements/TransferDetailsDialog";
 import { MovementDetailsDialog } from "@/components/history/MovementDetailsDialog";
 import {
@@ -33,6 +36,13 @@ import type {
   MovementStatus,
   MovementType,
 } from "@/types/history.types";
+
+import { PrintDialog, type PrintScope } from "@/components/print/PrintDialog";
+import { PrintLayout } from "@/components/print/PrintLayout";
+import { PrintPortal } from "@/components/print/PrintPortal";
+import { HistoryPrintView } from "@/components/history/HistoryPrintView";
+import { PRINT_MAX_EVENTS } from "@/lib/print/print-utils";
+import { enterPrintMode, exitPrintMode } from "@/lib/print/print-mode";
 
 // =============================
 // Labels
@@ -144,6 +154,16 @@ function CollapsiblePanel({
 }
 
 // =============================
+// Payload de impressão
+// =============================
+
+interface PrintPayload {
+  events: HistoryEvent[];
+  includeTransferMovements: boolean;
+  generatedAt: Date;
+}
+
+// =============================
 // Página
 // =============================
 
@@ -169,10 +189,6 @@ export default function HistoryPage() {
 
   // =============================
   // Modo de evento (Todos / Movimentações / Transferências)
-  // Derivado de hasTransfer:
-  //   undefined → all (includeTransfers=true, sem hasTransfer)
-  //   false     → movements (includeTransfers=false, hasTransfer=false)
-  //   true      → transfers (includeTransfers=true, hasTransfer=true)
   // =============================
 
   const eventMode: EventMode =
@@ -199,12 +215,49 @@ export default function HistoryPage() {
   const [transferDetailId, setTransferDetailId] = useState<string | null>(null);
 
   // =============================
+  // Impressão
+  // =============================
+
+  const [printDialogOpen, setPrintDialogOpen] = useState(false);
+  const [includeTransferMovements, setIncludeTransferMovements] =
+    useState(false);
+  const [printPayload, setPrintPayload] = useState<PrintPayload | null>(null);
+
+  // Ref auxiliar (caso precise consultar o payload fora de efeitos)
+  const printPayloadRef = useRef<PrintPayload | null>(null);
+  useEffect(() => {
+    printPayloadRef.current = printPayload;
+  }, [printPayload]);
+
+  // Dispara window.print() DEPOIS que o payload montou
+  useEffect(() => {
+    if (!printPayload) return;
+
+    enterPrintMode("list");
+
+    const raf = requestAnimationFrame(() => {
+      window.print();
+    });
+
+    return () => cancelAnimationFrame(raf);
+  }, [printPayload]);
+
+  // Limpa no afterprint
+  useEffect(() => {
+    function onAfterPrint() {
+      exitPrintMode();
+      setPrintPayload(null);
+    }
+    window.addEventListener("afterprint", onAfterPrint);
+    return () => window.removeEventListener("afterprint", onAfterPrint);
+  }, []);
+
+  // =============================
   // URL helpers
   // =============================
 
   function updateFilters(patch: Partial<HistoryFilters>) {
     const next: HistoryFilters = { ...filters, ...patch };
-    // ao mudar filtro (exceto page/limit), volta pra página 1
     const isFilterChange =
       patch.type !== undefined ||
       patch.status !== undefined ||
@@ -263,7 +316,99 @@ export default function HistoryPage() {
   const toRow = Math.min(page * limit, total);
 
   // =============================
-  // Render helpers
+  // Handlers de impressão
+  // =============================
+
+  function buildMetaLines(): string[] {
+    const parts: string[] = [];
+    if (filters.type) parts.push(`Tipo=${TYPE_LABEL[filters.type]}`);
+    if (filters.status) parts.push(`Status=${filters.status}`);
+    if (filters.dateFrom)
+      parts.push(
+        `De=${filters.dateFrom.slice(0, 10).split("-").reverse().join("/")}`,
+      );
+    if (filters.dateTo)
+      parts.push(
+        `Até=${filters.dateTo.slice(0, 10).split("-").reverse().join("/")}`,
+      );
+    if (filters.search) parts.push(`Busca="${filters.search}"`);
+    if (eventMode !== "all")
+      parts.push(`Eventos=${EVENT_MODE_LABEL[eventMode]}`);
+    return parts.length > 0 ? [`Filtros: ${parts.join(" · ")}`] : [];
+  }
+
+  function startPrintCurrent() {
+    setPrintPayload({
+      events,
+      includeTransferMovements,
+      generatedAt: new Date(),
+    });
+  }
+
+  async function fetchAllForPrint(): Promise<HistoryEvent[]> {
+    const collected: HistoryEvent[] = [];
+    let p = 1;
+    const fetchLimit = 100;
+
+    while (true) {
+      const res = await fetchHistory({
+        ...filters,
+        sortOrder: filters.sortOrder ?? HISTORY_DEFAULTS.sortOrder,
+        includeTransfers,
+        page: p,
+        limit: fetchLimit,
+      });
+      collected.push(...res.events);
+      if (p >= res.totalPages) break;
+      if (collected.length >= PRINT_MAX_EVENTS) break;
+      p++;
+    }
+
+    return collected.slice(0, PRINT_MAX_EVENTS);
+  }
+
+  function startPrintAll() {
+    void toast.promise(fetchAllForPrint(), {
+      loading: "Carregando eventos para impressão...",
+      success: (events) => {
+        setPrintPayload({
+          events,
+          includeTransferMovements,
+          generatedAt: new Date(),
+        });
+        return `${events.length} evento(s) prontos para impressão.`;
+      },
+      error: "Erro ao carregar eventos para impressão.",
+    });
+  }
+
+  function handlePrintClick() {
+    if (total === 0) return;
+    // Pula dialog se cabe em uma página
+    if (total <= limit) {
+      setIncludeTransferMovements(false);
+      startPrintCurrent();
+      return;
+    }
+    setPrintDialogOpen(true);
+  }
+
+  function handlePrintConfirm(scope: PrintScope) {
+    flushSync(() => {
+      setPrintDialogOpen(false);
+    });
+
+    setTimeout(() => {
+      if (scope === "current") {
+        startPrintCurrent();
+      } else {
+        startPrintAll();
+      }
+    }, 150);
+  }
+
+  // =============================
+  // Render helpers (tela)
   // =============================
 
   function renderMovementRow(m: HistoryMovementRef, depth = 0) {
@@ -412,9 +557,8 @@ export default function HistoryPage() {
             </div>
           </td>
         </tr>
-        {/* {isOpen && movements.map((m) => renderMovementRow(m, 1))} */}
 
-        {/* 🔹 Sub-lista animada, com visual próprio (separado da tabela) */}
+        {/* Sub-lista animada */}
         <tr className="border-t">
           <td colSpan={7} className="p-0 bg-transparent">
             <CollapsiblePanel open={isOpen}>
@@ -502,6 +646,16 @@ export default function HistoryPage() {
             Linha do tempo unificada de movimentações e remessas.
           </p>
         </div>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handlePrintClick}
+          disabled={total === 0}
+          className="cursor-pointer"
+        >
+          <Printer size={16} className="mr-2" />
+          Imprimir
+        </Button>
       </header>
 
       {/* Filtros */}
@@ -745,6 +899,42 @@ export default function HistoryPage() {
           if (!open) setTransferDetailId(null);
         }}
       />
+
+      {/* Dialog de impressão — key força reset do state ao abrir */}
+      <PrintDialog
+        key={printDialogOpen ? "open" : "closed"}
+        open={printDialogOpen}
+        onOpenChange={setPrintDialogOpen}
+        title="Imprimir histórico"
+        totalCount={total}
+        pageSize={limit}
+        currentLabel={`${Math.min(limit, total)} evento(s) desta página`}
+        allLabel={`${total} evento(s) (todos os filtros)`}
+        extraCheckbox={{
+          label: "Incluir movimentações das remessas",
+          checked: includeTransferMovements,
+          onCheckedChange: setIncludeTransferMovements,
+        }}
+        onConfirm={handlePrintConfirm}
+      />
+
+      {/* View de impressão — renderizada no #print-portal-root via portal */}
+      {printPayload && (
+        <PrintPortal>
+          <PrintLayout
+            title="Histórico"
+            metaLines={buildMetaLines()}
+            totalCount={printPayload.events.length}
+            generatedAt={printPayload.generatedAt}
+            itemLabel="evento"
+          >
+            <HistoryPrintView
+              events={printPayload.events}
+              includeTransferMovements={printPayload.includeTransferMovements}
+            />
+          </PrintLayout>
+        </PrintPortal>
+      )}
     </section>
   );
 }

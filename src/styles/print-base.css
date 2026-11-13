@@ -1,0 +1,55 @@
+/* ============================================================
+   Base de impressão — unificado.
+   Modos por classe no <body>: printing-label | printing-list
+   ============================================================ */
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 15mm 12mm;
+  }
+
+  /* ---- Modo etiqueta: esconde só a casca da app ---- */
+  body.printing-label aside,
+  body.printing-label header,
+  body.printing-label nav,
+  body.printing-label .no-print {
+    display: none !important;
+  }
+
+  /* ---- Modo listagem: esconde a app INTEIRA, mostra só o portal ---- */
+  body.printing-list #root {
+    display: none !important;
+  }
+  body.printing-list #print-portal-root {
+    display: block !important;
+  }
+  body.printing-list aside,
+  body.printing-list header,
+  body.printing-list nav,
+  body.printing-list .no-print {
+    display: none !important;
+  }
+
+  /* Esconde toaster do sonner em ambos os modos */
+  body.printing-list [data-sonner-toaster],
+  body.printing-label [data-sonner-toaster] {
+    display: none !important;
+  }
+
+  body.printing-label,
+  body.printing-list {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  body.printing-label .print-only,
+  body.printing-list .print-only {
+    display: block !important;
+  }
+}
+
+/* Fora do @media print: portal invisível na tela */
+.print-only {
+  display: none;
+}

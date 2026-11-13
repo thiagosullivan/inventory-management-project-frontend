@@ -1,5 +1,6 @@
-import "@/styles/print.css";
-import { useRef } from "react";
+// src/components/products/LabelPrintDialog.tsx
+import "@/styles/label-print.css";
+import { useEffect, useRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Barcode } from "./Barcode";
 import type { Product } from "@/types/products.types";
 import { useNavigate } from "react-router-dom";
+import { enterPrintMode, exitPrintMode } from "@/lib/print/print-mode";
 
 interface LabelPrintDialogProps {
   open: boolean;
@@ -29,10 +31,23 @@ export function LabelPrintDialog({
   const labelRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
+  // afterprint: limpa modo
+  useEffect(() => {
+    function onAfterPrint() {
+      exitPrintMode();
+    }
+    window.addEventListener("afterprint", onAfterPrint);
+    return () => window.removeEventListener("afterprint", onAfterPrint);
+  }, []);
+
   if (!product) return null;
 
   function handlePrint() {
-    window.print();
+    enterPrintMode("label");
+    // 1 frame para o body class aplicar antes de print
+    requestAnimationFrame(() => {
+      window.print();
+    });
   }
 
   function handleClose() {
