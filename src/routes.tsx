@@ -43,7 +43,6 @@ export const router = createBrowserRouter([
         children: [
           { path: "/movements", element: <MovementsPage /> },
           { path: "/requests", element: <RequestsPage /> },
-          { path: "/history", element: <HistoryPage /> },
         ],
       },
 
@@ -60,6 +59,7 @@ export const router = createBrowserRouter([
               { path: "/products/new", element: <ProductNewPage /> },
               { path: "/products/:id", element: <ProductDetailPage /> },
               { path: "/stock", element: <StockPage /> },
+              { path: "/history", element: <HistoryPage /> },
             ],
           },
         ],
