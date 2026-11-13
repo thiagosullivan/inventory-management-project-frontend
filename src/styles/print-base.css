@@ -47,6 +47,10 @@
   body.printing-list .print-only {
     display: block !important;
   }
+
+  body.printing-label #root {
+    display: none !important;
+  }
 }
 
 /* Fora do @media print: portal invisível na tela */

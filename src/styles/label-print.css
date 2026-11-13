@@ -1,26 +1,55 @@
 /* ============================================================
    Impressão de etiqueta — 60mm × 40mm.
-   Escopo: body.printing-label. Posicionamento: topo-esquerdo
-   no fluxo natural (sem absolute). Tamanho mantido.
+   Escopo: body.printing-label.
+   - Esconde TUDO (dialog incluído) com !important.
+   - Mostra apenas .print-label (do portal) e seus descendentes.
+   - Etiqueta no fluxo normal do #print-portal-root (topo-esquerdo).
    ============================================================ */
 
 @media print {
+  /* 1) Esconde tudo */
+  body.printing-label * {
+    visibility: hidden !important;
+  }
+
+  /* 2) Remove o dialog do Base UI do layout de impressão */
+  body.printing-label [data-slot="dialog-content"],
+  body.printing-label [data-slot="dialog-overlay"],
+  body.printing-label [data-slot="dialog-portal"] {
+    display: none !important;
+  }
+
+  /* 3) Garante que o portal de impressão apareça */
+  body.printing-label #print-portal-root {
+    display: block !important;
+    visibility: visible !important;
+  }
+  body.printing-label #print-portal-root * {
+    visibility: visible !important;
+  }
+
+  /* 4) Mostra a etiqueta e descendentes */
+  body.printing-label .print-label,
+  body.printing-label .print-label * {
+    visibility: visible !important;
+  }
+
+  /* 5) Etiqueta: topo-esquerdo, 60×40mm */
   body.printing-label .print-label {
     width: 60mm;
     height: 40mm;
     padding: 3mm;
     box-sizing: border-box;
-    display: flex;
+    display: flex !important;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 1mm;
-    background: #fff;
-    color: #000;
-    border: none;
+    background: #fff !important;
+    color: #000 !important;
+    border: none !important;
     box-shadow: none !important;
     page-break-inside: avoid;
-    /* sem position: absolute — fica no fluxo, topo-esquerdo */
   }
 
   body.printing-label .print-label__name {

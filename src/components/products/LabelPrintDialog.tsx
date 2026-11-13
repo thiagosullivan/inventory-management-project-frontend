@@ -1,6 +1,9 @@
 // src/components/products/LabelPrintDialog.tsx
 import "@/styles/label-print.css";
-import { useEffect, useRef } from "react";
+
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import {
   Dialog,
   DialogContent,
@@ -12,7 +15,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Barcode } from "./Barcode";
 import type { Product } from "@/types/products.types";
-import { useNavigate } from "react-router-dom";
+
+import { PrintPortal } from "@/components/print/PrintPortal";
 import { enterPrintMode, exitPrintMode } from "@/lib/print/print-mode";
 
 interface LabelPrintDialogProps {
@@ -28,13 +32,13 @@ export function LabelPrintDialog({
   product,
   onDone,
 }: LabelPrintDialogProps) {
-  const labelRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const [printing, setPrinting] = useState(false);
 
-  // afterprint: limpa modo
   useEffect(() => {
     function onAfterPrint() {
       exitPrintMode();
+      setPrinting(false);
     }
     window.addEventListener("afterprint", onAfterPrint);
     return () => window.removeEventListener("afterprint", onAfterPrint);
@@ -43,32 +47,68 @@ export function LabelPrintDialog({
   if (!product) return null;
 
   function handlePrint() {
+    setPrinting(true);
     enterPrintMode("label");
-    // 1 frame para o body class aplicar antes de print
     requestAnimationFrame(() => {
-      window.print();
+      requestAnimationFrame(() => {
+        window.print();
+      });
     });
   }
 
   function handleClose() {
     onOpenChange(false);
     onDone?.();
-
     navigate("/products");
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[520px]">
-        <DialogHeader>
-          <DialogTitle>Imprimir etiqueta</DialogTitle>
-          <DialogDescription>
-            Etiqueta 60 × 40 mm. Confira a pré-visualização antes de imprimir.
-          </DialogDescription>
-        </DialogHeader>
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-[520px]">
+          <DialogHeader>
+            <DialogTitle>Imprimir etiqueta</DialogTitle>
+            <DialogDescription>
+              Etiqueta 60 × 40 mm. Confira a pré-visualização antes de imprimir.
+            </DialogDescription>
+          </DialogHeader>
 
-        <div className="rounded-md border p-4 flex justify-center bg-white">
-          <div ref={labelRef} className="print-label shadow-sm">
+          <div className="rounded-md border p-4 flex justify-center bg-white">
+            <div className="print-label shadow-sm">
+              <p className="print-label__name">{product.name}</p>
+              <p className="print-label__meta">
+                {product.sku}
+                {product.location ? ` · ${product.location}` : ""}
+              </p>
+              <div className="print-label__barcode">
+                <Barcode
+                  value={product.barcode}
+                  height={40}
+                  width={1.5}
+                  displayValue
+                />
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={handleClose}
+              className="cursor-pointer"
+            >
+              Fechar
+            </Button>
+            <Button onClick={handlePrint} className="cursor-pointer">
+              Imprimir
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {printing && (
+        <PrintPortal>
+          <div className="print-label">
             <p className="print-label__name">{product.name}</p>
             <p className="print-label__meta">
               {product.sku}
@@ -83,21 +123,8 @@ export function LabelPrintDialog({
               />
             </div>
           </div>
-        </div>
-
-        <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={handleClose}
-            className="cursor-pointer"
-          >
-            Fechar
-          </Button>
-          <Button onClick={handlePrint} className="cursor-pointer">
-            Imprimir
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </PrintPortal>
+      )}
+    </>
   );
 }
