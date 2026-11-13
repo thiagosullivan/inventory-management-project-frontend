@@ -148,6 +148,16 @@ function TransferRow({
   includeMovements: boolean;
   addSpacer: boolean;
 }) {
+  // 🔹 Opção A — esconde TRANSFERENCIA quando existe SAIDA do mesmo produto
+  //    (evita duplicação "saiu -1" + "transferência -1" no papel)
+  const saidaProductIds = new Set(
+    movements.filter((m) => m.type === "SAIDA").map((m) => m.product.id),
+  );
+  const visibleMovements = movements.filter(
+    (m) => !(m.type === "TRANSFERENCIA" && saidaProductIds.has(m.product.id)),
+  );
+  const movementsCount = visibleMovements.length;
+
   const itemsPreview = transfer.items
     .slice(0, 3)
     .map((it) => `${it.product.name} (${it.quantity})`)
@@ -163,7 +173,6 @@ function TransferRow({
         <td>
           <div className="print-event-title">
             Remessa #{transfer.id.slice(0, 8)} · {transfer._count.items}{" "}
-            {/* item(ns) */}
             {transfer._count.items <= 1 ? "item" : "itens"}
           </div>
           <div className="print-event-sub">
@@ -197,7 +206,7 @@ function TransferRow({
         <td>
           <div>{transfer.createdBy.name ?? "—"}</div>
           <div className="print-event-sub">
-            {movements.length} movimentaç{movements.length === 1 ? "ão" : "ões"}
+            {movementsCount} movimentaç{movementsCount === 1 ? "ão" : "ões"}
           </div>
         </td>
       </tr>
@@ -208,9 +217,9 @@ function TransferRow({
           <td colSpan={3}>
             <div className="print-transfer-movements">
               <p className="print-transfer-movements__title">
-                Movimentações ({movements.length})
+                Movimentações ({movementsCount})
               </p>
-              {movements.length === 0 ? (
+              {movementsCount === 0 ? (
                 <p className="print-event-sub print-italic">
                   Sem movimentações registradas.
                 </p>
@@ -223,7 +232,7 @@ function TransferRow({
                     <col style={{ width: "20%" }} />
                   </colgroup>
                   <tbody>
-                    {movements.map((m) => (
+                    {visibleMovements.map((m) => (
                       <tr key={m.id}>
                         <td className="print-col-date">
                           {formatPrintDateTime(m.createdAt)}

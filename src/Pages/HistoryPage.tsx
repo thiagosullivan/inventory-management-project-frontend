@@ -477,7 +477,18 @@ export default function HistoryPage() {
   ) {
     const { transfer, movements } = event;
     const isOpen = expanded[transfer.id] === true;
-    const movementsCount = movements.length;
+
+    // 🔹 Opção A — esconde Movement TRANSFERENCIA quando existe SAIDA
+    //    correspondente (mesmo produto) na mesma transfer. Evita
+    //    duplicação visual ("saiu -1" + "transferência -1").
+    const saidaProductIds = new Set(
+      movements.filter((m) => m.type === "SAIDA").map((m) => m.product.id),
+    );
+    const visibleMovements = movements.filter(
+      (m) => !(m.type === "TRANSFERENCIA" && saidaProductIds.has(m.product.id)),
+    );
+
+    const movementsCount = visibleMovements.length;
 
     return (
       <>
@@ -568,7 +579,7 @@ export default function HistoryPage() {
                 </p>
 
                 <ul className="flex flex-col gap-2">
-                  {movements.map((m) => (
+                  {visibleMovements.map((m) => (
                     <li
                       key={m.id}
                       className="flex flex-wrap items-center justify-between gap-3 rounded-md border bg-background px-3 py-2 text-xs"
