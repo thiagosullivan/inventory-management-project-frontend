@@ -2,38 +2,10 @@ import { formatDate } from "@/lib/format-date";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { ProductDetailResponse } from "@/types/products.types";
 import { formatCentsToBRL } from "@/utils/currency";
-import { Badge } from "@/components/ui/badge";
+import { getExpiryBadge, getStockBadge } from "@/lib/product-badges";
 
 interface ProductDetailsTabProps {
   product: ProductDetailResponse;
-}
-
-/**
- * 🔹 Badge de status do estoque.
- * - Esgotado: quantity === 0
- * - Baixo: quantity <= minStock (e minStock > 0)
- * - OK: caso contrário
- */
-function getStockBadge(quantity: number, minStock: number | null) {
-  if (quantity <= 0) {
-    return (
-      <Badge variant="destructive" className="text-[10px] uppercase">
-        Esgotado
-      </Badge>
-    );
-  }
-  if (minStock !== null && minStock > 0 && quantity <= minStock) {
-    return (
-      <Badge className="text-[10px] uppercase bg-amber-100 text-amber-900 border-amber-300 hover:bg-amber-100">
-        Estoque baixo
-      </Badge>
-    );
-  }
-  return (
-    <Badge className="text-[10px] uppercase bg-emerald-100 text-emerald-900 border-emerald-300 hover:bg-emerald-100">
-      OK
-    </Badge>
-  );
 }
 
 function Field({ label, value }: { label: string; value: React.ReactNode }) {
@@ -98,8 +70,9 @@ export function ProductDetailsTab({ product }: ProductDetailsTabProps) {
       </Card>
 
       <Card>
-        <CardHeader>
+        <CardHeader className="flex justify-between">
           <CardTitle className="text-base">Validade e lote</CardTitle>
+          {getExpiryBadge(product.expiryDate)}
         </CardHeader>
         <CardContent className="space-y-3">
           <Field label="Validade" value={formatDate(product.expiryDate)} />
