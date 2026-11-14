@@ -111,9 +111,11 @@ export function ProductDetailHeader({
             <Printer className="h-4 w-4 mr-1" />
             Ficha
           </Button>
-          <Button onClick={onMovement} className="cursor-pointer">
-            Movimentar
-          </Button>
+          {canEdit && (
+            <Button onClick={onMovement} className="cursor-pointer">
+              Movimentar
+            </Button>
+          )}
           {canEdit && (
             <Select
               value=""
