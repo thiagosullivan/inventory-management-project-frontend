@@ -102,7 +102,11 @@ export function TableProducts({ products }: TableProductsProps) {
                   <DropdownMenu>
                     <DropdownMenuTrigger
                       render={
-                        <Button variant="ghost" size="icon" className="size-8">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="size-8 cursor-pointer"
+                        >
                           <MoreHorizontalIcon />
                           <span className="sr-only">Abrir menu</span>
                         </Button>
@@ -117,9 +121,9 @@ export function TableProducts({ products }: TableProductsProps) {
                           </Link>
                         )}
                       />
-                      <DropdownMenuItem className="cursor-pointer hover:bg-gray-200/90! duration-150">
+                      {/* <DropdownMenuItem className="cursor-pointer hover:bg-gray-200/90! duration-150">
                         Editar
-                      </DropdownMenuItem>
+                      </DropdownMenuItem> */}
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
                         className="cursor-pointer duration-150"
