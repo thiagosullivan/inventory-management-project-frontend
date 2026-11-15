@@ -12,6 +12,7 @@ import {
   UserShield,
   ArrowLeftRight,
   ClipboardList,
+  BarChart3,
 } from "lucide-react";
 
 import { useTheme } from "./themeProvider";
@@ -68,22 +69,32 @@ const MenuList: MenuItemsProps[] = [
     href: "/categories",
     warehouseOnly: true,
   },
+  // 🔴 legado — sem tela (Fase 8)
+  // {
+  //   label: "Activity",
+  //   icon: Activity,
+  //   href: "/activity",
+  //   warehouseOnly: true,
+  // },
+  // 🔴 legado — sem tela (Fase 8)
+  // {
+  //   label: "Alerts",
+  //   icon: Megaphone,
+  //   href: "/alerts",
+  //   warehouseOnly: true,
+  // },
+  // 🔴 legado — sem tela (Fase 8)
+  // {
+  //   label: "Products Resolve",
+  //   icon: PartyPopper,
+  //   href: "/products-resolve",
+  //   warehouseOnly: true,
+  // },
+  // 🔹 novo (Fase 7)
   {
-    label: "Activity",
-    icon: Activity,
-    href: "/activity",
-    warehouseOnly: true,
-  },
-  {
-    label: "Alerts",
-    icon: Megaphone,
-    href: "/alerts",
-    warehouseOnly: true,
-  },
-  {
-    label: "Products Resolve",
-    icon: PartyPopper,
-    href: "/products-resolve",
+    label: "Relatórios",
+    icon: BarChart3,
+    href: "/reports",
     warehouseOnly: true,
   },
   {
@@ -93,6 +104,12 @@ const MenuList: MenuItemsProps[] = [
     onlyManager: true,
   },
 ];
+
+// 🔴 imports legados mantidos para quando as telas voltarem (Fase 8).
+//    O `tsc` não reclama de import não usado por causa do `noUnusedLocals`?
+//    Se reclamar, comente também as 3 linhas de import abaixo.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const _legacyIcons = { Activity, Megaphone, PartyPopper };
 
 export default function Sidebar() {
   const { theme } = useTheme();
@@ -121,6 +138,12 @@ export default function Sidebar() {
     return logoLight;
   };
 
+  // 🔹 Ativo se pathname === href OU começa com href + "/" (ex.: /reports/requests)
+  const isItemActive = (href: string) => {
+    if (location.pathname === href) return true;
+    return location.pathname.startsWith(`${href}/`);
+  };
+
   return (
     <aside className="max-w-[280px] w-full bg-primary/20 rounded-lg h-full flex flex-col justify-between">
       <div className="p-8">
@@ -131,7 +154,7 @@ export default function Sidebar() {
           <ul>
             {visibleMenuItems.map((item, index) => {
               const Icon = item.icon;
-              const isActive = location.pathname === item.href;
+              const isActive = isItemActive(item.href);
               return (
                 <li key={index}>
                   <Link
