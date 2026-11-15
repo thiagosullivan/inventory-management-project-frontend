@@ -1,7 +1,11 @@
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, X, Upload } from "lucide-react";
+import imageCompression from "browser-image-compression";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import { NumericFormat } from "react-number-format";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -26,59 +30,44 @@ import type {
   Product,
   UpdateProductPayload,
 } from "@/types/products.types";
-import { centsToInputValue, parseBRLToCents } from "@/utils/currency";
 
-import { X, Upload } from "lucide-react";
-import imageCompression from "browser-image-compression";
 import { UploadButton } from "@/lib/uploadthing";
-import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { centsToInputValue } from "@/utils/currency";
 
 // =============================
 // Schema
 // =============================
 
-const baseSchema = {
+const productSchema = z.object({
   name: z.string().trim().min(1, "Nome é obrigatório").max(200),
   description: z.string().max(1000),
   categoryId: z.string().min(1, "Selecione uma categoria"),
   imageUrl: z.string().url("URL inválida").optional().or(z.literal("")),
+
+  // 🔹 Mudança crucial: usamos optional() em vez de nullable().
+  // O z.infer vai gerar "number | undefined". O refine garante que não pode ser vazio.
   priceInCents: z
+    .number({ message: "Preço é obrigatório" })
+    .positive("Preço deve ser maior que zero")
+    .optional()
+    .refine((v) => v !== undefined, "Preço é obrigatório"),
+
+  quantity: z
     .string()
-    .min(1, "Preço é obrigatório")
-    .refine((v) => parseBRLToCents(v) !== null, "Preço inválido"),
+    .min(1, "Quantidade é obrigatória")
+    .refine((v) => Number.isInteger(Number(v)) && Number(v) >= 0, {
+      message: "Quantidade inválida",
+    }),
   minStock: z.string().optional().or(z.literal("")),
   maxStock: z.string().optional().or(z.literal("")),
   expiryDate: z.string().optional().or(z.literal("")),
   batchNumber: z.string().max(100).optional().or(z.literal("")),
   location: z.string().max(100).optional().or(z.literal("")),
   supplier: z.string().max(200).optional().or(z.literal("")),
-};
-
-const createSchema = z.object({
-  ...baseSchema,
-  quantity: z
-    .string()
-    .min(1, "Quantidade é obrigatória")
-    .refine((v) => Number.isInteger(Number(v)) && Number(v) >= 0, {
-      message: "Quantidade inválida",
-    }),
+  reason: z.string().max(300).optional().or(z.literal("")),
 });
 
-const editSchema = z.object({
-  ...baseSchema,
-  quantity: z
-    .string()
-    .min(1, "Quantidade é obrigatória")
-    .refine((v) => Number.isInteger(Number(v)) && Number(v) >= 0, {
-      message: "Quantidade inválida",
-    }),
-  reason: z.string().max(300),
-});
-
-type CreateFormValues = z.infer<typeof createSchema>;
-type EditFormValues = z.infer<typeof editSchema>;
-type FormValues = CreateFormValues | EditFormValues;
+type FormValues = z.infer<typeof productSchema>;
 
 // =============================
 // Helpers
@@ -90,13 +79,18 @@ function toNumberOrNull(s: string | undefined): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
-function buildCreatePayload(v: CreateFormValues): CreateProductPayload {
+function reaisToCents(reais: number | undefined): number | null {
+  if (reais === undefined || reais === null) return null;
+  return Math.round(reais * 100);
+}
+
+function buildCreatePayload(v: FormValues): CreateProductPayload {
   return {
     name: v.name.trim(),
     description: v.description?.trim() || null,
     categoryId: v.categoryId,
     imageUrl: v.imageUrl?.trim() || null,
-    priceInCents: parseBRLToCents(v.priceInCents),
+    priceInCents: reaisToCents(v.priceInCents),
     quantity: Number(v.quantity),
     minStock: toNumberOrNull(v.minStock),
     maxStock: toNumberOrNull(v.maxStock),
@@ -108,7 +102,7 @@ function buildCreatePayload(v: CreateFormValues): CreateProductPayload {
 }
 
 function buildUpdatePayload(
-  v: EditFormValues,
+  v: FormValues,
   originalQuantity: number,
 ): UpdateProductPayload {
   const payload: UpdateProductPayload = {
@@ -116,7 +110,7 @@ function buildUpdatePayload(
     description: v.description?.trim() || null,
     categoryId: v.categoryId,
     imageUrl: v.imageUrl?.trim() || null,
-    priceInCents: parseBRLToCents(v.priceInCents),
+    priceInCents: reaisToCents(v.priceInCents),
     minStock: toNumberOrNull(v.minStock),
     maxStock: toNumberOrNull(v.maxStock),
     expiryDate: v.expiryDate || null,
@@ -146,14 +140,6 @@ interface ProductFormProps {
   isSubmitting?: boolean;
 }
 
-/**
- * Form de produto.
- *
- * ⚠️ O state interno do RHF é inicializado direto dos props. Quando o
- * `product` mudar (editar A → editar B), o componente pai deve remontar
- * este form com `key={product.id}`. Assim não precisamos de `useEffect`
- * com `form.reset(...)` (que dispara `set-state-in-effect` no ESLint).
- */
 export function ProductForm({
   mode,
   product,
@@ -162,16 +148,17 @@ export function ProductForm({
   isSubmitting,
 }: ProductFormProps) {
   const navigate = useNavigate();
-  const schema = mode === "create" ? createSchema : editSchema;
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(productSchema),
     defaultValues: {
       name: product?.name ?? "",
       description: product?.description ?? "",
       categoryId: product?.categoryId ?? "",
       imageUrl: product?.imageUrl ?? "",
-      priceInCents: centsToInputValue(product?.priceInCents),
+      // 🔹 Aqui passamos undefined em vez de null
+      priceInCents:
+        product?.priceInCents != null ? product.priceInCents / 100 : undefined,
       quantity: product ? String(product.quantity) : "0",
       minStock: product?.minStock != null ? String(product.minStock) : "",
       maxStock: product?.maxStock != null ? String(product.maxStock) : "",
@@ -179,7 +166,7 @@ export function ProductForm({
       batchNumber: product?.batchNumber ?? "",
       location: product?.location ?? "",
       supplier: product?.supplier ?? "",
-      ...(mode === "edit" ? { reason: "" } : {}),
+      reason: "",
     },
   });
 
@@ -191,11 +178,9 @@ export function ProductForm({
 
   async function handleSubmit(values: FormValues) {
     if (mode === "create" && onSubmitCreate) {
-      await onSubmitCreate(buildCreatePayload(values as CreateFormValues));
+      await onSubmitCreate(buildCreatePayload(values));
     } else if (mode === "edit" && onSubmitEdit && product) {
-      await onSubmitEdit(
-        buildUpdatePayload(values as EditFormValues, product.quantity),
-      );
+      await onSubmitEdit(buildUpdatePayload(values, product.quantity));
     }
   }
 
@@ -413,13 +398,27 @@ export function ProductForm({
                 <FieldLabel htmlFor="product-price">
                   Preço de compra (R$) *
                 </FieldLabel>
-                <Input
-                  {...field}
+                <NumericFormat
                   id="product-price"
+                  customInput={Input}
+                  // 🔹 undefined em vez de "" para o NumericFormat entender vazio
+                  value={field.value ?? ""}
+                  onValueChange={(values) => {
+                    // 🔹 Enviamos undefined se estiver vazio
+                    field.onChange(values.floatValue ?? undefined);
+                  }}
+                  onBlur={field.onBlur}
+                  name={field.name}
+                  thousandSeparator="."
+                  decimalSeparator=","
+                  decimalScale={2}
+                  fixedDecimalScale
+                  prefix="R$ "
+                  placeholder="R$ 0,00"
                   inputMode="decimal"
-                  aria-invalid={fieldState.invalid}
-                  placeholder="0,00"
                   autoComplete="off"
+                  aria-invalid={fieldState.invalid}
+                  allowNegative={false}
                 />
                 <FieldDescription>
                   Usado como último preço de compra. A média ponderada é
