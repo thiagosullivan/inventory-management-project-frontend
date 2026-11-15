@@ -23,7 +23,10 @@ import type {
   PurchaseRequestResponse,
   PurchaseRequestStatus,
 } from "@/types/purchaseRequests.types";
-import { fetchPurchaseRequests } from "@/services/purchaseRequests";
+import {
+  fetchPurchaseRequestById,
+  fetchPurchaseRequests,
+} from "@/services/purchaseRequests";
 
 // 🔹 Impressão
 import { PrintDialog, type PrintScope } from "@/components/print/PrintDialog";
@@ -130,6 +133,33 @@ export default function RequestsPage() {
   // Handlers de Impressão
   // =============================
 
+  async function enrichWithItems(
+    requests: PurchaseRequestResponse[],
+    includeItems: boolean,
+  ): Promise<PurchaseRequestResponse[]> {
+    if (!includeItems) return requests;
+
+    // Busca o detalhe de cada pedido em paralelo (N+1 controlado)
+    const detailed = await Promise.all(
+      requests.map(async (r) => {
+        // Se o backend já mandou items na listagem, usa
+        if (r.items && r.items.length > 0) return r;
+        try {
+          const detail = await fetchPurchaseRequestById(r.id);
+          return {
+            ...r,
+            // injeta items do detalhe no shape da lista
+            items: detail.items,
+          };
+        } catch (err) {
+          console.error(`Erro ao carregar itens do pedido ${r.id}:`, err);
+          return r; // segue sem itens
+        }
+      }),
+    );
+    return detailed;
+  }
+
   async function startPrintAll() {
     const toastId = toast.loading("Carregando pedidos para impressão...");
     try {
@@ -151,9 +181,12 @@ export default function RequestsPage() {
       }
 
       const capped = collected.slice(0, PRINT_MAX_EVENTS);
+      // 🔹 enriquece com items se marcado
+      const enriched = await enrichWithItems(capped, includeItems);
+
       toast.dismiss(toastId);
       setPrintPayload({
-        requests: capped,
+        requests: enriched,
         includeItems,
         generatedAt: new Date(),
       });
@@ -163,9 +196,10 @@ export default function RequestsPage() {
     }
   }
 
-  function startPrintCurrent() {
+  async function startPrintCurrent() {
+    const enriched = await enrichWithItems(rows, includeItems);
     setPrintPayload({
-      requests: rows,
+      requests: enriched,
       includeItems,
       generatedAt: new Date(),
     });
@@ -174,7 +208,7 @@ export default function RequestsPage() {
   function handlePrintConfirm(scope: PrintScope) {
     setPrintDialogOpen(false);
     setTimeout(() => {
-      if (scope === "current") startPrintCurrent();
+      if (scope === "current") void startPrintCurrent();
       else void startPrintAll();
     }, 150);
   }
@@ -368,7 +402,7 @@ export default function RequestsPage() {
         currentLabel={`${Math.min(limit, total)} pedidos desta página`}
         allLabel={`${total} pedidos (todos os filtros)`}
         extraCheckbox={{
-          label: "Incluir detalhamento de itens (ainda não implementado)",
+          label: "Incluir detalhamento de itens",
           checked: includeItems,
           onCheckedChange: setIncludeItems,
         }}

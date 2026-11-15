@@ -236,4 +236,30 @@
     font-weight: 700;
     margin: 1mm 0 0.5mm 0;
   }
+
+  /* ============================================================
+     Detalhamento de itens na lista de pedidos
+     ============================================================ */
+
+  body.printing-list tr.print-request-subrow > td {
+    border-top: none;
+    padding: 0;
+    background: #fafafa;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  body.printing-list .print-request-items {
+    padding: 2mm 3mm 3mm 3mm;
+    border-left: 1.5pt solid #999;
+  }
+
+  body.printing-list .print-request-items__title {
+    font-size: 8pt;
+    font-weight: 700;
+    color: #555;
+    margin: 0 0 1.5mm 0;
+    text-transform: uppercase;
+    letter-spacing: 0.3pt;
+  }
 }

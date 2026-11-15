@@ -50,7 +50,6 @@ export function RequestListPrintView({
           const transfersCount =
             r._count?.transfers ?? r.transfers?.length ?? 0;
 
-          // "Última ação" = a data mais recente entre finalizedAt / refusedAt / updatedAt
           const candidates = [r.finalizedAt, r.refusedAt, r.updatedAt]
             .filter((d): d is string => !!d)
             .map((d) => new Date(d).getTime());
@@ -59,39 +58,80 @@ export function RequestListPrintView({
               ? new Date(Math.max(...candidates)).toISOString()
               : r.createdAt;
 
+          const items = r.items ?? [];
+
           return (
-            <tr key={r.id}>
-              <td className="print-mono">{shortenId(r.id)}</td>
-              <td>{r.sector?.name ?? "—"}</td>
-              <td>{STATUS_LABEL[r.status]}</td>
-              <td className="print-col-qty">{itemsCount}</td>
-              <td className="print-col-date">
-                {formatPrintDateTime(r.createdAt)}
-              </td>
-              <td className="print-col-date">
-                {formatPrintDateTime(lastActionAt)}
-                {transfersCount > 0 && (
-                  <div className="print-event-sub">
-                    {transfersCount} remessa
-                    {transfersCount === 1 ? "" : "s"}
-                  </div>
-                )}
-              </td>
-            </tr>
+            <>
+              <tr key={r.id}>
+                <td className="print-mono">{shortenId(r.id)}</td>
+                <td>{r.sector?.name ?? "—"}</td>
+                <td>{STATUS_LABEL[r.status]}</td>
+                <td className="print-col-qty">{itemsCount}</td>
+                <td className="print-col-date">
+                  {formatPrintDateTime(r.createdAt)}
+                </td>
+                <td className="print-col-date">
+                  {formatPrintDateTime(lastActionAt)}
+                  {transfersCount > 0 && (
+                    <div className="print-event-sub">
+                      {transfersCount} remessa
+                      {transfersCount === 1 ? "" : "s"}
+                    </div>
+                  )}
+                </td>
+              </tr>
+
+              {/* 🔹 Detalhamento de itens (se checkbox marcado) */}
+              {includeItems && (
+                <tr className="print-request-subrow">
+                  <td></td>
+                  <td colSpan={5}>
+                    <div className="print-request-items">
+                      <p className="print-request-items__title">
+                        Itens do pedido ({items.length})
+                      </p>
+                      {items.length === 0 ? (
+                        <p className="print-event-sub print-italic">
+                          Sem itens detalhados.
+                        </p>
+                      ) : (
+                        <table className="print-table print-table--nested">
+                          <colgroup>
+                            <col style={{ width: "55%" }} />
+                            <col style={{ width: "20%" }} />
+                            <col style={{ width: "15%" }} />
+                            <col style={{ width: "10%" }} />
+                          </colgroup>
+                          <thead>
+                            <tr>
+                              <th>Produto</th>
+                              <th>SKU</th>
+                              <th>Barcode</th>
+                              <th style={{ textAlign: "right" }}>Qtd</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {items.map((it) => (
+                              <tr key={it.id}>
+                                <td>{it.product.name}</td>
+                                <td className="print-mono">{it.product.sku}</td>
+                                <td className="print-mono">
+                                  {it.product.barcode}
+                                </td>
+                                <td className="print-col-qty">{it.quantity}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </>
           );
         })}
       </tbody>
-      {includeItems && (
-        <tfoot>
-          <tr>
-            <td colSpan={6} className="print-event-sub print-italic">
-              Incluir itens por pedido não está implementado nesta versão.
-              Marque "Detalhe do pedido" no dialog ou imprima o pedido
-              individual.
-            </td>
-          </tr>
-        </tfoot>
-      )}
     </table>
   );
 }
