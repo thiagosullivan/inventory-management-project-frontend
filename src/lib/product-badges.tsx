@@ -51,15 +51,20 @@ export function getExpiryBadge(expiryDate: string | Date | null | undefined) {
     typeof expiryDate === "string" ? new Date(expiryDate) : expiryDate;
   if (Number.isNaN(date.getTime())) return null;
 
-  // Zera as horas pra comparar só o dia
+  // Normaliza os dois lados para "meia-noite UTC" (dia puro)
   const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const target = new Date(date);
-  target.setHours(0, 0, 0, 0);
-
-  const diffDays = Math.ceil(
-    (target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
+  const todayUTC = Date.UTC(
+    today.getUTCFullYear(),
+    today.getUTCMonth(),
+    today.getUTCDate(),
   );
+  const targetUTC = Date.UTC(
+    date.getUTCFullYear(),
+    date.getUTCMonth(),
+    date.getUTCDate(),
+  );
+
+  const diffDays = Math.ceil((targetUTC - todayUTC) / 86400000);
 
   if (diffDays < 0) {
     return (
@@ -71,7 +76,7 @@ export function getExpiryBadge(expiryDate: string | Date | null | undefined) {
   if (diffDays <= 30) {
     return (
       <Badge className="text-[10px] uppercase bg-amber-100 text-amber-900 border-amber-300 hover:bg-amber-100">
-        Vence em {diffDays > 1 ? `${diffDays} dias` : `${diffDays} dia`}
+        Vence em {diffDays == 1 ? `${diffDays} dia` : `${diffDays} dias`}
       </Badge>
     );
   }
