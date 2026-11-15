@@ -453,7 +453,7 @@ function CreateTransferForm({
                         <ImageOff />
                       </div>
                     )}
-                    <div>
+                    <div className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-medium">
                         {p.name}
                       </span>
@@ -492,23 +492,31 @@ function CreateTransferForm({
               return (
                 <li key={l.productId} className="py-5 px-3 space-y-2 relative">
                   <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0 flex items-center gap-x-2">
+                    {/* Lado esquerdo: Imagem + Textos */}
+                    <div className="min-w-0 flex-1 flex items-center gap-x-2">
                       {l.imageUrl ? (
-                        <img src={l.imageUrl} className="w-10 h-10" />
+                        <img
+                          src={l.imageUrl}
+                          className="w-10 h-10 shrink-0 rounded-md object-cover"
+                        />
                       ) : (
-                        <div className="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-md">
-                          <ImageOff />
+                        <div className="w-10 h-10 shrink-0 flex items-center justify-center border border-gray-300 rounded-md">
+                          <ImageOff size={18} />
                         </div>
                       )}
-                      <div>
-                        <p className="truncate text-sm font-medium">{l.name}</p>
+                      <div className="min-w-0 flex-1">
+                        {/* Use 'truncate' para 1 linha ou 'line-clamp-2 break-words' para quebrar linha */}
+                        <p className="line-clamp-2 break-words text-sm font-medium">
+                          {l.name}
+                        </p>
                         <p className="truncate text-xs text-muted-foreground">
                           {l.sku} · {l.barcode}
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-3">
+                    {/* Lado direito: Controles e Lixeira (protegidos com shrink-0) */}
+                    <div className="shrink-0 flex flex-wrap items-center gap-3">
                       <div className="flex items-center gap-x-3">
                         {l.quantityOrdered !== undefined && (
                           <div className="text-xs text-muted-foreground text-end">
@@ -538,7 +546,7 @@ function CreateTransferForm({
                             onChange={(e) =>
                               setLineQuantity(l.productId, e.target.value)
                             }
-                            className="w-15"
+                            className="w-16"
                           />
                         </div>
                       </div>
@@ -548,7 +556,7 @@ function CreateTransferForm({
                         size="sm"
                         onClick={() => removeLine(l.productId)}
                         title="Remover item"
-                        className="cursor-pointer hover:text-red-500 "
+                        className="cursor-pointer hover:text-red-500"
                       >
                         <Trash2 size={16} />
                       </Button>
