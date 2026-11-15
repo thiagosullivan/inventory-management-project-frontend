@@ -118,24 +118,38 @@ export function ProductPrintView({
           ) : (
             <div className="print-events">
               {movements.map((m) => (
-                <div key={m.id} className="print-event">
+                <div
+                  key={m.id}
+                  className="print-event border-b border-gray-200 mb-3 pb-2"
+                >
                   <div className="print-event__title">
                     <span className="print-event__title-main">
-                      {TYPE_LABEL[m.type]}
+                      <strong>{TYPE_LABEL[m.type]}</strong>{" "}
                       <span className="print-event__type">
                         {" "}
                         · {m.quantity > 0 ? `+${m.quantity}` : m.quantity} un.
+                        |{" "}
                       </span>
                     </span>
                     <span className="print-event__status">
                       {formatPrintCents(m.unitPriceInCents)}
                     </span>
                   </div>
-                  <div className="print-event__meta">
+                  <div className="print-event__meta flex gap-x-2">
                     <strong>{formatPrintDateTime(m.createdAt)}</strong>
-                    {" · "}
-                    {m.createdBy.name ?? m.createdBy.email}
-                    {m.supplier && ` · ${m.supplier}`}
+                    {/* {" · "} */}
+                    {" | "}
+                    <p>
+                      Criador:{" "}
+                      <strong>{m.createdBy.name ?? m.createdBy.email}</strong>
+                    </p>
+                    {m.supplier ? (
+                      <p>
+                        {" | "}Fornecedor: {m.supplier && ` ${m.supplier}`}
+                      </p>
+                    ) : (
+                      ""
+                    )}
                   </div>
                   {m.reason && (
                     <div className="print-event__details">
