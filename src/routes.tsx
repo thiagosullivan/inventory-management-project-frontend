@@ -20,6 +20,12 @@ import MovementsPage from "./pages/MovementsPage.tsx";
 import RequestsPage from "./pages/RequestsPage.tsx";
 import AccountSuspended from "./pages/AccountSuspended.tsx";
 import HistoryPage from "./pages/HistoryPage.tsx";
+// 🔹 novo (Fase 7)
+
+import ReportsHubPage from "./pages/ReportsHubPage.tsx";
+import ReportsRequestsPage from "./pages/ReportsRequestsPage.tsx";
+import ReportsConsumptionPage from "./pages/ReportsConsumptionPage.tsx";
+import ReportsManualOutputPage from "./pages/ReportsManualOutputPage.tsx";
 
 export const router = createBrowserRouter([
   // Public
@@ -60,6 +66,23 @@ export const router = createBrowserRouter([
               { path: "/products/:id", element: <ProductDetailPage /> },
               { path: "/stock", element: <StockPage /> },
               { path: "/history", element: <HistoryPage /> },
+
+              // 🔹 novo (Fase 7) — Relatórios
+              { path: "/reports", element: <ReportsHubPage /> },
+              { path: "/reports/requests", element: <ReportsRequestsPage /> },
+              // 🔹 rota específica antes do param genérico
+              {
+                path: "/reports/consumption",
+                element: <ReportsConsumptionPage />,
+              },
+              {
+                path: "/reports/consumption/:sectorId",
+                element: <ReportsConsumptionPage />,
+              },
+              {
+                path: "/reports/manual-output",
+                element: <ReportsManualOutputPage />,
+              },
             ],
           },
         ],
