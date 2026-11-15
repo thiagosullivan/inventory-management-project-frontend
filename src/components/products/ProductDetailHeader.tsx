@@ -1,5 +1,5 @@
 // src/components/products/ProductDetailHeader.tsx
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowLeft, MoreHorizontal, Package, Printer } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,9 +18,13 @@ interface ProductDetailHeaderProps {
   canEdit: boolean;
   onMovement: () => void;
   onPrint: () => void;
-  onPrintSheet: () => void; // 🔹 novo
+  onPrintSheet: () => void;
   onEdit: () => void;
   onDelete: () => void;
+}
+
+interface LocationState {
+  from?: string;
 }
 
 export function ProductDetailHeader({
@@ -33,14 +37,25 @@ export function ProductDetailHeader({
   onDelete,
 }: ProductDetailHeaderProps) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const state = location.state as LocationState | null;
 
   function handleBack() {
-    if (window.history.length > 1) {
+    if (state?.from === "/history") {
       navigate(-1);
     } else {
       navigate("/products");
     }
   }
+
+  // function handleBack() {
+  //   if (window.history.length > 1) {
+  //     navigate(-1);
+  //     navigate("/products");
+  //   } else {
+  //     navigate("/products");
+  //   }
+  // }
 
   return (
     <div className="flex flex-col gap-4 w-full">

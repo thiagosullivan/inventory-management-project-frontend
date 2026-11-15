@@ -25,6 +25,16 @@ export function ProductCreatedDialog({
 }: ProductCreatedDialogProps) {
   const navigate = useNavigate();
 
+  function handleViewProduct() {
+    if (!product) return;
+
+    // Ajuste para /products/ se sua rota for no plural
+    navigate(`/products/${product.id}`, {
+      state: { from: "/products/new" },
+      replace: true,
+    });
+  }
+
   if (!product) return null;
 
   return (
@@ -52,7 +62,7 @@ export function ProductCreatedDialog({
             variant="secondary"
             onClick={() => {
               onOpenChange(false);
-              navigate(`/products/${product.id}`);
+              handleViewProduct();
             }}
             className="cursor-pointer"
           >

@@ -61,6 +61,15 @@ export function MovementDetailsDialog({
 
   const isProductPage = /^\/products\/[^/]+$/.test(location.pathname);
 
+  function handleViewProduct() {
+    if (!movement?.product) return;
+
+    // Confirme se a rota é /products/ (plural) ou /product/ (singular)
+    navigate(`/products/${movement.product.id}`, {
+      state: { from: location.pathname },
+    });
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[480px]">
@@ -124,7 +133,7 @@ export function MovementDetailsDialog({
             ""
           ) : (
             <Button
-              onClick={() => navigate(`/products/${movement?.product.id}`)}
+              onClick={() => handleViewProduct()}
               className="cursor-pointer"
             >
               Ver Produto
