@@ -1,8 +1,10 @@
 // src/lib/print/print-utils.ts
-
 export const PRINT_MAX_EVENTS = 500;
 
-export function formatPrintDateTime(value: string | Date): string {
+export function formatPrintDateTime(
+  value: string | Date | null | undefined, // 🔹 aceita null e undefined
+): string {
+  if (!value) return "—";
   const d = typeof value === "string" ? new Date(value) : value;
   if (Number.isNaN(d.getTime())) return "—";
   return d.toLocaleString("pt-BR", {
