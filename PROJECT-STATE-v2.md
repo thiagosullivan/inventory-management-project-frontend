@@ -1,444 +1,302 @@
-Inventory Management
-Projeto de gestão de estoque para prefeitura: Almoxarifado é ponto 0 único (só ele tem estoque). Outros setores pedem (PurchaseRequest) e recebem (Transfer). Uso futuro: mecânica (venda via salePriceInCents, Fase 8+).
+# Inventory Management
+
+Projeto de gestão de estoque para prefeitura. Almoxarifado é ponto 0 (único com estoque). Outros setores pedem (PurchaseRequest) e recebem (Transfer). Uso futuro: mecânica (venda, Fase 8+).
 
-Backend: D:\Development\ats\estoque\backend · Frontend: D:\Development\ats\estoque\frontend
+Backend: `D:\Development\ats\estoque\backend` · Frontend: `D:\Development\ats\estoque\frontend`
 
-1. Stack
-   Backend: Node + Express + TS + Prisma v7 (output src/generated/prisma) + PostgreSQL (Neon) + Better Auth + tsx.
+## Stack
 
-Frontend: Vite + React + TS + React Router v7 + TanStack Query v5 (keepPreviousData) + shadcn/ui + Tailwind + Base UI (não Radix, sem asChild) + Axios + Recharts + jsbarcode + sonner + react-hook-form + zod + browser-image-compression + uploadthing + socket.io-client (Fase 8).
+Backend: Node + Express + TS + Prisma v7 (output `src/generated/prisma`) + PostgreSQL (Neon) + Better Auth + tsx.
 
-Socket.io (Fase 8): JWT auth, salas user:{id} e sector:{id}.
+Frontend: Vite + React + TS + React Router v7 + TanStack Query v5 (`keepPreviousData`) + shadcn/ui + Tailwind + Base UI (sem `asChild`) + Axios + Recharts + jsbarcode + sonner + react-hook-form + zod + browser-image-compression + uploadthing + `react-number-format` + `socket.io-client` (Fase 8).
 
-2. Convenções
-   lib/ e utils/: kebab-case. Hooks: camelCase. Componentes: PascalCase. shadcn: kebab-case (não alterar).
-   Comentários: // 🔹 novo, // 🔴 legado.
-   Imports: @/ (frontend); relativos com .js (backend ESM).
-   Envelope backend: { success, data } — service frontend sempre desembrulha e retorna payload.
-   Erros: getApiErrorMessage(err) / getApiErrorCode(err) (nunca err: any).
-   UI ↔ schema: Transfer=Remessa, TransferItem=Item da remessa, PurchaseRequest=Pedido, Movement=Movimentação, Sector=Setor.
-   shadcn novo: sem form.tsx antigo — RHF Controller + Field/FieldLabel/FieldError/FieldDescription de @/components/ui/field; textareas via InputGroupTextarea.
-   Componente com state inicializado de prop → key={...}.
-   Zod: z.string() (nunca .optional().or(z.literal(""))).
-   Rotas específicas antes de param genérico.
-   Busca normalizada: unaccent no backend (ILIKE), normalize-text.ts no front (comparações client-side).
+## Convenções
 
-3. Decisões travadas (críticas)
-   Modelo:
+- `lib/`/`utils/`: kebab-case. Hooks: camelCase. Componentes: PascalCase. shadcn: kebab-case (não alterar).
+- Comentários: `// 🔹 novo`, `// 🔴 legado`.
+- Imports: `@/` (front); relativos com `.js` (back ESM).
+- Backend envelope: `{ success, data }` — service front desembrulha.
+- Erros: `getApiErrorMessage(err)` / `getApiErrorCode(err)` (nunca `err: any`).
+- UI ↔ schema: Transfer=Remessa, TransferItem=Item da remessa, PurchaseRequest=Pedido, Movement=Movimentação, Sector=Setor.
+- shadcn: sem `form.tsx` antigo — RHF Controller + `Field`/`FieldLabel`/`FieldError`/`FieldDescription` de `@/components/ui/field`; textareas via `InputGroupTextarea`.
+- Componente com state inicializado de prop → `key={...}` no pai.
+- Zod: `z.string()` (nunca `.optional().or(z.literal(""))` — só quando for opcional de verdade).
+- Rotas específicas antes de param genérico.
+- Busca: unaccent no backend (ILIKE), `normalize-text.ts` no front.
 
-Product.quantity = estoque do Almoxarifado. StockBySector NÃO existe.
+## Decisões travadas
 
-Sector.isWarehouse boolean, exatamente 1 true, imutável, não deletável.
+**Modelo:** `Product.quantity` = estoque do Almox. `StockBySector` NÃO existe. `Sector.isWarehouse` bool, exatamente 1 true, imutável, não deletável. `User.sectorId` obrigatório. `StockAlert` global (sem sectorId).
 
-User.sectorId obrigatório.
+**SKU/Barcode/Preço:**
 
-StockAlert é por produto (global), sem sectorId.
+- SKU: `PREFIX-NNN` (ex.: `BEB-001`), gerado no backend, imutável.
+- Prefix: 3-4 letras maiúsculas, `@unique`. Regra: 1 palavra → 3 primeiras; 2+ → 3 da 1ª + 1ª da 2ª; colisão → 4ª letra da 1ª, depois sufixo numérico.
+- Barcode: numérico sequencial global (`1000001...`), Code 128, lazy (`GET .../next` preview, real no POST). EAN-13/GTIN proibido.
+- `Product.priceInCents` (Int?), `Product.avgPriceInCents` = média ponderada móvel (só ENTRADA com preço > 0, regra MYOB). `Movement.unitPriceInCents` = histórico.
+- `minStock Int? @default(0)` (era 5, mudou na Fase 6.6).
+- No form: `priceInCents` é `number` (reais, float) no RHF; `reaisToCents` converte pra centavos no payload. Máscara com `react-number-format`.
+- Datas: `formatDate` em **UTC** (datas puras — `expiryDate`), `formatDateTime` em **BRT** (com hora — `createdAt`). `getExpiryBadge` calcula em UTC.
 
-SKU / Barcode / Preço:
+**Fase 6 (Setores/Pedidos/Remessas):**
 
-SKU: PREFIX-NNN (BEB-001), gerado no backend, imutável.
+- `TransferStatus`: PENDENTE | CONCLUIDO | CANCELADO | RECUSADO.
+- `PurchaseRequestStatus`: PENDENTE | EM_ATENDIMENTO | ATENDIDO | RECUSADO | CANCELADO.
+- Criar Transfer (Almox/MANAGER): debita `Product.quantity`, cria N `Movement TRANSFERENCIA` (qty negativo) + `StockHistory`, transação atômica. `fromSectorId` forçado.
+- Confirmar (destino): `Transfer` → CONCLUIDO; cria 1 `Movement SAIDA` por item (qty negativo, CONCLUIDO, `transferId`, setores, `unitPriceInCents = avgPriceInCents`, reason "Remessa <id> confirmada — <sector>"). NÃO cria `StockHistory` nem debita de novo. Objetivo: métricas do dashboard.
+- Recusar (destino) / Cancelar (Almox/MANAGER): `refusalReason` / `cancelReason` **obrigatórios**, devolvem estoque, criam `StockHistory` de devolução. `Movement TRANSFERENCIA` vira RECUSADO (recusa) ou CANCELADO (cancel).
+- **Duplicação visual no `/history`:** TRANSFERENCIA + SAIDA do mesmo produto na mesma Transfer. Filtrar TRANSFERENCIA quando existe SAIDA correspondente (tela e papel).
+- `PurchaseRequest`: N Transfers por pedido. Item não cadastrado → `notes` (textarea), NÃO `PurchaseRequestItem` com productId null.
+- Finalizar pedido: manual, trava = nenhuma Transfer PENDENTE. `finalizeNote` obrigatório se houver Transfer RECUSADO/CANCELADO ou soma enviada < pedida.
+- Recusar pedido: Almox/MANAGER, `refusalReason` obrigatório, final. Cancelar: setor criador/MANAGER.
+- Visibilidade: setor comum vê só o próprio; Almox/MANAGER veem tudo.
+- ENTRADA de produto: só STAFF Almox/MANAGER. SAIDA/AJUSTE: qualquer setor.
+- Bipagem: só em `/movements` via `CreateTransferDialog` (Enter, sem debounce). NÃO em `/products/:id`.
+- `/movements` = ação; `/requests` = pedidos; `/history` = consulta (Fase 6.5). Filtros na URL.
+- `MovementStatus`: PENDENTE | CONCLUIDO | CANCELADO | RECUSADO (ganhou RECUSADO na 6.5).
 
-Prefix: 3-4 letras maiúsculas, @unique. Regra: 1 palavra→3 primeiras; 2+→3 da 1ª + 1ª da 2ª; colisão→4ª letra da 1ª, depois sufixo numérico. Imutável após criação.
+**Auth/perfil (Fase 6.1):**
 
-Barcode: numérico sequencial global (1000001...), Code 128, alocação lazy (preview GET .../next, real no POST). EAN-13/GTIN proibido.
+- Backend fonte da verdade: `GET /me` (fora do `/admin`, só `authenticate`) retorna `user` com `sector: { id, name, isWarehouse }`.
+- Front hidrata via `getMe()`. `MeResult` discriminado: `{ status: "ok", user } | { status: "unauthenticated" } | { status: "inactive" }`.
+- `authenticate` retorna 401 se `!fullUser`, 403 `{ code: "USER_INACTIVE" }` se `!isActive`.
+- `AuthContext` trata inactive → stub `{ isActive: false }` → `ProtectedRoute` manda pra `/account-suspended` (standalone).
+- Pós-login: MANAGER ou STAFF Almox → `/dashboard`; demais STAFF → `/requests`.
 
-Preço: priceInCents (Int?), Product.avgPriceInCents = média ponderada móvel (só ENTRADA com preço>0; regra MYOB). Movement.unitPriceInCents = histórico.
+**Permissões de Produto:**
 
-Impressão de etiqueta: só pós-POST (nunca preview). window.print() + print.css. Layout 60×40mm.
+- `/products` e `/products/:id` em `WarehouseOnlyRoute` + guard defensivo no componente.
+- Editar: criador OU MANAGER OU STAFF Almox (backend expandido na 6.6 — antes era só criador/MANAGER).
+- Botão "Movimentar" dentro de `canEdit`.
 
-Contadores:
+**Outros:**
 
-CategoryCounter (1:1) e ProductCounter (singleton) — incremento atômico em transação.
+- Imagem: UploadThing (free 2GB) + browser-image-compression. `Product.imageUrl String?`.
+- `/history` só Almox/MANAGER (front `WarehouseOnlyRoute` + back 403).
+- Usuários: só inativados (nunca deletados). MANAGER não se auto-rebaixa.
+- `Notification` + Socket.io entram na Fase 8.
 
-Categorias:
+## Modelos Prisma (principais)
 
-CustomCategory (não enum). createdById obrigatório (Restrict). prefix obrigatório.
+- `Sector`: id, name(unique), description?, isWarehouse(bool), isActive, timestamps. Relações: users, movementsFrom/To, transfersFrom/To, purchaseRequests.
+- `Transfer`: fromSectorId, toSectorId, purchaseRequestId?, status, reason?, refusalReason?, cancelReason?, createdById, confirmedById?, refusedById?, cancelledById?, timestamps. + items, movements.
+- `TransferItem`: transferId(Cascade), productId(Restrict), quantity.
+- `PurchaseRequest`: sectorId, status, notes?, refusalReason?, finalizeNote?, createdById, finalizedById?, refusedById?, timestamps. + items, transfers.
+- `PurchaseRequestItem`: requestId(Cascade), productId(Restrict), quantity.
+- `User`: + sectorId (obrigatório) + sector.
+- `Movement`: + fromSectorId?, toSectorId?, transferId?. quantity negativo em TRANSFERENCIA e SAIDA. Sem `purchaseRequestId` no schema.
+- `Product`: + requestItems, transferItems. quantity coluna. minStock `@default(0)`.
+- `StockHistory`: id, productId, oldQuantity, newQuantity, movementId?, changedById, changedAt, reason.
+- Enums: `MovementType` ENTRADA|SAIDA|AJUSTE|TRANSFERENCIA; `MovementStatus` PENDENTE|CONCLUIDO|CANCELADO|RECUSADO; `TransferStatus` PENDENTE|CONCLUIDO|CANCELADO|RECUSADO; `PurchaseRequestStatus` PENDENTE|EM_ATENDIMENTO|ATENDIDO|RECUSADO|CANCELADO.
 
-Permissões: STAFF só mexe nas que criou; MANAGER em todas. onDelete: Restrict.
+## Endpoints
 
-Fase 6 (Setores/Pedidos/Remessas):
+**Produtos:**
 
-TransferStatus: PENDENTE | CONCLUIDO | CANCELADO | RECUSADO
+- `POST /admin/products` (Almox/MANAGER) — gera SKU + barcode + Movement ENTRADA inicial. minStock default 0. expiryDate salvo UTC meia-noite.
+- `GET /admin/products` (filtros + paginação) / `/:id` / `/sku/:sku` / `/barcode/:barcode` / `/barcode/next`.
+- `PATCH /admin/products/:id` / `DELETE /admin/products/:id`.
+- `POST /admin/products/:id/movements` (ENTRADA só Almox/MANAGER; SAIDA/AJUSTE qualquer).
+- `GET /admin/products/:id/movements` / `/history` — history inclui `movement` com status/reason/transferId/createdAt/fromSector/toSector (Fase 6.6).
 
-PurchaseRequestStatus: PENDENTE | EM_ATENDIMENTO | ATENDIDO | RECUSADO | CANCELADO
+**Setores:** GET/POST/PATCH/DELETE `/admin/sectors` + `/options` → `{ label, value, isWarehouse }[]`.
 
-Transfer (remessa): 1 header + N itens. Criar (Almox/MANAGER) → debita Product.quantity, cria N Movement TRANSFERENCIA (quantity negativo) + StockHistory, transação atômica. fromSectorId forçado no backend.
+**Transfers:** POST/GET `/admin/transfers` (+`/:id`) / PATCH `/:id/confirm` / `/:id/refuse` / `/:id/cancel`.
 
-Confirmar/recusar: destino. Cancelar: Almox/MANAGER, cancelReason obrigatório, só se PENDENTE. Recusa/cancelamento devolvem estoque.
+**Purchase Requests:** POST/GET `/admin/purchase-requests` (+`/:id`, `/catalog`) / PATCH `/:id/refuse` / `/:id/finalize` / `/:id/cancel`.
 
-Confirmar remessa cria 1 Movement SAIDA por item (quantity negativo, status CONCLUIDO, transferId, fromSectorId, toSectorId, unitPriceInCents = avgPriceInCents, reason = "Remessa <id> confirmada — <toSector.name>"). NÃO cria StockHistory e NÃO debita estoque de novo. Objetivo: entrar nas métricas do dashboard.
+**Outros:** GET `/admin/movements`, GET `/admin/history`, CRUD `/admin/categories` + `/options`, CRUD `/admin/users` + `/options`, `/admin/dashboard/overview|stock|activity|alerts`, `/admin/stock/summary`, PATCH `/admin/alerts/:id/resolve`, GET `/me`.
 
-Motivos obrigatórios (auditoria): Transfer.refusalReason e Transfer.cancelReason obrigatórios nas ações de recusa/cancelamento — backend valida trim(), front exige preenchimento via dialog (Textarea/Input).
+## Fase 6.5 — Relatórios (contratos fechados)
 
-PurchaseRequest (pedido): N transfers por pedido. Item não cadastrado → notes (textarea), NÃO PurchaseRequestItem com productId: null.
+- `/admin/history`: Movement + Transfer agrupado por transferId. Query: type/status/createdById/productId/dateFrom/dateTo/search/page/limit/sortOrder/includeTransfers/hasTransfer. Shape `HistoryEvent` discriminado (MOVEMENT / TRANSFER com movements[]). `/history` front pronto.
+- **R1** `GET /admin/reports/requests`: auditoria pedidos. `RequestReportRow` com `totals { requestedQty, sentQty, fulfillmentPct }`. Enviado = TransferItem.quantity de Transfers CONCLUIDO.
+- **R2** `GET /admin/reports/consumption`: só Transfer CONCLUIDO. `consumedValueInCents = Σ TransferItem.quantity × Movement.unitPriceInCents` (SAIDA histórica). Prioridade: `monthsWithConsumption / monthsInRange ≥ 0.8` OU `consumedQty >= priorityThreshold`. Mês = `Transfer.confirmedAt` (UTC).
+- **R2 setor** `GET /admin/reports/consumption/:sectorId`: `monthlyBreakdown[]` (YYYY-MM), `priority`. Summary soma sobre productMap inteiro (não top N).
+- **R2b** `GET /admin/reports/manual-output`: Movement SAIDA com `transferId IS NULL`. `fromSectorId` null → exibe "—" e não entra em bySector.
+- Backend R1/R2/R2b 100% validado no Insomnia. **Telas no front ainda não implementadas** (próximas, início da Fase 7).
 
-Finalizar pedido: manual, trava = nenhuma Transfer PENDENTE. finalizeNote obrigatório se houver Transfer RECUSADO/CANCELADO OU soma enviada < soma pedida.
+## Filtros
 
-Recusar pedido: Almox/MANAGER, refusalReason obrigatório, final. Cancelar: setor criador/MANAGER.
+**`/admin/products`:** search (unaccent), categoryId, minQuantity, maxQuantity, hasExpiryDate (tri-state), isExpiring/isLowStock/isExpired (só "true"), createdById, page, limit (max 100), sortBy (createdAt/updatedAt/name/quantity/expiryDate), sortOrder.
 
-Visibilidade: setor comum vê só o próprio; Almox/MANAGER veem tudo.
+**`/admin/dashboard/stock`:** categoryId, location+locationExact, supplier+supplierExact, limit (por seção), sectorId (Fase 7).
 
-ENTRADA de produto: só STAFF do Almox/MANAGER. SAIDA/AJUSTE: qualquer setor.
+**`/stock`:** `categoryId`, `location`/`locationExact`, `supplier`/`supplierExact`.
 
-Bipagem: só em /movements via CreateTransferDialog (Enter, sem debounce). NÃO existe em /products/:id.
+## FASES — STATUS
 
-/movements = ação; /requests = pedidos; /history = consulta (Fase 6.5). Filtros na URL.
+- Fase 1–5, 4.5/4.5.1/4.6 ✅
+- Fase 6 (setores/pedidos/remessas + upload) ✅
+- Fase 6.1 (auth/sector + Movement SAIDA + motivos) ✅
+- Fase 6.5 (backend R1/R2/R2b + /history backend + /history frontend) ✅
+- **Fase 6.6 — Impressão + cadastro/edição + badges** ✅ (ver seção abaixo)
+- **Fase 7 — Dashboard (filtros setor + KPIs) + 3 telas de relatório (R1/R2/R2b) no front** ⬜ ← próximo
+- Fase 7.5 — `/users` (MANAGER) ⬜
+- Fase 8 — `/alerts` + Socket.io + badge ⬜
+- Fase 9 — polish ⬜
 
-MovementStatus (após Fase 6.5): PENDENTE | CONCLUIDO | CANCELADO | RECUSADO
+## Fase 6.6 — Impressão (concluída)
 
-CANCELADO = Almox cancela a remessa antes do destino agir (cancelTransfer).
+**Infra (reusável em qualquer página):**
 
-RECUSADO = destino recusa a remessa (refuseTransfer) — o Movement TRANSFERENCIA correspondente também vira RECUSADO (não mais CANCELADO).
+- `src/styles/print-base.css`: `@page` A4 retrato, margem 15×12mm. Esconde `#root` em `printing-label` e `printing-list`; mostra `#print-portal-root`. `.print-only` escondido na tela. **Importado no `App.tsx`** (se não importar, bordas/espaçamentos somem).
+- `src/styles/label-print.css`: escopo `body.printing-label`. Esconde tudo (`> * { display: none }`) exceto `#print-portal-root`. `.print-label` 60×40mm, topo-esquerdo. `page-break-inside: avoid`.
+- `src/styles/list-print.css`: escopo `body.printing-list`. Layout B (tabela 4 colunas) + ficha do produto + resumo de stock + detalhamento de pedidos. `thead` repetido, `break-inside: avoid` por `<tr>`, `box-sizing: border-box`, `print-spacer` (4mm) entre grupos (spacer via `<td>` com `height`, não `<tr>`).
+- `src/lib/print/print-mode.ts`: `enterPrintMode("label"|"list")` / `exitPrintMode()`.
+- `src/lib/print/print-utils.ts`: `formatPrintDateTime(value: string|Date|null|undefined)` (aceita null), `formatPrintCents`, `PRINT_MAX_EVENTS = 500`.
+- `src/lib/shorten-id.ts`: `shortenId(id)` → `8 chars…`.
+- `src/lib/stock-history-badge.ts`: `getHistoryEventKind(entry)` (deriva `DEVOLUCAO` do `reason`), `HISTORY_EVENT_LABEL`, `HISTORY_EVENT_BADGE`.
+- `src/lib/product-badges.tsx`: `getStockBadge(quantity, minStock)` (OK/Baixo/Esgotado), `getExpiryBadge(expiryDate)` (OK/Vence em Xd/Vencido, em UTC).
+- `src/components/print/`: `PrintDialog` (radio "página atual" vs "todos" + 1 `extraCheckbox`; reset via `key` no pai), `PrintHeader`, `PrintFooter`, `PrintLayout` (`.print-only.print-doc`), `PrintPortal` (renderiza em `#print-portal-root` do `index.html`, sem state/effect).
+- `index.html` tem `<div id="print-portal-root"></div>` no `<body>`.
 
-Recusa de pedido (PurchaseRequest RECUSADO) não gera Movement (só quando a remessa é criada).
+**Telas imprimíveis implementadas:**
 
-Auth / perfil (Fase 6.1 — fechado):
-
-Backend é fonte da verdade do sector: GET /me (fora do /admin, só authenticate) retorna req.user com sector: { id, name, isWarehouse }. authenticate inclui sector no select e em req.user.
-
-Front hidrata o user via getMe(), não via session.user do Better Auth. LoginForm chama getMe() e faz setUser(me). AuthContext chama getMe() no mount.
-
-getMe() retorna MeResult discriminado: { status: "ok", user } | { status: "unauthenticated" } | { status: "inactive" }.
-
-Backend: authenticate retorna 401 se !fullUser e 403 { code: "USER_INACTIVE" } se !fullUser.isActive.
-
-AuthContext trata inactive setando stub { isActive: false } → ProtectedRoute intercepta e manda pra /account-suspended.
-
-/account-suspended é standalone. PublicRoute trata user.isActive === false → /account-suspended.
-
-Navegação pós-login: MANAGER ou STAFF Almox → /dashboard; demais STAFF → /requests (LoginForm e PublicRoute).
-
-User.sector obrigatório no tipo front, mas guards usam user.sector?.isWarehouse defensivo.
-
-Imagem: UploadThing (free 2GB) + browser-image-compression. Product.imageUrl String?. Limpeza de órfã = Fase 9.
-
-Outras:
-
-/history = Movement + Transfer juntos (Fase 6.5, backend + frontend implementados).
-
-R1 (/reports/requests) = auditoria pedidos. R2 (/reports/consumption) = consumo = remessas CONCLUIDO. R2b (/reports/manual-output) = saídas manuais (Movement SAIDA sem transferId). Todos só Almox/MANAGER.
-
-/history só Almox/MANAGER (front via WarehouseOnlyRoute + backend 403).
-
-Notification (tabela) + Socket.io entram na Fase 8.
-
-Usuários: só inativados (nunca deletados). MANAGER não se auto-rebaixa.
-
-4. Modelos Prisma (principais)
-   Sector: id, name(unique), description?, isWarehouse(bool), isActive, timestamps. Relações: users, movementsFrom/To, transfersFrom/To, purchaseRequests.
-
-Transfer: fromSectorId, toSectorId, purchaseRequestId?, status, reason?, refusalReason?, cancelReason?, createdById, confirmedById?, refusedById?, cancelledById?, timestamps. Relações + items, movements.
-
-TransferItem: transferId(Cascade), productId(Restrict), quantity.
-
-PurchaseRequest: sectorId, status, notes?, refusalReason?, finalizeNote?, createdById, finalizedById?, refusedById?, timestamps. Relações + items, transfers.
-
-PurchaseRequestItem: requestId(Cascade), productId(Restrict), quantity.
-
-User: + sectorId (obrigatório) + sector.
-
-Movement: + fromSectorId?, toSectorId?, transferId?. quantity negativo em TRANSFERENCIA e em SAIDA. Sem purchaseRequestId no schema. Sem @@unique([transferId, type]).
-
-Product: + requestItems, transferItems. quantity coluna.
-
-Enums:
-
-MovementType: ENTRADA | SAIDA | AJUSTE | TRANSFERENCIA
-
-MovementStatus: PENDENTE | CONCLUIDO | CANCELADO | RECUSADO
-
-TransferStatus: PENDENTE | CONCLUIDO | CANCELADO | RECUSADO
-
-PurchaseRequestStatus: PENDENTE | EM_ATENDIMENTO | ATENDIDO | RECUSADO | CANCELADO
-
-5. Endpoints (backend)
-   Produtos:
-   POST /admin/products (Almox/MANAGER) — gera SKU + barcode + Movement ENTRADA inicial
-   GET /admin/products (filtros + paginação) / /:id / /sku/:sku / /barcode/:barcode
-   GET /admin/products/barcode/next (preview)
-   PATCH /admin/products/:id / DELETE /admin/products/:id (hard)
-   POST /admin/products/:id/movements (ENTRADA só Almox/MANAGER; SAIDA/AJUSTE qualquer setor)
-   GET /admin/products/:id/movements / /history
-
-Setores:
-GET /admin/sectors (STAFF+MANAGER) / POST (MANAGER, bloqueia isWarehouse dup) / PATCH (MANAGER, isWarehouse imutável) / DELETE (MANAGER, Restrict) / GET /options → {label,value,isWarehouse}[]
-
-Transfers:
-POST /admin/transfers (Almox/MANAGER) — debita estoque, N Movements TRANSFERENCIA
-GET /admin/transfers (filtrada por setor) / /:id
-PATCH /:id/confirm / /refuse (destino; refusalReason obrigatório) / /cancel (Almox/MANAGER, cancelReason obrigatório)
-PATCH /:id/confirm também cria N Movements SAIDA.
-
-Purchase Requests:
-POST /admin/purchase-requests (setor não-Almox/MANAGER)
-GET /admin/purchase-requests (filtrada) / /:id / /catalog
-PATCH /:id/refuse / /finalize (trava + finalizeNote condicional) / /cancel
-GET /:id retorna transfers com refusalReason incluso.
-
-Outros:
-GET /admin/movements (global paginada)
-GET /admin/history (Fase 6.5) — lista unificada Movement + Transfer, agrupando por transferId; ver seção 6.
-Categorias: GET/POST/PATCH/DELETE /admin/categories + /options → {label,value,prefix}[]
-Users: GET/POST /admin/users, PATCH /:id/status|role|sector, GET /options
-Dashboard: GET /admin/dashboard/overview|stock|activity|alerts
-GET /admin/stock/summary, PATCH /admin/alerts/:id/resolve
-GET /me (fora do /admin, só authenticate) → { user } com sector. 200 (ativo), 401 (não encontrado), 403 { code: "USER_INACTIVE" } (desativado).
-
-6. Fase 6.5 — Relatórios e /history (contratos fechados, backend + /history frontend implementados)
-   6.1 /admin/history (implementado — backend + frontend)
-   Fonte: Movement + Transfer, com visibilidade por setor:
-
-MANAGER e STAFF Almox → veem tudo.
-
-STAFF de setor comum → só Movements/Transfers onde seu setor participa (fromSectorId ou toSectorId). Mas /history é restrito a Almox/MANAGER (front WarehouseOnlyRoute + backend 403), então a visibilidade por setor só se aplica a STAFF do Almox (que vê tudo) ou MANAGER.
-
-Parâmetros (query):
-
-type (MovementType) — se presente, exclui Transfers do resultado (Transfer não tem type).
-
-status (MovementStatus | TransferStatus) — Movements filtram por MovementStatus; Transfers por TransferStatus. Se valor não existir em MovementStatus (ex.: RECUSADO), Movements ficam vazios (sem 500); se não existir em TransferStatus, Transfers ficam fora.
-
-createdById, productId, dateFrom, dateTo (ISO; filtram Movement.createdAt e Transfer.createdAt).
-
-search: filtra os dois lados:
-
-Movements: product.name, product.sku, Movement.reason (unaccent + ILIKE).
-
-Transfers: product.name/sku dos itens (contains insensitive) OU Transfer.reason (contains insensitive).
-
-page (default 1), limit (default 20, max 100), sortOrder (asc|desc, default desc).
-
-includeTransfers (default true): true → agrupa por transferId (TRANSFER event com movements[] dentro); false → lista bruta de Movements (cada um vira MOVEMENT event, inclusive os com transferId).
-
-hasTransfer (true|false|ausente): true → só Movements com transferId; false → só Movements sem transferId (e exclude Transfers); ausente → todos.
-
-Shape (HistoryEvent discriminado):
-
-{ eventType: "MOVEMENT", createdAt, movement: HistoryMovementRef }
-
-{ eventType: "TRANSFER", createdAt, transfer: HistoryTransferRef, movements: HistoryMovementRef[] }
-
-HistoryMovementRef: id, type, status, quantity, reason, unitPriceInCents, createdAt, product {id,name,sku,imageUrl}, createdBy {id,name}, fromSector {id,name,isWarehouse}|null, toSector|null.
-
-HistoryTransferRef: id, status, createdAt, confirmedAt/refusedAt/cancelledAt, reason/refusalReason/cancelReason, fromSector, toSector, createdBy, items[], \_count {items}.
-
-Paginação: total = Movements sem transferId + Transfers (quando includeTransfers=true); Movements brutos (quando false). totalPages = ceil(total/limit).
-
-Erros: 400 INVALID_INCLUDE_TRANSFERS / INVALID_HAS_TRANSFER (valores ≠ "true"/"false"); 403 FORBIDDEN (não-Almox/MANAGER); 401.
-
-6.2 R1 — GET /admin/reports/requests (Almox/MANAGER)
-Query: dateFrom?, dateTo? (default mês corrente), sectorId?, status?, page? (default 1), limit? (default 20, max 100), sortBy? (createdAt | finalizedAt | sectorName, default createdAt), sortOrder? (asc|desc, default desc).
-
-Filtro de período por PurchaseRequest.createdAt. Todos os status incluídos por default.
-
-Response: requests: RequestReportRow[] + summary (totalRequests, byStatus Record<PurchaseRequestStatus,number>, totalRequestedQty, totalSentQty, overallFulfillmentPct 0–100) + paginação.
-
-RequestReportRow: id, sectorId, sectorName, status, createdAt, finalizedAt, createdById, createdByName, totals {requestedQty, sentQty, fulfillmentPct}, items[] {productId, productName, productSku, requestedQty, sentQty, fulfillmentPct}.
-"Enviado" = soma de TransferItem.quantity das Transfers CONCLUIDO por produto.
-
-6.3 R2 — GET /admin/reports/consumption (global, Almox/MANAGER)
-Query: dateFrom?, dateTo? (default últimos 6 meses), priorityThreshold? (default 50), limit? (default 10, max 100 = top N por setor).
-
-Fonte: só Transfer CONCLUIDO. consumedValueInCents = Σ TransferItem.quantity × Movement.unitPriceInCents (SAIDA da transfer, histórico real; não Product.avgPriceInCents).
-
-Response: period, summary {totalConsumedQty, totalConsumedValueInCents, totalSectors, totalProducts, monthsInRange, priorityProductsCount}, bySector[] {sectorId, sectorName, totalConsumedQty, totalConsumedValueInCents, productsCount, topProducts[] com priority}, overallTopProducts[].
-
-Regra de prioridade: monthsWithConsumption / monthsInRange ≥ 0.8 OU consumedQty >= priorityThreshold. Calculado no backend, retornado priority: boolean.
-
-Mês de consumo = Transfer.confirmedAt (UTC). monthsInRange e monthKey usam getUTCFullYear/getUTCMonth (imune a fuso).
-
-priorityProductsCount (global): produtos DISTINTOS com prioridade em qualquer setor.
-
-6.4 R2 — GET /admin/reports/consumption/:sectorId (Almox/MANAGER)
-Mesmos query params (exceto limit = top N produtos do setor). Response: sector {id,name}, period, summary {totalConsumedQty, totalConsumedValueInCents, productsCount, monthsInRange, priorityProductsCount}, products[] com monthlyBreakdown[] (YYYY-MM; zero para meses sem consumo) e priority.
-
-summary soma sobre o productMap INTEIRO (não só top N).
-
-6.5 R2b — GET /admin/reports/manual-output (Almox/MANAGER)
-Fonte: Movement com type = SAIDA e transferId IS NULL. Query: dateFrom?, dateTo? (default mês corrente), sectorId? (fromSectorId), productId?, page? (default 1), limit? (default 20, max 100).
-
-Response: movements[] {id, createdAt, productId, productName, productSku, productImageUrl, quantity (negativo), reason, fromSectorId, fromSectorName, createdById, createdByName, unitPriceInCents, totalValueInCents = |quantity| × unitPrice} + summary {totalMovements, totalQty (soma |qty|), totalValueInCents, bySector[] {sectorId, sectorName, totalMovements, totalQty, totalValueInCents}} + paginação.
-
-Se fromSectorId for null (saídas criadas via /products/:id/movements), fromSectorName = null e a movimentação NÃO entra em bySector (só no summary global). Front exibe "—".
-
-7. Filtros /admin/products
-   search (unaccent), categoryId, minQuantity, maxQuantity, hasExpiryDate (tri-state), isExpiring/isLowStock/isExpired (só "true"), createdById, page, limit (max 100), sortBy (createdAt/updatedAt/name/quantity/expiryDate), sortOrder.
-
-8. Filtros /admin/dashboard/stock
-   categoryId, location+locationExact, supplier+supplierExact, limit (por seção), sectorId (Fase 7).
-
-9. FASES — STATUS
-   Fase 1 — URL fonte da verdade ✅
-   Fase 2 — UI filtros ✅
-   Fase 3 — CRUD categorias ✅
-   Fase 4 — /stock ✅
-   Fase 4.5/4.5.1 — polish + prefix/counters/normalize ✅
-   Fase 5 + 4.6 — SKU/barcode/preço/média ✅
-   Fase 6 — setores/pedidos/remessas + upload ✅
-   Fase 6.1 — auth/sector + Movement SAIDA + motivos obrigatórios ✅
-   🔹 Fase 6.5 — /history + R1 + R2 + R2b — backend R1/R2/R2b ✅ + /history backend ✅ + /history frontend ✅ (com animação, sub-lista distinta, Select Todos/Movimentações/Transferências, filtro RECUSADO, busca nos dois lados). Próximo: 3 telas de relatório (R1/R2/R2b) no front.
-   Fase 7 — dashboard (filtros setor + KPIs) ⬜
-   Fase 7.5 — /users (MANAGER) ⬜
-   Fase 8 — /alerts + Socket.io + badge ⬜
-   Fase 9 — polish ⬜
-
-10. Frontend Fase 6.5
-    /history ✅ implementado:
-
-src/types/history.types.ts (espelho do backend; MovementStatus inclui RECUSADO; HistoryStatusFilter = MovementStatus | TransferStatus).
-
-src/lib/history-query-params.ts (HISTORY_DEFAULTS, HISTORY_STATUS_VALUES com 4, MOVEMENT_TYPE_VALUES; parse/serialize; hasTransfer serializado sempre que definido).
-
-src/services/history.ts (fetchHistory).
-
-src/hooks/useHistory.ts (TanStack Query + keepPreviousData + staleTime 30s).
-
-src/components/history/MovementDetailsDialog.tsx.
-
-src/pages/HistoryPage.tsx: Select "Eventos" (Todos/Movimentações/Transferências), Select Tipo, Select Status (Pendente/Concluído/Cancelado/Recusado), De/Até, Buscar com debounce. Tabela com expand animado (CollapsiblePanel grid-rows 0fr→1fr + opacity). Sub-lista de Movements com visual próprio (bg-muted/40, dashed, cards), não tabela. Botão "Limpar filtros" (disabled quando não há filtro ativo). Link do produto → /products/:id.
-
-src/routes.tsx: /history dentro de WarehouseOnlyRoute.
-
-Sidebar já tem History → /history.
-
-Pendências /history:
-
-TransferDetailsDialog mostra a remessa completa (correto; o search filtra a lista, não o dialog).
-
-"Limpar filtros" reseta searchInput e URL.
-
-Próximas telas:
-
-/reports/requests (R1) — auditoria pedidos (tabs por status, período, filtro por setor), comparativo pedido × enviado, imprimível.
-
-/reports/consumption (R2) — consumo por setor, recomendações, itens prioritários (badge). Visão global + por setor.
-
-/reports/manual-output (R2b) — saídas manuais, standalone com link cruzado.
-
-/reports/requests e /reports/consumption e /reports/manual-output: só Almox + MANAGER (WarehouseOnlyRoute).
-
-11. Bugs já corrigidos (não repetir)
-    categoryAlertMap TDZ no dashboardService
-
-locationExact/supplierExact não repassados no controller
-
-resolvedBy string → resolvedById FK
-
-where.category → where.categoryId
-
-imageUrl: p.id → p.imageUrl
-
-asChild (Base UI) → buttonVariants + Link
-
-<Cell> Recharts → fill no dado
-
-SelectValue mostrando ID/all → selectedOption + fallback
-
-Search sem unaccent → unaccent
-
-SignUpEmail falhava sem sectorId → additionalFields required
-
-sectorService.updateSector lia data.isWarehouse → checagem no controller
-
-productController.createMovement com 2 args → 4 args
-
-Import ../../generated → ../generated em movement.types.ts
-
-useRefuseTransfer quebrado em /movements → dialog de recusa obrigatório
-
-refusalReason não exibido em RequestTransfersList → corrigido
-
-refusalReason ausente do payload de GET /admin/purchase-requests/:id → adicionado em requestDetailInclude e PurchaseRequestTransferDetailRef
-
-Crash Cannot read properties of undefined (reading 'isWarehouse') → /me + getMe() + user.sector?.isWarehouse defensivo
-
-Desconecta ao navegar / refresh em /dashboard → /me montado + 2º useEffect removido
-
-STAFF setor comum indo para /dashboard → LoginForm/PublicRoute redirecionam
-
-Loop de redirect em /account-suspended → standalone + PublicRoute trata isActive === false
-
-getMe engolia 403 → MeResult discriminado + stub { isActive: false }
-
-monthsBetween off-by-one em R2 → getUTCFullYear/getUTCMonth (UTC)
-
-/history: type=ENTRADA/SAIDA/AJUSTE retornava todas as Transfers → buildTransferWhere exclui Transfers quando filters.type presente
-
-/history: status=RECUSADO dava 500 → buildMovementWhere força id in ["none"] quando status não existe em MovementStatus
-
-/history: search=caixa retornava Transfers sem "caixa" → buildTransferWhere aplica search em items.some.product.name/sku OU Transfer.reason
-
-/history: Movement de remessa recusada aparecia como CANCELADO → MovementStatus ganhou RECUSADO; refuseTransfer seta RECUSADO
-
-/history: filtro de Status não tinha RECUSADO → HISTORY_STATUS_VALUES (4) no front + HistoryStatusFilter no back
-
-12. Comandos
-    Backend: npm run dev | npx prisma migrate dev --name X → generate → db seed | npx prisma migrate reset --force (dropa + recria + seed) | npx prisma studio | matar node: Get-Process node -ErrorAction SilentlyContinue | Stop-Process -Force
-
-Frontend: npm run dev | npm run build (validação real) | npx tsc --noEmit | npx shadcn@latest add X | buscar asChild: Select-String -Path "src\*\*\*.tsx" -Pattern "asChild"
-
-Teste rápido /me (Insomnia): POST {{ _.baseurl }}/auth/sign-in/email com user ativo → 200; GET {{ _.baseurl }}/me → 200 com user.sector. Com user desativado: GET /me → 403 com { code: "USER_INACTIVE" }.
-
-13. Pendências (backlog)
-    Imediato: 3 telas de relatório (R1 → R2 → R2b) → Fase 7 → 7.5 → 8 → 9.
-
-/history: TransferDetailsDialog mostra remessa completa (correto). Se um dia houver /transfers/:id no front, linha do TRANSFER pode linkar direto.
-
-getActivityMetrics revisar: agora conta SAIDA de transferência confirmada. Validar que TRANSFERENCIA continua não contada e que SAIDA entra em totalExits, entriesExitsRatio, byPeriod, byUser, byProduct, trends.
-
-R2b manual-output: no front, standalone com link cruzado "ver saídas manuais do setor X". fromSectorId null → exibir "—" e não entrar em bySector.
-
-Outras: ProductPagination muitas páginas | filtros mobile | página por categoria | Tooltip nativo→shadcn em "Deletar" | refatorar CategoriesPage (useState+2 dialogs→reducer) | truncamento /stock | DashboardPage service próprio | impressora térmica | QR Code (descartado) | webcam (descartado) | múltiplos códigos/produto | deletar imagem órfã UploadThing (Fase 9) | Neon Object Storage (futura) | transformação imagem backend | Supplier entidade | salePriceInCents | relatórios de gasto | PATCH /products/:id/average-cost | tsconfig paths sem baseUrl (Fase 9) | import.meta.dirname (Fase 9) | code-splitting React.lazy (~1.4MB/422KB gzip)
-
-⚠️ Fase 9 (polish) — itens a discutir com a IA:
-
-Refatorar AuthContext (additionalFields required: true no Better Auth vs. /me como fonte da verdade). Parcialmente resolvido na 6.1; decidir se remove ou mantém para signup.
-
-14. PROTOCOLO IA
-    Avisar contexto cedo ao notar 2+ sinais (repetir pergunta, esquecer arquivo, confundir decisão, resposta genérica, perder fio). Não esperar travar.
-
-Entregar .md sempre como texto puro, sem bloco triple-backtick externo (o .md tem blocos internos — quebra parser). Começar em # Inventory Management e terminar no último parágrafo. Exceções (partes, comentário) só se pedido.
-
-Fim de fase: usuário diz "Terminamos Fase X, atualiza .md" → marcar concluída, adicionar arquivos/decisões/pendências, atualizar próxima.
-
-Migração: usuário anexa .md → IA atualiza e devolve texto puro → usuário salva → novo chat: "Continuando projeto inventory management. Anexei PROJECT-STATE.md. Quero [fase]."
-
-Quando precisar de arquivo, marcar [BACK] ou [FRONT] e entregar em blocos separados (## 🖥️ Backend / ## 🎨 Frontend).
-
-Sempre que fizer uma pergunta, dar recomendação junto.
-
-15. ONDE PARAMOS
-    Fases 1–5, 4.5/4.5.1/4.6, 6, 6.1 concluídas ✅.
-
-Fase 6.5 — backend R1/R2/R2b 100% validado no Insomnia ✅. /history backend ✅ (agrupamento, filtros type/status/search nos dois lados, hasTransfer, RECUSADO, 403 Almox/MANAGER). /history frontend ✅ (Select Todos/Movimentações/Transferências, filtro RECUSADO no Status, expand animado, sub-lista distinta, limpar filtros, WarehouseOnlyRoute).
-
-Testes automatizados: instalar Vitest + Supertest (backend) e Playwright (frontend) no fim da Fase 6.5, depois das 3 telas de relatório prontas. Não escrever testes agora (contratos ainda mudam com o front). Escopo inicial: smoke test por endpoint (200 + shape mínimo) para R1/R2/R2b//history; depois regras (permissão, filtros, prioridade, paginação, agrupamento). Diferenciar no currículo: Supertest = integration test de API; Playwright = E2E.
-
-Próximo passo imediato: 3 telas de relatório no front (R1 → R2 → R2b), na ordem acordada.
-
-Não bloqueadores: TS5101 (baseUrl) e \_\_dirname → Fase 9.
-
-Última atualização: 12/11/2026.
-
-16. CHANGELOG v3.2 → v3.3
-    🔹 /history backend implementado e validado: types, service, controller, routes, mount em /admin. Agrupamento por transferId (TRANSFER event com movements[]), listagem bruta (includeTransfers=false), filtros type/status/createdById/productId/dateFrom/dateTo/search/page/limit/sortOrder, hasTransfer (true/false/ausente), search nos dois lados (Movements: name/sku/reason com unaccent; Transfers: nome/sku dos itens e reason com contains insensitive), total honesto (Movements sem transferId + Transfers).
-
-🔹 /history restrito a Almox/MANAGER: frontend WarehouseOnlyRoute + backend 403 FORBIDDEN no controller.
-
-🔹 MovementStatus ganhou RECUSADO (migração add_recusado_to_movement_status). refuseTransfer seta MovementStatus.RECUSADO (não CANCELADO). cancelTransfer continua CANCELADO. Distinção: Cancelado = Almox cancela antes do destino; Recusado = destino recusa.
-
-🔹 Filtro de Status no /history front inclui RECUSADO (HISTORY_STATUS_VALUES com 4); HistoryStatusFilter = MovementStatus | TransferStatus no back e no front; badge de Movement RECUSADO em vermelho.
-
-🔹 /history frontend implementado: Select "Eventos" (Todos/Movimentações/Transferências) derivando includeTransfers + hasTransfer; filtro de RECUSADO; expand animado (CollapsiblePanel grid-rows 0fr→1fr); sub-lista de Movements com visual próprio (bg-muted/40, dashed, cards) em vez de tabela; botão "Limpar filtros"; link do produto → /products/:id; /history em WarehouseOnlyRoute; Sidebar já tem History.
-
-🔹 Correções de /history no backend: type presente exclui Transfers; status inválido em MovementStatus força Movements vazio (sem 500); search em Transfers (itens e reason); hasTransfer (true/false) filtrando Movements por transferId e excluindo Transfers quando false.
-
-🔹 Seed ampliado: cobre Movement ENTRADA/SAIDA/SAIDA-manual/AJUSTE/TRANSFERENCIA em todos os status (PENDENTE/CONCLUIDO/CANCELADO/RECUSADO), Transfer PENDENTE/CONCLUIDO/CANCELADO/RECUSADO, PurchaseRequest PENDENTE/EM_ATENDIMENTO/ATENDIDO/RECUSADO/CANCELADO, SAIDA manual (transferId null) para R2b. Idempotente (findFirst antes de create).
-
-🔹 Regra de prioridade R2 confirmada em UTC: monthsBetween e monthKey usam getUTCFullYear/getUTCMonth; Transfer.confirmedAt é referência de mês de consumo. 2.4 validado (monthsInRange=3 para ago–out/2026).
-
-🔹 R2 global: priorityProductsCount = produtos DISTINTOS com prioridade em qualquer setor (não ocorrências por setor). Summary do R2 setor soma sobre o productMap inteiro (não top N).
-
-🔹 Decisão de testes automatizados registrada para o fim da Fase 6.5: Vitest + Supertest (backend), Playwright (frontend). Não implementar agora.
-
-🔹 Decisão de escopo: /history frontend entregue; 3 telas de relatório (R1/R2/R2b) no front são o próximo passo.
+- **Etiqueta** (`LabelPrintDialog`): renderiza preview no dialog + etiqueta no `PrintPortal` (fora do dialog). `handlePrint` → `enterPrintMode("label")` + 2×`requestAnimationFrame` → `window.print()`. `afterprint` limpa. 1 página, topo-esquerdo.
+- **`/history`**: `HistoryPrintView` (layout B). Botão "Imprimir" sempre abre dialog (checkbox é escolha do usuário). "Imprimir tudo" via `toast.promise` + loop de fetch (limite 500). Filtra TRANSFERENCIA duplicada quando existe SAIDA.
+- **Ficha do produto** (`ProductDetailPage`): botão "Ficha" no `ProductDetailHeader` + `PrintDialog` (1 checkbox "incluir listas") + `ProductPrintView` via `PrintPortal`. Lazy fetch de movements/history no clique.
+- **`/products` lista**: botão "Imprimir" + `PrintDialog` (checkbox "incluir detalhes completos" — categoria/média/local) + `ProductListPrintView` (5 colunas).
+- **`/stock`**: botão "Imprimir" + `PrintDialog` (checkbox "incluir distribuição") + `StockPrintView` (resumo 5 cards + 4 seções de alerta + 3 tabelas de distribuição opcionais).
+- **`/requests` lista**: botão "Imprimir" + `PrintDialog` (checkbox "incluir detalhamento de itens") + `RequestListPrintView` (6 colunas). Quando checkbox marcado, `enrichWithItems` busca detalhe de cada pedido (N+1 via `fetchPurchaseRequestById`) e renderiza sub-tabela de itens (`colSpan`) por pedido.
+- **`/requests` detalhe** (`RequestDetailsDialog`): botão "Imprimir" no header + `PrintDialog` (checkbox "incluir remessas", default marcado) + `RequestPrintView` (cabeçalho + itens + remessas + motivos).
+
+**Comportamento:** cabeçalhos/rodapés do Chrome aparecem no papel até o usuário desmarcar "Cabeçalhos e rodapés" no diálogo de impressão. **Não é bug** — se for crítico, geração de PDF no backend (Fase 9).
+
+**Cadastro/edição de produto (fixes da 6.6):**
+
+- Schema Zod unificado (`productSchema`) — `reason` opcional, `priceInCents: z.number().optional().refine(...)` (não `.nullable()` — quebra o TS Resolver do RHF).
+- `<NumericFormat>`: `value={field.value ?? ""}`, `onValueChange={(v) => field.onChange(v.floatValue ?? undefined)}`.
+- `formatDate` em UTC (evita "voltar 1 dia" por BRT).
+- `toDateInputValue` no edit (formata ISO UTC pra input `type="date"`).
+- `getProductById` inclui `category: { id, name, prefix }`.
+- Categoria aparece em `ProductDetailHeader` (badge), `ProductDetailsTab` (card Localização), `ProductPrintView` (ficha).
+- Badge de estoque em `ProductDetailsTab` (OK/Baixo/Esgotado), badge de validade no card de validade.
+- `/stock` mantém datas escritas (sem badges — decisão).
+- Editar produto: backend expandido pra `isCreator || isManager || isAlmoxarifadoStaff`.
+
+**Histórico enriquecido (`ProductHistoryTab`):**
+
+- `ProductHistoryChart` (Recharts, linha do saldo, agrega por dia se > 30 registros).
+- Agrupamento por dia (cabeçalho sticky).
+- Delta explícito (`+5`, `-2`, `0`).
+- Botão "Ver detalhes" (abre `TransferDetailsDialog` se `movement.transferId`, senão `MovementDetailsDialog`). Adapter `stockHistoryToMovementRef` em `src/lib/stock-history-adapter.ts`.
+- Badge "Devolução" via `getHistoryEventKind`.
+- Backend `getProductHistory` inclui `movement` com status/reason/transferId/createdAt/fromSector/toSector.
+
+**ID de remessa padronizado:**
+
+- Listas: `shortenId(transfer.id)` (8 chars + "…").
+- Dialog: ID completo + botão copiar (`CopyId` em `TransferDetailsDialog`).
+
+**Fixes importantes (não repetir):**
+
+- `/stock` e `/products?isExpiring=true`/`isExpired=true` filtram `quantity > 0` (produto sem estoque não "vence"). `getStockMetrics` e `listProducts` alinhados (contador e lista).
+- `/history`: filtro de TRANSFERENCIA duplicada (tela + papel).
+- Dialog de ficha sempre abre (checkbox é escolha do usuário).
+- `toast.promise` no "imprimir tudo" (não `toast.loading` + `dismiss` manual).
+- `flushSync(() => setPrintDialogOpen(false))` + `setTimeout(150)` antes de montar payload (evita dialog no papel).
+- `#root` escondido com `display: none` (não `visibility: hidden` — causava página em branco).
+- `print-base.css` precisa ser importado no `App.tsx` (bordas somem se não).
+
+## Comandos
+
+**Backend:** `npm run dev` | `npx prisma migrate dev --name X` → `generate` → `db seed` | `npx prisma migrate reset --force` | `npx prisma studio` | matar node: `Get-Process node -ErrorAction SilentlyContinue | Stop-Process -Force`.
+
+**Frontend:** `npm run dev` | `npm run build` (validação real) | `npx tsc --noEmit` | `npx shadcn@latest add X` | buscar `asChild`: `Select-String -Path "src\*\*\*.tsx" -Pattern "asChild"`.
+
+**Teste rápido /me (Insomnia):** `POST /auth/sign-in/email` com user ativo → 200; `GET /me` → 200 com `user.sector`. Com user desativado: 403 `{ code: "USER_INACTIVE" }`.
+
+## Pendências (backlog)
+
+**Próximo imediato:** Fase 7 — dashboard com filtros de setor + KPIs. Depois 3 telas de relatório no front (R1 → R2 → R2b, na ordem acordada).
+
+**Fase 7.5:** `/users` (MANAGER).
+
+**Fase 8:** `/alerts` + Socket.io + badge.
+
+**Fase 9 (polish):**
+
+- Refatorar AuthContext (additionalFields required vs `/me` fonte da verdade).
+- Testes automatizados: Vitest + Supertest (backend) e Playwright (frontend). Smoke test por endpoint + regras. Supertest = integration API; Playwright = E2E. Instalar depois das 3 telas de relatório.
+- `PrintDialog` com N `extraCheckboxes` (hoje aceita 1). Fase 9 se virar necessidade.
+- Impressão múltipla de etiquetas por folha A4 (grid de N etiquetas) — **não foi pedida**, ideia registrada.
+- Geração de PDF no backend (Puppeteer/pdfkit) — só se cabeçalhos do Chrome forem críticos. **Não é bug.**
+- Imprimir comprovante de remessa a partir do `TransferDetailsDialog` (feature separada).
+- **Performance `/requests` com itens:** `enrichWithItems` faz N+1 requests (`fetchPurchaseRequestById` por pedido). Para 500 pedidos = 500 requests. **Mover pro backend** (incluir `items` na listagem via `include`) — 1 request. Patch: no `purchaseRequestService.listPurchaseRequests`, adicionar `items: { include: { product: { select: { name, sku, barcode } } } }` no `include` do `findMany`.
+- Outras: ProductPagination muitas páginas | filtros mobile | página por categoria | Tooltip nativo → shadcn em "Deletar" | refatorar `CategoriesPage` (useState + 2 dialogs → reducer) | truncamento `/stock` | `DashboardPage` service próprio | impressora térmica | QR Code (descartado) | webcam (descartado) | múltiplos códigos/produto | deletar imagem órfã UploadThing | Neon Object Storage (futura) | Supplier entidade | `salePriceInCents` | relatórios de gasto | `PATCH /products/:id/average-cost` | tsconfig paths sem baseUrl | `import.meta.dirname` | code-splitting React.lazy (~1.4MB / 422KB gzip).
+
+**Não bloqueadores:** TS5101 (baseUrl) e `__dirname` → Fase 9.
+
+## Bugs já corrigidos (não repetir)
+
+- categoryAlertMap TDZ no dashboardService.
+- locationExact/supplierExact não repassados no controller.
+- `resolvedBy` string → `resolvedById` FK.
+- `where.category` → `where.categoryId`.
+- `imageUrl: p.id` → `p.imageUrl`.
+- `asChild` (Base UI) → `buttonVariants` + `Link`.
+- `<Cell>` Recharts → `fill` no dado.
+- `SelectValue` mostrando ID/all → `selectedOption` + fallback.
+- Search sem unaccent → unaccent.
+- `SignUpEmail` falhava sem sectorId → `additionalFields required`.
+- `sectorService.updateSector` lia `data.isWarehouse` → checagem no controller.
+- `productController.createMovement` com 2 args → 4 args.
+- Import `../../generated` → `../generated` em `movement.types.ts`.
+- `useRefuseTransfer` quebrado em `/movements` → dialog de recusa obrigatório.
+- `refusalReason` não exibido em `RequestTransfersList` → corrigido.
+- `refusalReason` ausente do payload de `GET /admin/purchase-requests/:id` → adicionado.
+- Crash `Cannot read properties of undefined (reading 'isWarehouse')` → `/me` + `getMe()` + `user.sector?.isWarehouse` defensivo.
+- Desconecta ao navegar/refresh em `/dashboard` → `/me` montado + 2º `useEffect` removido.
+- STAFF setor comum indo para `/dashboard` → `LoginForm`/`PublicRoute` redirecionam.
+- Loop de redirect em `/account-suspended` → standalone + `PublicRoute` trata `isActive === false`.
+- `getMe` engolia 403 → `MeResult` discriminado + stub `{ isActive: false }`.
+- `monthsBetween` off-by-one em R2 → `getUTCFullYear`/`getUTCMonth` (UTC).
+- `/history`: `type=ENTRADA/SAIDA/AJUSTE` retornava todas as Transfers → `buildTransferWhere` exclui Transfers quando `filters.type` presente.
+- `/history`: `status=RECUSADO` dava 500 → `buildMovementWhere` força `id in ["none"]` quando status não existe em `MovementStatus`.
+- `/history`: `search=caixa` retornava Transfers sem "caixa" → `buildTransferWhere` aplica search em `items.some.product.name/sku` OU `Transfer.reason`.
+- `/history`: Movement de remessa recusada aparecia como CANCELADO → `MovementStatus` ganhou RECUSADO; `refuseTransfer` seta RECUSADO.
+- `/history`: filtro de Status não tinha RECUSADO → `HISTORY_STATUS_VALUES` (4) no front + `HistoryStatusFilter` no back.
+- Etiqueta imprimia o modal inteiro → `LabelPrintDialog` renderiza no `PrintPortal` + `body.printing-label > * { display: none }` + import do `label-print.css`.
+- Página em branco antes da etiqueta → `#root` escondido em `printing-label` com `display: none`.
+- `/history` colorido na 1ª folha → `body.printing-list #root { display: none }` + `#print-portal-root { display: block }`.
+- Toast preso no "imprimir tudo" → `toast.promise`.
+- Dialog aparecia no papel → `flushSync` + `setTimeout(150)`.
+- Layout B sem bordas → CSS do layout B (não misturar com A) + `box-sizing: border-box` + `print-spacer` via `<td>`.
+- `print-base.css` não importado → bordas somem.
+- Produto: data "1 dia a menos" → `formatDate` em UTC + `getExpiryBadge` em UTC.
+- Produto: "Preço inválido" → schema `number` + `NumericFormat` com `floatValue` + `reaisToCents`.
+- Produto: `minStock` default 5 → 0.
+- Produto: edição bloqueada pra STAFF Almox → backend expandido.
+- Produto: categoria não aparecia → `getProductById` inclui `category`.
+- Produto: devolução sem badge → `getHistoryEventKind`.
+- Produto: `ProductHistoryTab` pobre → chart + agrupamento + delta + dialogs.
+- Produto: `StockHistory` faltando em transfers do seed → seed simula criação + ação.
+- Produto: ID truncado inconsistente → `shortenId` + `CopyId`.
+- Produto: TS Resolver conflito → schema unificado com `reason` opcional.
+- Produto: `NumericFormat` vazio no edit → `value ?? ""` + `floatValue ?? undefined`.
+- Seed: `Giz de Cera` não existia → `Caixa de Lápis de Cor`.
+- `/stock`: lista de vencidos/vencendo e contadores incluíam `quantity === 0` → filtrado em `getStockMetrics` (backend) e alinhado em `listProducts`.
+
+## Seed
+
+5 usuários: `admin@estoque.com` (MANAGER/Admin@123), `almoxarifado@estoque.com` (STAFF Almox/Staff@123), `almoxarifado2@estoque.com` (STAFF Almox/Staff@123), `cozinha@estoque.com` (STAFF/Staff@123), `escola@estoque.com` (STAFF/Staff@123).
+
+3 setores (Almoxarifado `isWarehouse=true`, Cozinha, Escola). 6 categorias. 10 produtos. ~30 movimentações manuais em ~30 dias (`addManualMovement` helper) para gerar > 20 StockHistory em vários produtos. 5 Transfers (PENDENTE, CONCLUIDO ×2, CANCELADO, RECUSADO) com StockHistory completo. 3 PurchaseRequests (PENDENTE, RECUSADO, CANCELADO). Seed idempotente (`findFirst` antes de `create`). Usar `npx prisma migrate reset --force` para recriar tudo.
+
+## Protocolo IA
+
+- **Este .md é contexto de chat para chat.** Mantenha-o **enxuto**. Remova bugs antigos, pensamentos, ideias em espera, explicações longas — mantenha só o que ajuda o **próximo chat a implementar a próxima feature** sem reler código. Se crescer, corte sem dó.
+- Avisar contexto cedo ao notar 2+ sinais (repetir pergunta, esquecer arquivo, confundir decisão, perder fio).
+- Entregar .md sempre como texto puro (bloco único), **sem** triple-backtick externo.
+- Fim de fase: usuário diz "Terminamos Fase X, atualiza .md" → marcar ✅, adicionar decisões/pendências, atualizar próxima.
+- Quando precisar de arquivo, marcar `[BACK]` ou `[FRONT]` e entregar em blocos separados (`## 🖥️ Backend` / `## 🎨 Frontend`).
+- Sempre que fizer pergunta, dar recomendação junto.
+
+## ONDE PARAMOS
+
+Fases 1–6.1 ✅. Fase 6.5 ✅ (backend R1/R2/R2b + `/history` backend + frontend). **Fase 6.6 ✅** — impressão completa (`/history`, ficha do produto, `/products` lista, `/stock`, `/requests` lista + detalhe), cadastro/edição de produto, badges, histórico enriquecido, ID padronizado, categoria na UI.
+
+**Próximo passo imediato: Fase 7** — dashboard com filtros de setor + KPIs. Depois 3 telas de relatório no front (R1 → R2 → R2b).
+
+Última atualização: 15/11/2026.
