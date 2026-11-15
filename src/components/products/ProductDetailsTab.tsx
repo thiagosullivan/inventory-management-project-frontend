@@ -85,6 +85,7 @@ export function ProductDetailsTab({ product }: ProductDetailsTabProps) {
           <CardTitle className="text-base">Localização</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
+          <Field label="Categoria" value={product.category?.name ?? "—"} />
           <Field label="Local" value={product.location} />
           <Field label="Fornecedor" value={product.supplier} />
         </CardContent>
