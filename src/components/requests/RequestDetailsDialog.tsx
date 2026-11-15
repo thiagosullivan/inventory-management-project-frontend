@@ -1,6 +1,6 @@
 // src/components/requests/RequestDetailsDialog.tsx
-import { useState } from "react";
-import { Truck, X, CheckCircle2, Ban, ImageOff } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Truck, X, CheckCircle2, Ban, ImageOff, Printer } from "lucide-react";
 
 import {
   Dialog,
@@ -25,8 +25,18 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { formatDateTime } from "@/lib/format-date";
 import type { SectorOption } from "@/types/sectors.types";
-import type { PurchaseRequestStatus } from "@/types/purchaseRequests.types";
+import type {
+  PurchaseRequestDetailResponse,
+  PurchaseRequestStatus,
+} from "@/types/purchaseRequests.types";
 import { RequestTransfersList } from "./RequestTransfersList";
+
+// 🔹 Impressão
+import { PrintDialog } from "@/components/print/PrintDialog";
+import { PrintLayout } from "@/components/print/PrintLayout";
+import { PrintPortal } from "@/components/print/PrintPortal";
+import { RequestPrintView } from "./RequestPrintView";
+import { enterPrintMode, exitPrintMode } from "@/lib/print/print-mode";
 
 export interface RequestDetailsDialogProps {
   requestId: string | null;
@@ -99,7 +109,6 @@ function RequestDetailsBody({
   const { user } = useAuth();
   const query = usePurchaseRequest(requestId);
   const request = query.data;
-  console.log(request, "REQ");
 
   const refuseMutation = useRefusePurchaseRequest();
   const finalizeMutation = useFinalizePurchaseRequest();
@@ -112,6 +121,33 @@ function RequestDetailsBody({
 
   const [refusalReason, setRefusalReason] = useState("");
   const [finalizeNote, setFinalizeNote] = useState("");
+
+  // 🔹 Impressão
+  const [printOpen, setPrintOpen] = useState(false);
+  const [includeTransfers, setIncludeTransfers] = useState(true);
+  const [printPayload, setPrintPayload] = useState<{
+    request: PurchaseRequestDetailResponse;
+    includeTransfers: boolean;
+    generatedAt: Date;
+  } | null>(null);
+
+  useEffect(() => {
+    if (!printPayload) return;
+    enterPrintMode("list");
+    const raf = requestAnimationFrame(() => {
+      window.print();
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [printPayload]);
+
+  useEffect(() => {
+    function onAfterPrint() {
+      exitPrintMode();
+      setPrintPayload(null);
+    }
+    window.addEventListener("afterprint", onAfterPrint);
+    return () => window.removeEventListener("afterprint", onAfterPrint);
+  }, []);
 
   const isManager = user?.role === "MANAGER";
   const isWarehouseUser = user?.sector?.isWarehouse === true;
@@ -254,13 +290,28 @@ function RequestDetailsBody({
   return (
     <>
       <DialogHeader>
-        <DialogTitle className="text-base font-bold text-primary">
-          Detalhes do pedido
-        </DialogTitle>
-        <DialogDescription>
-          ID{" "}
-          <span className="font-mono uppercase">{request.id.slice(0, 8)}</span>
-        </DialogDescription>
+        <div className="flex items-start justify-between gap-2">
+          <div>
+            <DialogTitle className="text-base font-bold text-primary">
+              Detalhes do pedido
+            </DialogTitle>
+            <DialogDescription>
+              ID{" "}
+              <span className="font-mono uppercase">
+                {request.id.slice(0, 8)}
+              </span>
+            </DialogDescription>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setPrintOpen(true)}
+            className="cursor-pointer"
+          >
+            <Printer size={16} className="mr-2" />
+            Imprimir
+          </Button>
+        </div>
       </DialogHeader>
 
       {/* Barra de status resumida */}
@@ -599,6 +650,56 @@ function RequestDetailsBody({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* ---- Dialog: imprimir ---- */}
+      <PrintDialog
+        key={printOpen ? "open" : "closed"}
+        open={printOpen}
+        onOpenChange={setPrintOpen}
+        title="Imprimir pedido"
+        totalCount={1}
+        pageSize={1}
+        currentLabel="Pedido completo"
+        allLabel="Pedido completo"
+        extraCheckbox={{
+          label: "Incluir remessas",
+          checked: includeTransfers,
+          onCheckedChange: setIncludeTransfers,
+        }}
+        onConfirm={() => {
+          setPrintOpen(false);
+          setTimeout(() => {
+            setPrintPayload({
+              request,
+              includeTransfers,
+              generatedAt: new Date(),
+            });
+          }, 150);
+        }}
+      />
+
+      {/* ---- Conteúdo da impressão ---- */}
+      {printPayload && (
+        <PrintPortal>
+          <PrintLayout
+            title={`Pedido #${printPayload.request.id.slice(0, 8)}`}
+            metaLines={[
+              `Setor: ${printPayload.request.sector?.name ?? "—"} · Status: ${STATUS_LABEL[printPayload.request.status]}`,
+            ]}
+            totalCount={
+              (printPayload.request.items?.length ?? 0) +
+              (printPayload.request.transfers?.length ?? 0)
+            }
+            generatedAt={printPayload.generatedAt}
+            itemLabel="registro"
+          >
+            <RequestPrintView
+              request={printPayload.request}
+              includeTransfers={printPayload.includeTransfers}
+            />
+          </PrintLayout>
+        </PrintPortal>
+      )}
     </>
   );
 }

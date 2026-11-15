@@ -1,7 +1,8 @@
 // src/pages/RequestsPage.tsx
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Plus, Eye } from "lucide-react";
+import { Plus, Eye, Printer } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -22,6 +23,15 @@ import type {
   PurchaseRequestResponse,
   PurchaseRequestStatus,
 } from "@/types/purchaseRequests.types";
+import { fetchPurchaseRequests } from "@/services/purchaseRequests";
+
+// 🔹 Impressão
+import { PrintDialog, type PrintScope } from "@/components/print/PrintDialog";
+import { PrintLayout } from "@/components/print/PrintLayout";
+import { PrintPortal } from "@/components/print/PrintPortal";
+import { RequestListPrintView } from "@/components/requests/RequestListPrintView";
+import { enterPrintMode, exitPrintMode } from "@/lib/print/print-mode";
+import { PRINT_MAX_EVENTS } from "@/lib/print/print-utils";
 
 const STATUS_LABEL: Record<PurchaseRequestStatus, string> = {
   TODOS: "Todos",
@@ -41,6 +51,12 @@ const STATUS_CLASS: Record<PurchaseRequestStatus, string> = {
   CANCELADO: "bg-zinc-200 text-zinc-800 border-zinc-300",
 };
 
+interface PrintPayload {
+  requests: PurchaseRequestResponse[];
+  includeItems: boolean;
+  generatedAt: Date;
+}
+
 export default function RequestsPage() {
   const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -52,15 +68,37 @@ export default function RequestsPage() {
 
   const isManager = user?.role === "MANAGER";
   const isWarehouseUser = user?.sector?.isWarehouse === true;
-  const canCreate = isManager || !isWarehouseUser; // STAFF não-Almoxarifado ou MANAGER
-  // Obs.: MANAGER de setor Almoxarifado também vê o botão (regra do backend permite).
-  // O backend rejeita STAFF do Almoxarifado — aqui escondo pra UX.
+  const canCreate = isManager || !isWarehouseUser;
 
   const requestsQuery = usePurchaseRequests(filters);
   const sectorOptionsQuery = useSectorOptions();
 
   const [detailsId, setDetailsId] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
+
+  // 🔹 Impressão
+  const [printDialogOpen, setPrintDialogOpen] = useState(false);
+  const [includeItems, setIncludeItems] = useState(false);
+  const [printPayload, setPrintPayload] = useState<PrintPayload | null>(null);
+
+  useEffect(() => {
+    if (!printPayload) return;
+    enterPrintMode("list");
+    const raf = requestAnimationFrame(() => {
+      toast.dismiss();
+      window.print();
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [printPayload]);
+
+  useEffect(() => {
+    function onAfterPrint() {
+      exitPrintMode();
+      setPrintPayload(null);
+    }
+    window.addEventListener("afterprint", onAfterPrint);
+    return () => window.removeEventListener("afterprint", onAfterPrint);
+  }, []);
 
   function setStatusTab(status: PurchaseRequestStatus) {
     setSearchParams(
@@ -88,6 +126,67 @@ export default function RequestsPage() {
     (s) => !s.isWarehouse,
   );
 
+  // =============================
+  // Handlers de Impressão
+  // =============================
+
+  async function startPrintAll() {
+    const toastId = toast.loading("Carregando pedidos para impressão...");
+    try {
+      const collected: PurchaseRequestResponse[] = [];
+      let p = 1;
+      const fetchLimit = 100;
+
+      while (true) {
+        const res = await fetchPurchaseRequests({
+          ...filters,
+          status: filters.status === "TODOS" ? undefined : filters.status,
+          page: p,
+          limit: fetchLimit,
+        });
+        collected.push(...res.requests);
+        if (p >= res.totalPages) break;
+        if (collected.length >= PRINT_MAX_EVENTS) break;
+        p++;
+      }
+
+      const capped = collected.slice(0, PRINT_MAX_EVENTS);
+      toast.dismiss(toastId);
+      setPrintPayload({
+        requests: capped,
+        includeItems,
+        generatedAt: new Date(),
+      });
+    } catch (err) {
+      console.error(err);
+      toast.error("Erro ao carregar pedidos para impressão.", { id: toastId });
+    }
+  }
+
+  function startPrintCurrent() {
+    setPrintPayload({
+      requests: rows,
+      includeItems,
+      generatedAt: new Date(),
+    });
+  }
+
+  function handlePrintConfirm(scope: PrintScope) {
+    setPrintDialogOpen(false);
+    setTimeout(() => {
+      if (scope === "current") startPrintCurrent();
+      else void startPrintAll();
+    }, 150);
+  }
+
+  function buildMetaLines(): string[] {
+    const parts: string[] = [];
+    if (filters.status && filters.status !== "TODOS")
+      parts.push(`Status=${STATUS_LABEL[filters.status]}`);
+    if (filters.sectorId) parts.push(`Setor filtrado`);
+    return parts.length > 0 ? [`Filtros: ${parts.join(" · ")}`] : [];
+  }
+
   return (
     <section className="flex flex-col mx-auto gap-6 w-full max-w-6xl px-4 py-8">
       <header className="flex items-center justify-between gap-4">
@@ -97,18 +196,30 @@ export default function RequestsPage() {
             Pedidos de compra entre setores.
           </p>
         </div>
-        {canCreate && (
+
+        <div className="flex items-center gap-2">
           <Button
-            onClick={() => setCreateOpen(true)}
+            variant="outline"
+            onClick={() => setPrintDialogOpen(true)}
+            disabled={total === 0}
             className="py-5 cursor-pointer"
           >
-            <Plus size={16} className="mr-2" />
-            Novo pedido
+            <Printer size={16} className="mr-2" />
+            Imprimir
           </Button>
-        )}
+          {canCreate && (
+            <Button
+              onClick={() => setCreateOpen(true)}
+              className="py-5 cursor-pointer"
+            >
+              <Plus size={16} className="mr-2" />
+              Novo pedido
+            </Button>
+          )}
+        </div>
       </header>
 
-      {/* Tabs por status (sincronizadas com ?status=) */}
+      {/* Tabs por status */}
       <Tabs
         value={filters.status}
         onValueChange={(v) => setStatusTab(v as PurchaseRequestStatus)}
@@ -245,6 +356,42 @@ export default function RequestsPage() {
         }}
         destinationOptions={destinationOptions}
       />
+
+      {/* Dialog de impressão */}
+      <PrintDialog
+        key={printDialogOpen ? "open" : "closed"}
+        open={printDialogOpen}
+        onOpenChange={setPrintDialogOpen}
+        title="Imprimir lista de pedidos"
+        totalCount={total}
+        pageSize={limit}
+        currentLabel={`${Math.min(limit, total)} pedidos desta página`}
+        allLabel={`${total} pedidos (todos os filtros)`}
+        extraCheckbox={{
+          label: "Incluir detalhamento de itens (ainda não implementado)",
+          checked: includeItems,
+          onCheckedChange: setIncludeItems,
+        }}
+        onConfirm={handlePrintConfirm}
+      />
+
+      {/* Payload de impressão */}
+      {printPayload && (
+        <PrintPortal>
+          <PrintLayout
+            title="Lista de Pedidos"
+            metaLines={buildMetaLines()}
+            totalCount={printPayload.requests.length}
+            generatedAt={printPayload.generatedAt}
+            itemLabel="pedido"
+          >
+            <RequestListPrintView
+              requests={printPayload.requests}
+              includeItems={printPayload.includeItems}
+            />
+          </PrintLayout>
+        </PrintPortal>
+      )}
     </section>
   );
 }
