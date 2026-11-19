@@ -51,6 +51,12 @@
   body.printing-label #root {
     display: none !important;
   }
+
+  body.printing-list [data-slot="dialog-content"],
+  body.printing-list [data-slot="dialog-overlay"],
+  body.printing-list [data-slot="dialog-portal"] {
+    display: none !important;
+  }
 }
 
 /* Fora do @media print: portal invisível na tela */
