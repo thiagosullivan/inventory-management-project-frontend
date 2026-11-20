@@ -26,6 +26,7 @@ import ReportsHubPage from "./pages/ReportsHubPage.tsx";
 import ReportsRequestsPage from "./pages/ReportsRequestsPage.tsx";
 import ReportsConsumptionPage from "./pages/ReportsConsumptionPage.tsx";
 import ReportsManualOutputPage from "./pages/ReportsManualOutputPage.tsx";
+import UsersPage from "./Pages/UsersPage.tsx";
 
 export const router = createBrowserRouter([
   // Public
@@ -92,10 +93,10 @@ export const router = createBrowserRouter([
       {
         element: <ManagerRoutes />,
         children: [
-          {
-            element: <RootLayout />,
-            children: [{ path: "/admin", element: <AdminPage /> }],
-          },
+          { element: <RootLayout />, children: [
+            { path: "/admin", element: <AdminPage /> },
+            { path: "/admin/users", element: <UsersPage /> }, // 🔹 NOVO (Fase 7.5)
+          ]},
         ],
       },
     ],
