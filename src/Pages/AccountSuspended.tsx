@@ -3,10 +3,13 @@ import logoLight from "../../public/logo-light.png";
 import logoDark from "../../public/logo-dark.png";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { signOut } from "@/services/auth";
+import { useAuth } from "@/contexts/AuthContext";
 
 function AccountSuspended() {
   const { theme } = useTheme();
   const navigate = useNavigate();
+  const { setUser } = useAuth();
 
   const getLogo = () => {
     if (theme === "dark") return logoDark;
@@ -21,6 +24,17 @@ function AccountSuspended() {
 
     return logoLight;
   };
+
+  async function handleBack() {
+  try {
+    await signOut();          // 🔹 backend: revoga sessão + limpa cookie
+  } catch {
+    // mesmo se falhar, limpa local
+  } finally {
+    setUser(null);            // 🔹 limpa o stub { isActive: false }
+    navigate("/");            // 🔹 agora PublicRoute deixa passar
+  }
+}
 
   return (
     <main className="flex items-center justify-center h-screen">
@@ -37,7 +51,7 @@ function AccountSuspended() {
           </div>
           <Button
             className="py-6 px-10 text-base mx-auto flex cursor-pointer"
-            onClick={() => navigate("/")}
+            onClick={handleBack}
           >
             Voltar
           </Button>
