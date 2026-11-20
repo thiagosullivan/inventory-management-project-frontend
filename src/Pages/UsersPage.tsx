@@ -57,7 +57,7 @@ export default function UsersPage() {
             Gerencie os usuários do sistema. Gerentes não aparecem nesta lista.
           </p>
         </div>
-        <Button onClick={openCreate} className="cursor-pointer">
+        <Button onClick={openCreate} className="cursor-pointer min-h-9 p-2">
           <Plus className="h-4 w-4 mr-2" />
           Novo usuário
         </Button>

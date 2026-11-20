@@ -47,7 +47,7 @@ export default function CategoriesPage() {
             Gerencie as categorias usadas nos produtos.
           </p>
         </div>
-        <Button onClick={handleOpenCreate} className="cursor-pointer">
+        <Button onClick={handleOpenCreate} className="cursor-pointer min-h-9 py-4 px-2">
           <Plus className="mr-2 h-4 w-4" />
           Nova categoria
         </Button>

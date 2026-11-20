@@ -658,7 +658,7 @@ export default function HistoryPage() {
           variant="outline"
           onClick={handlePrintClick}
           disabled={total === 0}
-          className="cursor-pointer"
+          className="cursor-pointer min-h-9 p-2"
         >
           <Printer size={16} className="mr-2" />
           Imprimir

@@ -96,7 +96,7 @@ export default function StockPage() {
         <Button
           variant="outline"
           onClick={() => setPrintDialogOpen(true)}
-          className="cursor-pointer ml-auto"
+          className="cursor-pointer ml-auto min-h-9 p-2"
         >
           <Printer size={16} className="mr-2" />
           Imprimir
