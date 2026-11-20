@@ -1,3 +1,4 @@
+// src/components/users/UserFormDialog.tsx
 import {
   Dialog,
   DialogContent,
@@ -17,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import {
   useCreateUser,
+  useUpdateUserProfile,
   useUpdateUserRole,
   useUpdateUserSector,
 } from "@/hooks/useUsers";
@@ -25,7 +27,7 @@ import { fetchSectorOptions } from "@/services/sectors";
 import type { User, UserRole } from "@/types/users.types";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { toast } from "sonner"; // ajuste se for useToast do shadcn
+import { toast } from "sonner";
 
 const ROLE_LABEL: Record<UserRole, string> = {
   MANAGER: "Manager",
@@ -51,6 +53,7 @@ export function UserFormDialog({
   const createMutation = useCreateUser();
   const roleMutation = useUpdateUserRole();
   const sectorMutation = useUpdateUserSector();
+  const profileMutation = useUpdateUserProfile();
 
   const { data: sectors = [] } = useQuery({
     queryKey: ["sectors", "options"],
@@ -59,8 +62,6 @@ export function UserFormDialog({
     enabled: open,
   });
 
-  // 🔹 Estado inicial vem das props (sem useEffect de reset).
-  //    O pai força remontagem via `key` — ver UsersPage.
   const [name, setName] = useState(user?.name ?? "");
   const [email, setEmail] = useState(user?.email ?? "");
   const [password, setPassword] = useState("");
@@ -72,21 +73,33 @@ export function UserFormDialog({
   const isPending =
     createMutation.isPending ||
     roleMutation.isPending ||
-    sectorMutation.isPending;
+    sectorMutation.isPending ||
+    profileMutation.isPending;
 
   const canSubmitCreate =
     name.trim().length > 0 &&
     email.trim().length > 0 &&
     password.length >= 6 &&
     sectorId.length > 0;
+
+  // 🔹 Fase 7.6 — name agora entra no diff
   const canSubmitEdit =
     isEdit &&
     !!user &&
-    (role !== user.role || sectorId !== user.sectorId);
+    (name.trim() !== (user.name ?? "") ||
+      role !== user.role ||
+      sectorId !== (user.sectorId ?? ""));
 
   async function handleSubmit() {
     if (isEdit && user) {
       try {
+        // 🔹 Fase 7.6 — profile primeiro (nome)
+        if (name.trim() !== (user.name ?? "")) {
+          await profileMutation.mutateAsync({
+            id: user.id,
+            payload: { name: name.trim() },
+          });
+        }
         if (role !== user.role && canEditRole) {
           await roleMutation.mutateAsync({ id: user.id, payload: { role } });
         }
@@ -132,21 +145,18 @@ export function UserFormDialog({
           </DialogTitle>
           <DialogDescription>
             {isEdit
-              ? "Edite cargo e setor. Nome, email e senha não são editáveis nesta fase."
+              ? "Edite nome, cargo e setor. Email e senha não são editáveis."
               : "Preencha os dados. O setor é obrigatório."}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-3">
-          {/* Nome */}
+          {/* Nome — editável no create e no edit (Fase 7.6) */}
           <div>
             <label className="text-xs text-muted-foreground">Nome</label>
             <Input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              disabled={isEdit}
-              readOnly={isEdit}
-              title={isEdit ? "Edição de nome disponível na Fase 8" : undefined}
             />
           </div>
 
@@ -166,7 +176,7 @@ export function UserFormDialog({
           {/* Senha — só no create */}
           {!isEdit && (
             <div>
-              <label className="text-xs text-muted-foreground">Senha</label>
+              <label className="text-xs text-muted-foreground">Senha (mínimo 6 caracteres)</label>
               <Input
                 type="password"
                 value={password}
@@ -182,7 +192,6 @@ export function UserFormDialog({
             <Select
               value={role}
               onValueChange={(v) => {
-                // 🔹 normaliza null do Base UI
                 if (v === null) return;
                 setRole(v as UserRole);
               }}
@@ -195,7 +204,6 @@ export function UserFormDialog({
                     : undefined
                 }
               >
-                {/* 🔹 children explícito — evita mostrar valor cru */}
                 <SelectValue placeholder="Selecione">
                   {ROLE_LABEL[role]}
                 </SelectValue>
@@ -218,13 +226,11 @@ export function UserFormDialog({
             <Select
               value={sectorId}
               onValueChange={(v) => {
-                // 🔹 normaliza null do Base UI
                 if (v === null) return;
                 setSectorId(v);
               }}
             >
               <SelectTrigger>
-                {/* 🔹 children explícito — evita mostrar valor cru */}
                 <SelectValue placeholder="Selecione o setor">
                   {sectorId
                     ? (sectors.find((s) => s.value === sectorId)?.label ??
