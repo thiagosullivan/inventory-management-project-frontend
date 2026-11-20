@@ -27,6 +27,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner"; // ajuste se for useToast do shadcn
 
+const ROLE_LABEL: Record<UserRole, string> = {
+  MANAGER: "Manager",
+  STAFF: "Staff",
+};
+
 interface UserFormDialogProps {
   mode: "create" | "edit";
   user: User | null;
@@ -178,7 +183,7 @@ export function UserFormDialog({
               value={role}
               onValueChange={(v) => {
                 // 🔹 normaliza null do Base UI
-                if (v == null) return;
+                if (v === null) return;
                 setRole(v as UserRole);
               }}
               disabled={!canEditRole}
@@ -190,7 +195,10 @@ export function UserFormDialog({
                     : undefined
                 }
               >
-                <SelectValue />
+                {/* 🔹 children explícito — evita mostrar valor cru */}
+                <SelectValue placeholder="Selecione">
+                  {ROLE_LABEL[role]}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="STAFF">Staff</SelectItem>
@@ -211,12 +219,18 @@ export function UserFormDialog({
               value={sectorId}
               onValueChange={(v) => {
                 // 🔹 normaliza null do Base UI
-                if (v == null) return;
+                if (v === null) return;
                 setSectorId(v);
               }}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Selecione o setor" />
+                {/* 🔹 children explícito — evita mostrar valor cru */}
+                <SelectValue placeholder="Selecione o setor">
+                  {sectorId
+                    ? (sectors.find((s) => s.value === sectorId)?.label ??
+                      "Selecione o setor")
+                    : "Selecione o setor"}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {sectors.map((s) => (
