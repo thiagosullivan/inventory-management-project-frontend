@@ -4,11 +4,13 @@ import {
   fetchUserOptions,
   fetchUsers,
   toggleUserStatus,
+  updateUserProfile,
   updateUserRole,
   updateUserSector,
 } from "@/services/users";
 import type {
   CreateUserPayload,
+  UpdateUserProfilePayload,
   UpdateUserRolePayload,
   UpdateUserSectorPayload,
   User,
@@ -17,7 +19,7 @@ import type {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 // ============================================================
-// Options (já existia) — alimenta o UserSelect
+// Options
 // ============================================================
 
 export function useUsers() {
@@ -44,7 +46,7 @@ export function useUsersList(filters: UserFilters) {
     queryKey: ["users", "list", filters],
     queryFn: () => fetchUsers(filters),
     staleTime: 1000 * 30,
-    placeholderData: (prev) => prev, // mantém tabela anterior enquanto pagina/filtra
+    placeholderData: (prev) => prev,
   });
 }
 
@@ -100,6 +102,21 @@ export function useUpdateUserSector() {
   });
 }
 
+// 🔹 NOVO (Fase 7.6)
+export function useUpdateUserProfile() {
+  const invalidate = useInvalidateUsers();
+  return useMutation({
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: UpdateUserProfilePayload;
+    }) => updateUserProfile(id, payload),
+    onSuccess: invalidate,
+  });
+}
+
 export function useToggleUserStatus() {
   const invalidate = useInvalidateUsers();
   return useMutation({
@@ -115,9 +132,5 @@ export function useDeleteUser() {
     onSuccess: invalidate,
   });
 }
-
-// ============================================================
-// Hook composto opcional — só se o dialog precisar de tudo junto
-// ============================================================
 
 export type { User };

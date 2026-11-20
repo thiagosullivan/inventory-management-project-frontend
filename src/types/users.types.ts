@@ -1,21 +1,13 @@
-// ============================================================
-// Roles
-// ============================================================
+// src/types/users.types.ts
 
 export type UserRole = "MANAGER" | "STAFF";
 
-// ============================================================
-// Entidades
-// ============================================================
-
-/** Setor resumido que vem aninhado no User (select do backend). */
 export interface UserSectorRef {
   id: string;
   name: string;
   isWarehouse: boolean;
 }
 
-/** Usuário como retornado por GET /admin/users (shape do select). */
 export interface User {
   id: string;
   email: string;
@@ -30,7 +22,6 @@ export interface User {
   sector: UserSectorRef | null;
 }
 
-/** Resposta de GET /admin/users. */
 export interface UsersListResponse {
   users: User[];
   total: number;
@@ -38,7 +29,6 @@ export interface UsersListResponse {
   limit: number;
 }
 
-/** Filtros aceitos por GET /admin/users (query params). */
 export interface UserFilters {
   search?: string;
   role?: UserRole;
@@ -52,28 +42,30 @@ export interface UserFilters {
 // Payloads
 // ============================================================
 
-/** POST /admin/users */
 export interface CreateUserPayload {
   name: string;
   email: string;
   password: string;
-  role?: UserRole; // default STAFF no backend
-  sectorId: string; // obrigatório
+  role?: UserRole;
+  sectorId: string;
   image?: string;
 }
 
-/** PATCH /admin/users/:id/role */
 export interface UpdateUserRolePayload {
   role: UserRole;
 }
 
-/** PATCH /admin/users/:id/sector */
 export interface UpdateUserSectorPayload {
   sectorId: string;
 }
 
+// 🔹 NOVO (Fase 7.6) — PATCH /admin/users/:id/profile
+export interface UpdateUserProfilePayload {
+  name: string;
+}
+
 // ============================================================
-// Options (selects) — já existia, mantido
+// Options
 // ============================================================
 
 export interface UserOption {

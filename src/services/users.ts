@@ -1,6 +1,8 @@
+// src/services/users.ts
 import type { ApiEnvelope } from "@/lib/api-envelope";
 import type {
   CreateUserPayload,
+  UpdateUserProfilePayload,
   UpdateUserRolePayload,
   UpdateUserSectorPayload,
   User,
@@ -10,10 +12,6 @@ import type {
   UsersListResponse,
 } from "@/types/users.types";
 import { api } from "./api";
-
-// ============================================================
-// Options (já existia)
-// ============================================================
 
 interface GetUserOptionsResponse {
   success: boolean;
@@ -26,10 +24,6 @@ export async function fetchUserOptions(): Promise<UserOption[]> {
   );
   return response.data.data;
 }
-
-// ============================================================
-// Lista paginada
-// ============================================================
 
 export async function fetchUsers(
   filters: UserFilters = {},
@@ -51,18 +45,10 @@ export async function fetchUsers(
   return response.data.data;
 }
 
-// ============================================================
-// Criar
-// ============================================================
-
 export async function createUser(payload: CreateUserPayload): Promise<User> {
   const response = await api.post<ApiEnvelope<User>>("/admin/users", payload);
   return response.data.data;
 }
-
-// ============================================================
-// Update role
-// ============================================================
 
 export async function updateUserRole(
   id: string,
@@ -75,10 +61,6 @@ export async function updateUserRole(
   return response.data.data;
 }
 
-// ============================================================
-// Update setor
-// ============================================================
-
 export async function updateUserSector(
   id: string,
   payload: UpdateUserSectorPayload,
@@ -90,10 +72,17 @@ export async function updateUserSector(
   return response.data.data;
 }
 
-// ============================================================
-// Toggle status (inativar / reativar)
-// ⚠️ Backend é TOGGLE PURO — sem body. Não existe PATCH { isActive }.
-// ============================================================
+// 🔹 NOVO (Fase 7.6) — PATCH /admin/users/:id/profile
+export async function updateUserProfile(
+  id: string,
+  payload: UpdateUserProfilePayload,
+): Promise<User> {
+  const response = await api.patch<ApiEnvelope<User>>(
+    `/admin/users/${id}/profile`,
+    payload,
+  );
+  return response.data.data;
+}
 
 export async function toggleUserStatus(id: string): Promise<User> {
   const response = await api.patch<ApiEnvelope<User>>(
@@ -102,24 +91,13 @@ export async function toggleUserStatus(id: string): Promise<User> {
   return response.data.data;
 }
 
-// ============================================================
-// Delete
-// ⚠️ DÍVIDA TÉCNICA — regra de negócio está só no front (Fase 7.6).
-//    O backend hoje só bloqueia delete self.
-// ============================================================
-
 export async function deleteUser(id: string): Promise<void> {
   await api.delete<ApiEnvelope<null>>(`/admin/users/${id}`);
 }
-
-// ============================================================
-// (Opcional) Get by id — não usado na 7.5, mas o backend tem.
-// ============================================================
 
 export async function fetchUserById(id: string): Promise<User> {
   const response = await api.get<ApiEnvelope<User>>(`/admin/users/${id}`);
   return response.data.data;
 }
 
-// Reexport de role pra conveniência dos componentes (evita import circular)
 export type { UserRole };
