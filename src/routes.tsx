@@ -26,7 +26,7 @@ import ReportsHubPage from "./pages/ReportsHubPage.tsx";
 import ReportsRequestsPage from "./pages/ReportsRequestsPage.tsx";
 import ReportsConsumptionPage from "./pages/ReportsConsumptionPage.tsx";
 import ReportsManualOutputPage from "./pages/ReportsManualOutputPage.tsx";
-import UsersPage from "./Pages/UsersPage.tsx";
+import UsersPage from "./pages/UsersPage.tsx";
 
 export const router = createBrowserRouter([
   // Public
