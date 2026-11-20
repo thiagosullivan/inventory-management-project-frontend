@@ -274,3 +274,23 @@
     appearance: textfield;
   }
 }
+
+/* Sobrescreve o foco padrão do shadcn/ui + Base UI */
+[data-slot="input"]:focus,
+[data-slot="input"]:focus-visible,
+[data-slot="textarea"]:focus,
+[data-slot="textarea"]:focus-visible,
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible {
+  outline: none !important;
+  outline-width: 0 !important;
+  box-shadow: none !important;
+  --tw-ring-color: transparent !important;
+  --tw-ring-shadow: 0 0 #0000 !important;
+  --tw-ring-offset-shadow: 0 0 #0000 !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  border-color: var(--color-primary) !important; /* <-- Aqui estava o detalhe da cor */
+}
