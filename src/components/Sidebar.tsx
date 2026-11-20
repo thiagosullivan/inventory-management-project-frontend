@@ -4,11 +4,11 @@ import {
   LayoutDashboard,
   ShoppingCart,
   Layers,
-  Activity,
-  Megaphone,
+  // Activity,
+  // Megaphone,
   ListClock,
   ListSortDescending,
-  PartyPopper,
+  // PartyPopper,
   UserShield,
   ArrowLeftRight,
   ClipboardList,
@@ -108,8 +108,8 @@ const MenuList: MenuItemsProps[] = [
 // 🔴 imports legados mantidos para quando as telas voltarem (Fase 8).
 //    O `tsc` não reclama de import não usado por causa do `noUnusedLocals`?
 //    Se reclamar, comente também as 3 linhas de import abaixo.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const _legacyIcons = { Activity, Megaphone, PartyPopper };
+ 
+// const _legacyIcons = { Activity, Megaphone, PartyPopper };
 
 export default function Sidebar() {
   const { theme } = useTheme();

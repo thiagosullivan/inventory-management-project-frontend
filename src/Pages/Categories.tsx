@@ -1,3 +1,4 @@
+import { getApiErrorMessage } from "@/lib/api-error";
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -61,8 +62,7 @@ export default function CategoriesPage() {
 
       {isError && (
         <div className="rounded-md border border-destructive/40 bg-destructive/5 p-8 text-center text-sm text-destructive">
-          {(error as any)?.response?.data?.message ??
-            "Não foi possível carregar as categorias."}
+          {getApiErrorMessage(error, "Não foi possível carregar as categorias.")}
         </div>
       )}
 
