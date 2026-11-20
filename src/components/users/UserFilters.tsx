@@ -13,7 +13,12 @@ import type {
 } from "@/types/users.types";
 import { useQuery } from "@tanstack/react-query";
 
-const ALL = "__all__";
+const ALL_VALUE = "__all__";
+
+const ROLE_LABEL: Record<UserRole, string> = {
+  MANAGER: "Manager",
+  STAFF: "Staff",
+};
 
 interface UserFiltersProps {
   value: UserFiltersType;
@@ -45,20 +50,26 @@ export function UserFilters({ value, onChange }: UserFiltersProps) {
       <div className="min-w-[180px]">
         <label className="text-xs text-muted-foreground">Setor</label>
         <Select
-          value={value.sectorId ?? ALL}
-          onValueChange={(v) =>
+          value={value.sectorId ?? ALL_VALUE}
+          onValueChange={(v) => {
+            if (v === null) return;
             onChange({
               ...value,
-              sectorId: v == null || v === ALL ? undefined : v, // 🔹 normaliza null
+              sectorId: v === ALL_VALUE ? undefined : v,
               page: 1,
-            })
-          }
+            });
+          }}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Todos" />
+            <SelectValue placeholder="Todos">
+              {value.sectorId
+                ? (sectors.find((s) => s.value === value.sectorId)?.label ??
+                  "Todos")
+                : "Todos"}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={ALL}>Todos</SelectItem>
+            <SelectItem value={ALL_VALUE}>Todos</SelectItem>
             {sectors.map((s) => (
               <SelectItem key={s.value} value={s.value}>
                 {s.label}
@@ -68,24 +79,27 @@ export function UserFilters({ value, onChange }: UserFiltersProps) {
         </Select>
       </div>
 
-      {/* Role */}
+      {/* Cargo */}
       <div className="min-w-[140px]">
         <label className="text-xs text-muted-foreground">Cargo</label>
         <Select
-          value={value.role ?? ALL}
-          onValueChange={(v) =>
+          value={value.role ?? ALL_VALUE}
+          onValueChange={(v) => {
+            if (v === null) return;
             onChange({
               ...value,
-              role: v == null || v === ALL ? undefined : (v as UserRole), // 🔹 normaliza null
+              role: v === ALL_VALUE ? undefined : (v as UserRole),
               page: 1,
-            })
-          }
+            });
+          }}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Todos" />
+            <SelectValue placeholder="Todos">
+              {value.role ? ROLE_LABEL[value.role] : "Todos"}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={ALL}>Todos</SelectItem>
+            <SelectItem value={ALL_VALUE}>Todos</SelectItem>
             <SelectItem value="STAFF">Staff</SelectItem>
             <SelectItem value="MANAGER">Manager</SelectItem>
           </SelectContent>
@@ -96,20 +110,29 @@ export function UserFilters({ value, onChange }: UserFiltersProps) {
       <div className="min-w-[140px]">
         <label className="text-xs text-muted-foreground">Status</label>
         <Select
-          value={value.isActive === undefined ? ALL : String(value.isActive)}
-          onValueChange={(v) =>
+          value={
+            value.isActive === undefined ? ALL_VALUE : String(value.isActive)
+          }
+          onValueChange={(v) => {
+            if (v === null) return;
             onChange({
               ...value,
-              isActive: v == null || v === ALL ? undefined : v === "true", // 🔹 normaliza null
+              isActive: v === ALL_VALUE ? undefined : v === "true",
               page: 1,
-            })
-          }
+            });
+          }}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Todos" />
+            <SelectValue placeholder="Todos">
+              {value.isActive === undefined
+                ? "Todos"
+                : value.isActive
+                  ? "Ativos"
+                  : "Inativos"}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={ALL}>Todos</SelectItem>
+            <SelectItem value={ALL_VALUE}>Todos</SelectItem>
             <SelectItem value="true">Ativos</SelectItem>
             <SelectItem value="false">Inativos</SelectItem>
           </SelectContent>
