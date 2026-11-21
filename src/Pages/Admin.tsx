@@ -58,8 +58,8 @@ export default function AdminPage() {
         <HubCard
           title="Setores"
           description="Gestão de setores e Almoxarifado."
+          href="/admin/sectors"
           icon={<Building2 className="h-5 w-5" />}
-          soon
         />
         <HubCard
           title="Configurações"
