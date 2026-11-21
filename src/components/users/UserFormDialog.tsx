@@ -154,10 +154,7 @@ export function UserFormDialog({
           {/* Nome — editável no create e no edit (Fase 7.6) */}
           <div>
             <label className="text-xs text-muted-foreground">Nome</label>
-            <Input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
+            <Input value={name} onChange={(e) => setName(e.target.value)} />
           </div>
 
           {/* Email */}
@@ -176,7 +173,9 @@ export function UserFormDialog({
           {/* Senha — só no create */}
           {!isEdit && (
             <div>
-              <label className="text-xs text-muted-foreground">Senha (mínimo 6 caracteres)</label>
+              <label className="text-xs text-muted-foreground">
+                Senha (mínimo 6 caracteres)
+              </label>
               <Input
                 type="password"
                 value={password}
@@ -240,8 +239,20 @@ export function UserFormDialog({
               </SelectTrigger>
               <SelectContent>
                 {sectors.map((s) => (
-                  <SelectItem key={s.value} value={s.value}>
+                  <SelectItem
+                    key={s.value}
+                    value={s.value}
+                    disabled={!s.isActive}
+                    className={
+                      !s.isActive ? "opacity-50 pointer-events-none" : undefined
+                    }
+                  >
                     {s.label}
+                    {!s.isActive && (
+                      <span className="ml-2 text-xs text-muted-foreground">
+                        (inativo)
+                      </span>
+                    )}
                   </SelectItem>
                 ))}
               </SelectContent>

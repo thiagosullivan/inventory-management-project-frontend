@@ -371,8 +371,20 @@ function CreateTransferForm({
             </SelectTrigger>
             <SelectContent>
               {destinationOptions.map((s) => (
-                <SelectItem key={s.value} value={s.value}>
+                <SelectItem
+                  key={s.value}
+                  value={s.value}
+                  disabled={!s.isActive}
+                  className={
+                    !s.isActive ? "opacity-50 pointer-events-none" : undefined
+                  }
+                >
                   {s.label}
+                  {!s.isActive && (
+                    <span className="ml-2 text-xs text-muted-foreground">
+                      (inativo)
+                    </span>
+                  )}
                 </SelectItem>
               ))}
             </SelectContent>
