@@ -180,6 +180,7 @@ function RequestDetailsBody({
           label: request.sector.name,
           value: request.sector.id,
           isWarehouse: request.sector.isWarehouse,
+          isActive: true,
         },
       ]
     : [];
