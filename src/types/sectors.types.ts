@@ -27,8 +27,14 @@ export interface SectorResponse {
     transfersFrom: number;
     transfersTo: number;
     purchaseRequests: number;
+    // 🔹 Fase 7.7 — movimentações também bloqueiam delete
+    movementsFrom: number;
+    movementsTo: number;
   };
 }
+
+// Alias semântico (usado na UI)
+export type Sector = SectorResponse;
 
 // =============================
 // Lista (sem paginação — volume baixo)
@@ -57,6 +63,7 @@ export interface SectorOption {
   label: string;
   value: string;
   isWarehouse: boolean;
+  isActive: boolean; // 🔹 Fase 7.7
 }
 
 // =============================
@@ -66,13 +73,13 @@ export interface SectorOption {
 export interface CreateSectorData {
   name: string;
   description?: string;
-  isWarehouse?: boolean; // só 1 pode ser true no sistema
+  isWarehouse?: boolean;
   isActive?: boolean;
 }
 
 // isWarehouse NÃO está aqui de propósito (imutável)
 export interface UpdateSectorData {
   name?: string;
-  description?: string;
+  description?: string | null; // 🔹 backend aceita null (limpa)
   isActive?: boolean;
 }

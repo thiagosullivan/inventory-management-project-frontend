@@ -2,10 +2,12 @@
 import { api } from "./api";
 import type { ApiEnvelope } from "@/lib/api-envelope";
 import type {
+  CreateSectorData,
   SectorFilters,
   SectorOption,
   SectorResponse,
   SectorsListResponse,
+  UpdateSectorData,
 } from "@/types/sectors.types";
 
 // =============================
@@ -50,4 +52,33 @@ export async function fetchSectorById(id: string): Promise<SectorResponse> {
     `/admin/sectors/${id}`,
   );
   return response.data.data;
+}
+
+// =============================
+// 🔹 Fase 7.7 — mutations
+// =============================
+
+export async function createSector(
+  payload: CreateSectorData,
+): Promise<SectorResponse> {
+  const response = await api.post<ApiEnvelope<SectorResponse>>(
+    "/admin/sectors",
+    payload,
+  );
+  return response.data.data;
+}
+
+export async function updateSector(
+  id: string,
+  payload: UpdateSectorData,
+): Promise<SectorResponse> {
+  const response = await api.patch<ApiEnvelope<SectorResponse>>(
+    `/admin/sectors/${id}`,
+    payload,
+  );
+  return response.data.data;
+}
+
+export async function deleteSector(id: string): Promise<void> {
+  await api.delete<ApiEnvelope<null>>(`/admin/sectors/${id}`);
 }
