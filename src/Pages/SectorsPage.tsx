@@ -1,6 +1,6 @@
 // src/pages/SectorsPage.tsx
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { ArrowLeft, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { SectorFilters } from "@/components/sectors/SectorFilters";
@@ -13,6 +13,7 @@ import type {
   Sector,
   SectorFilters as SectorFiltersType,
 } from "@/types/sectors.types";
+import { useNavigate } from "react-router-dom";
 
 export default function SectorsPage() {
   const [filters, setFilters] = useState<SectorFiltersType>({});
@@ -22,6 +23,8 @@ export default function SectorsPage() {
   const [deleting, setDeleting] = useState<Sector | null>(null);
 
   const { data, isLoading, isError, error, refetch } = useSectors(filters);
+
+  const navigate = useNavigate();
 
   const sectors = data?.sectors ?? [];
 
@@ -39,6 +42,14 @@ export default function SectorsPage() {
 
   return (
     <div className="space-y-6">
+      <Button
+        variant="outline"
+        onClick={() => navigate(-1)}
+        className="cursor-pointer"
+      >
+        <ArrowLeft className="h-4 w-4 mr-1" />
+        Voltar
+      </Button>
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-primary">Setores</h1>

@@ -8,19 +8,25 @@ import { useUsersList } from "@/hooks/useUsers";
 import { getApiErrorMessage } from "@/lib/api-error";
 import type { User, UserFilters as UserFiltersType } from "@/types/users.types";
 import { useMemo, useState } from "react";
-import { Plus } from "lucide-react";
+import { ArrowLeft, Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const PAGE_SIZE = 10;
 
 export default function UsersPage() {
   const { user: currentUser } = useAuth();
-  const [filters, setFilters] = useState<UserFiltersType>({ page: 1, limit: PAGE_SIZE });
+  const [filters, setFilters] = useState<UserFiltersType>({
+    page: 1,
+    limit: PAGE_SIZE,
+  });
   const [formOpen, setFormOpen] = useState(false);
   const [formMode, setFormMode] = useState<"create" | "edit">("create");
   const [editing, setEditing] = useState<User | null>(null);
   const [deleting, setDeleting] = useState<User | null>(null);
 
   const { data, isLoading, isError, error, refetch } = useUsersList(filters);
+
+  const navigate = useNavigate();
 
   // MANAGER não aparece na lista (regra de produto)
   const visibleUsers = useMemo(
@@ -49,6 +55,14 @@ export default function UsersPage() {
 
   return (
     <div className="space-y-6">
+      <Button
+        variant="outline"
+        onClick={() => navigate(-1)}
+        className="cursor-pointer"
+      >
+        <ArrowLeft className="h-4 w-4 mr-1" />
+        Voltar
+      </Button>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -143,7 +157,7 @@ export default function UsersPage() {
         open={formOpen}
         onOpenChange={setFormOpen}
         currentUserId={currentUser.id}
-        />
+      />
 
       <DeleteUserDialog
         user={deleting}
