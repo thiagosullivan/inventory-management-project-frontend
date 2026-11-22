@@ -15,10 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { getApiErrorMessage } from "@/lib/api-error";
-import {
-  useCreateSector,
-  useUpdateSector,
-} from "@/hooks/useSectors";
+import { useCreateSector, useUpdateSector } from "@/hooks/useSectors";
 import type { Sector } from "@/types/sectors.types";
 
 interface SectorFormDialogProps {
@@ -40,7 +37,6 @@ export function SectorFormDialog({
 
   const [name, setName] = useState(sector?.name ?? "");
   const [description, setDescription] = useState(sector?.description ?? "");
-  const [isWarehouse, setIsWarehouse] = useState(sector?.isWarehouse ?? false);
   const [isActive, setIsActive] = useState(sector?.isActive ?? true);
 
   const isPending = createMutation.isPending || updateMutation.isPending;
@@ -75,11 +71,13 @@ export function SectorFormDialog({
       return;
     }
 
+    // 🔹 Fase 7.8 — Almoxarifado é criado pelo seed do sistema.
+    //    O create de setor NUNCA cria Almoxarifado (isWarehouse: false fixo).
     createMutation.mutate(
       {
         name: name.trim(),
         description: description.trim() || undefined,
-        isWarehouse,
+        isWarehouse: false,
         isActive: true,
       },
       {
@@ -103,7 +101,7 @@ export function SectorFormDialog({
           <DialogDescription>
             {isEdit
               ? "Edite nome, descrição e status. O tipo (Almoxarifado) é imutável."
-              : "O tipo (Almoxarifado) não pode ser alterado depois."}
+              : "Setor comum. O Almoxarifado é criado pelo seed do sistema e não pode ser duplicado."}
           </DialogDescription>
         </DialogHeader>
 
@@ -125,21 +123,6 @@ export function SectorFormDialog({
               placeholder="Opcional"
             />
           </div>
-
-          {!isEdit && (
-            <div className="flex items-center justify-between rounded border p-3">
-              <div>
-                <Label>É o Almoxarifado?</Label>
-                <p className="text-xs text-muted-foreground">
-                  Só pode existir 1. Imutável após criação.
-                </p>
-              </div>
-              <Switch
-                checked={isWarehouse}
-                onCheckedChange={(v) => setIsWarehouse(v === true)}
-              />
-            </div>
-          )}
 
           {isEdit && sector?.isWarehouse && (
             <div className="rounded border bg-muted/30 p-3 text-sm">
@@ -175,9 +158,7 @@ export function SectorFormDialog({
           </Button>
           <Button
             onClick={handleSubmit}
-            disabled={
-              isPending || (isEdit ? !canSubmitEdit : !canSubmitCreate)
-            }
+            disabled={isPending || (isEdit ? !canSubmitEdit : !canSubmitCreate)}
             className="cursor-pointer"
           >
             {isPending
