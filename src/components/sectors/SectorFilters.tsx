@@ -26,11 +26,12 @@ export function SectorFilters({ value, onChange }: SectorFiltersProps) {
           id="sector-search"
           value={value.search ?? ""}
           onChange={(e) =>
+            // 🔹 Fase 7.8 — SectorFilters (front) não tem paginação;
+            //    `page: 1` e o `as Filters` eram resquício do backend.
             onChange({
               ...value,
               search: e.target.value || undefined,
-              page: 1,
-            } as Filters)
+            })
           }
           placeholder="Nome ou descrição"
           autoComplete="off"
@@ -49,8 +50,7 @@ export function SectorFilters({ value, onChange }: SectorFiltersProps) {
             if (v === null) return;
             onChange({
               ...value,
-              isWarehouse:
-                v === ALL_VALUE ? undefined : v === "true",
+              isWarehouse: v === ALL_VALUE ? undefined : v === "true",
             });
           }}
         >
