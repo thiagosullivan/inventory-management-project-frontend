@@ -5,7 +5,7 @@ import { greeting } from "@/utils/greeting";
 import { Button } from "../ui/button";
 import NavUser from "./NavUser";
 import { ModeToggle } from "../modeToggle";
-import { EmailVerificationBanner } from "../auth/EmailVerificationBanner";
+// import { EmailVerificationBanner } from "../auth/EmailVerificationBanner";
 
 export default function Header() {
   const { user } = useAuth();
