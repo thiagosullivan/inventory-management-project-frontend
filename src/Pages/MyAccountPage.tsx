@@ -111,10 +111,18 @@ export default function MinhaContaPage() {
 
       <Tabs defaultValue="perfil">
         <TabsList className="flex-wrap h-auto">
-          <TabsTrigger value="perfil">Perfil</TabsTrigger>
-          <TabsTrigger value="seguranca">Segurança</TabsTrigger>
-          <TabsTrigger value="verificacao">Verificação</TabsTrigger>
-          <TabsTrigger value="sessoes">Sessões</TabsTrigger>
+          <TabsTrigger value="perfil" className="cursor-pointer">
+            Perfil
+          </TabsTrigger>
+          <TabsTrigger value="seguranca" className="cursor-pointer">
+            Segurança
+          </TabsTrigger>
+          <TabsTrigger value="verificacao" className="cursor-pointer">
+            Verificação
+          </TabsTrigger>
+          <TabsTrigger value="sessoes" className="cursor-pointer">
+            Sessões
+          </TabsTrigger>
         </TabsList>
 
         {/* ============================ PERFIL ============================ */}
@@ -193,8 +201,9 @@ export default function MinhaContaPage() {
 
           <div className="space-y-1">
             <Label>E-mail</Label>
-            <div className="flex gap-2">
-              <Input value={profile.email} readOnly />
+            <div className="flex items-center gap-2">
+              {/* <Input value={profile.email} readOnly /> */}
+              <p className="">{profile.email}</p>
               <Button
                 variant="outline"
                 onClick={() => setShowEmailChange((v) => !v)}
