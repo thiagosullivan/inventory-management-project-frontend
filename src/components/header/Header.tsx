@@ -1,9 +1,11 @@
+// src/components/header/Header.tsx
 import { Bell } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { greeting } from "@/utils/greeting";
 import { Button } from "../ui/button";
 import NavUser from "./NavUser";
 import { ModeToggle } from "../modeToggle";
+import { EmailVerificationBanner } from "../auth/EmailVerificationBanner";
 
 export default function Header() {
   const { user } = useAuth();
@@ -12,29 +14,26 @@ export default function Header() {
   const firstName = user.name ? user.name.split(" ")[0] : "Usuário";
 
   return (
-    <header className="flex justify-between items-center mb-12">
-      <div className="text-foreground">
-        <p className="font-black text-xl">Hello, {firstName} 👋🏻</p>
-        <span className="text-muted-foreground text-sm">{greeting}</span>
-      </div>
-      <div className="flex items-center gap-x-5">
-        {/* <div className="relative">
-          <Input
-            className="max-w-[260px] w-full h-12.5 rounded-lg pl-11 text-muted-foreground"
-            type="text"
-            placeholder="Search"
-          />
-          <Search
-            className="absolute top-1/2 -translate-y-1/2 left-4 text-muted-foreground"
-            size={24}
-          />
-        </div> */}
-        <Button className="w-12 h-12 bg-muted-foreground/30 text-foreground cursor-pointer">
-          <Bell />
-        </Button>
-        <NavUser />
-        <ModeToggle />
-      </div>
-    </header>
+    <>
+      <header className="flex justify-between items-center">
+        <div className="text-foreground">
+          <p className="font-black text-xl">Hello, {firstName} 👋🏻</p>
+          <span className="text-muted-foreground text-sm">{greeting}</span>
+        </div>
+        <div className="flex items-center gap-x-5">
+          <Button className="w-12 h-12 bg-muted-foreground/30 text-foreground cursor-pointer">
+            <Bell />
+          </Button>
+          <NavUser />
+          <ModeToggle />
+        </div>
+      </header>
+
+      {/* 🔹 Fase 7.9 — banner de verificação (só aparece se !emailVerified) */}
+      {/* <EmailVerificationBanner /> */}
+
+      {/* espaço abaixo do header, mantendo o mb-12 original quando não há banner */}
+      <div className="mb-12" />
+    </>
   );
 }
