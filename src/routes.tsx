@@ -28,6 +28,8 @@ import ReportsConsumptionPage from "./pages/ReportsConsumptionPage.tsx";
 import ReportsManualOutputPage from "./pages/ReportsManualOutputPage.tsx";
 import UsersPage from "./pages/UsersPage.tsx";
 import SectorsPage from "./pages/SectorsPage.tsx";
+import VerifyEmailPage from "./pages/VerifyEmailPage.tsx";
+import MinhaContaPage from "./pages/MyAccountPage.tsx";
 
 export const router = createBrowserRouter([
   // Public
@@ -51,6 +53,8 @@ export const router = createBrowserRouter([
         children: [
           { path: "/movements", element: <MovementsPage /> },
           { path: "/requests", element: <RequestsPage /> },
+          { path: "/verify-email", element: <VerifyEmailPage /> },
+          { path: "/minha-conta", element: <MinhaContaPage /> },
         ],
       },
 
@@ -94,11 +98,14 @@ export const router = createBrowserRouter([
       {
         element: <ManagerRoutes />,
         children: [
-          { element: <RootLayout />, children: [
-            { path: "/admin", element: <AdminPage /> },
-            { path: "/admin/users", element: <UsersPage /> },
-            { path: "/admin/sectors", element: <SectorsPage /> },
-          ]},
+          {
+            element: <RootLayout />,
+            children: [
+              { path: "/admin", element: <AdminPage /> },
+              { path: "/admin/users", element: <UsersPage /> },
+              { path: "/admin/sectors", element: <SectorsPage /> },
+            ],
+          },
         ],
       },
     ],

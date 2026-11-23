@@ -16,9 +16,9 @@ import { getMe, signIn } from "../../services/auth";
 const formSchema = z.object({
   email: z
     .string()
-    .email("Insira um e-mail válido.") // Melhorado o validador para e-mail real
+    .email("Insira um e-mail válido.")
     .min(5, "E-mail deve ter pelo menos 5 caracteres."),
-  password: z.string().min(6, "A senha deve ter pelo menos 6 caracteres."), // Ajustado min de 20 para 6 (comum para senhas)
+  password: z.string().min(6, "A senha deve ter pelo menos 6 caracteres."),
   rememberMe: z.boolean(),
 });
 

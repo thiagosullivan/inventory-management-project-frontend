@@ -307,7 +307,7 @@ function RequestDetailsBody({
             variant="outline"
             size="sm"
             onClick={() => setPrintOpen(true)}
-            className="cursor-pointer"
+            className="cursor-pointer mr-6"
           >
             <Printer size={16} className="mr-2" />
             Imprimir
