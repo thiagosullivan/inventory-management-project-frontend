@@ -21,6 +21,7 @@ import {
   useUpdateMyPassword,
   useUpdateMyProfile,
 } from "@/hooks/useMe";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function MinhaContaPage() {
   const { user, setUser } = useAuth();
@@ -52,6 +53,9 @@ export default function MinhaContaPage() {
   const [emailOtp, setEmailOtp] = useState("");
   const [showEmailChange, setShowEmailChange] = useState(false);
   const [emailOtpSent, setEmailOtpSent] = useState(false);
+  const [showPassword1, setShowPassword1] = useState(false);
+  const [showPassword2, setShowPassword2] = useState(false);
+  const [showPassword3, setShowPassword3] = useState(false);
 
   async function handleSaveName() {
     if (displayName.trim().length < 2) {
@@ -272,30 +276,60 @@ export default function MinhaContaPage() {
         <TabsContent value="seguranca" className="space-y-4 pt-4">
           <div className="space-y-1">
             <Label>Senha atual</Label>
-            <Input
-              type="password"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              autoComplete="current-password"
-            />
+            <div className="relative">
+              <Input
+                type={showPassword1 ? "text" : "password"}
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                autoComplete="current-password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword1(!showPassword1)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                aria-label={showPassword1 ? "Esconder senha" : "Mostrar senha"}
+              >
+                {showPassword1 ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
           </div>
           <div className="space-y-1">
             <Label>Nova senha</Label>
-            <Input
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              autoComplete="new-password"
-            />
+            <div className="relative">
+              <Input
+                type={showPassword2 ? "text" : "password"}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                autoComplete="new-password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword2(!showPassword2)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                aria-label={showPassword2 ? "Esconder senha" : "Mostrar senha"}
+              >
+                {showPassword2 ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
           </div>
           <div className="space-y-1">
             <Label>Confirmar nova senha</Label>
-            <Input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              autoComplete="new-password"
-            />
+            <div className="relative">
+              <Input
+                type={showPassword3 ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                autoComplete="new-password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword3(!showPassword3)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                aria-label={showPassword3 ? "Esconder senha" : "Mostrar senha"}
+              >
+                {showPassword3 ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
           </div>
           <Button
             onClick={handleSavePassword}
