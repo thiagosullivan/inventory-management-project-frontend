@@ -13,6 +13,7 @@ import {
   ArrowLeftRight,
   ClipboardList,
   BarChart3,
+  UserRoundCog,
 } from "lucide-react";
 
 import { useTheme } from "./themeProvider";
@@ -98,6 +99,11 @@ const MenuList: MenuItemsProps[] = [
     warehouseOnly: true,
   },
   {
+    label: "Minha Conta",
+    icon: UserRoundCog,
+    href: "/minha-conta",
+  },
+  {
     label: "Admin",
     icon: UserShield,
     href: "/admin",
@@ -108,7 +114,7 @@ const MenuList: MenuItemsProps[] = [
 // 🔴 imports legados mantidos para quando as telas voltarem (Fase 8).
 //    O `tsc` não reclama de import não usado por causa do `noUnusedLocals`?
 //    Se reclamar, comente também as 3 linhas de import abaixo.
- 
+
 // const _legacyIcons = { Activity, Megaphone, PartyPopper };
 
 export default function Sidebar() {
