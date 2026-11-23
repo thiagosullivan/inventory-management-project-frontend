@@ -46,3 +46,35 @@ export interface AuthErrorResponse {
   message?: string;
   code?: string;
 }
+
+export interface UpdateProfilePayload {
+  name: string;
+}
+
+export interface UpdatePasswordPayload {
+  currentPassword: string;
+  newPassword: string;
+}
+
+export interface UpdateAvatarPayload {
+  url: string;
+}
+
+export interface RequestEmailChangePayload {
+  newEmail: string;
+}
+
+export interface ConfirmEmailChangePayload {
+  newEmail: string;
+  otp: string;
+}
+
+export interface SessionInfo {
+  id: string;
+  userId: string;
+  expiresAt: string;
+  createdAt: string;
+  ipAddress: string | null;
+  userAgent: string | null;
+  isCurrent: boolean;
+}
