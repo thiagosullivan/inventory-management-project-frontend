@@ -19,16 +19,18 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { useLogout } from "@/hooks/useLogout";
+import { useNavigate } from "react-router-dom";
 
 export default function NavUser() {
   const logout = useLogout();
   const { user } = useAuth();
+  const navigate = useNavigate();
   if (!user) return null;
 
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger className="max-w-50 w-full py-1 px-2 flex items-center border border-muted-foreground/30 rounded-lg">
+        <DropdownMenuTrigger className="max-w-50 w-full py-1 px-2 flex items-center border border-muted-foreground/30 rounded-lg cursor-pointer">
           <Avatar className="h-10 w-10 rounded-md mr-2">
             <AvatarImage src={user.image ?? undefined} alt={user.email} />
             <AvatarFallback className="bg-accent text-accent-foreground font-medium">
@@ -69,13 +71,18 @@ export default function NavUser() {
                 </TooltipContent>
               </Tooltip>
             </div>
-            <DropdownMenuItem>
-              <Settings /> Account
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => navigate("/minha-conta")}
+            >
+              <Settings /> Minha Conta
             </DropdownMenuItem>
-            <DropdownMenuItem>Notifications</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer">
+              Notifications
+            </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={logout}>
+          <DropdownMenuItem onClick={logout} className="cursor-pointer">
             <LogOutIcon className="mr-2 h-4 w-4" />
             <span>Sign Out</span>
           </DropdownMenuItem>
