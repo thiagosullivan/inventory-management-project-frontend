@@ -15,7 +15,7 @@ export function StockAlertsSections({ details }: StockAlertsSectionsProps) {
         variant="warning"
         showMinStock
         emptyMessage="Nenhum produto com estoque baixo"
-        seeAllHref="/products?isLowStock=true"
+        seeAllHref="/produtos?isLowStock=true"
         icon="alert"
       />
 
@@ -26,7 +26,7 @@ export function StockAlertsSections({ details }: StockAlertsSectionsProps) {
         variant="warning"
         showExpiryDate
         emptyMessage="Nenhum produto vencendo em 30 dias"
-        seeAllHref="/products?isExpiring=true"
+        seeAllHref="/produtos?isExpiring=true"
         icon="clock"
       />
 
@@ -37,7 +37,7 @@ export function StockAlertsSections({ details }: StockAlertsSectionsProps) {
         variant="destructive"
         showExpiryDate
         emptyMessage="Nenhum produto vencido"
-        seeAllHref="/products?isExpired=true"
+        seeAllHref="/produtos?isExpired=true"
         icon="calendar"
       />
 
@@ -47,7 +47,7 @@ export function StockAlertsSections({ details }: StockAlertsSectionsProps) {
         items={details.productsOutOfStock}
         variant="destructive"
         emptyMessage="Nenhum produto sem estoque"
-        seeAllHref="/products?maxQuantity=0"
+        seeAllHref="/produtos?maxQuantity=0"
         icon="package"
       />
     </div>
