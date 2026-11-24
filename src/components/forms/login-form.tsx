@@ -190,7 +190,7 @@ export default function LoginForm() {
         </FieldGroup>
         <div>
           <Link
-            to="/forgot-password"
+            to="/recuperar-senha"
             className="whitespace-nowrap text-primary font-light"
           >
             Esqueceu a senha?

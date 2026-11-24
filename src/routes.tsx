@@ -40,7 +40,7 @@ export const router = createBrowserRouter([
     element: <PublicRoute />,
     children: [
       { path: "/", element: <HomePage /> },
-      { path: "/forgot-password", element: <ForgotPasswordPage /> },
+      { path: "/recuperar-senha", element: <ForgotPasswordPage /> },
     ],
   },
 
