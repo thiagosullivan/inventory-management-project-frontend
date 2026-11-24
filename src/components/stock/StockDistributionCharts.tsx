@@ -35,7 +35,6 @@ export function StockDistributionCharts({
   const { byCategory, byLocation, bySupplier } = distribution;
   const { filters, setFilters } = useStockQueryParams();
 
-  // 🔹 Handler genérico: se o valor já está filtrado, limpa; senão, aplica.
   const handleCategoryClick = (categoryId: string) => {
     if (filters.categoryId === categoryId) {
       setFilters({ categoryId: undefined });
@@ -60,8 +59,6 @@ export function StockDistributionCharts({
     }
   };
 
-  // 🔹 Esmaece se há filtro EXATO ativo e este item não é ele (case-insensitive).
-  // Filtro de texto (contains) NÃO esmaece — é busca, não filtro visual.
   const isDimmed = (
     activeValue: string | undefined,
     exact: boolean | undefined,
@@ -77,54 +74,75 @@ export function StockDistributionCharts({
   const categoryChartData = byCategory.map((item) => ({
     ...item,
     fill: `var(--color-${item.categoryId})`,
-    // 🔹 Se há filtro de categoria ativo e este item não é ele, esmaece
     opacity:
       filters.categoryId && filters.categoryId !== item.categoryId ? 0.35 : 1,
   }));
 
-  const categoryChartConfig = byCategory.reduce((config, item, index) => {
-    config[item.categoryId] = {
-      label: item.categoryName,
-      color: getChartColor(index),
-    };
-    return config;
-  }, {} as ChartConfig);
+  const categoryChartConfig = byCategory.reduce(
+    (config, item, index) => {
+      config[item.categoryId] = {
+        label: item.categoryName,
+        color: getChartColor(index),
+      };
+      return config;
+    },
+    {
+      totalUnits: {
+        label: "Unidades",
+        color: "hsl(var(--muted-foreground))",
+      },
+    } as ChartConfig,
+  );
 
   // ===== Bar de localização =====
   const locationChartData = byLocation.map((item, index) => ({
     ...item,
     fill: `var(--color-loc-${index})`,
-    // 🔹 Esmaece se há filtro de location ativo e este não é ele
     opacity: isDimmed(filters.location, filters.locationExact, item.location)
       ? 0.35
       : 1,
   }));
 
-  const locationChartConfig = byLocation.reduce((config, item, index) => {
-    config[`loc-${index}`] = {
-      label: item.location,
-      color: getChartColor(index),
-    };
-    return config;
-  }, {} as ChartConfig);
+  const locationChartConfig = byLocation.reduce(
+    (config, item, index) => {
+      config[`loc-${index}`] = {
+        label: item.location,
+        color: getChartColor(index),
+      };
+      return config;
+    },
+    {
+      totalUnits: {
+        label: "Unidades",
+        color: "hsl(var(--muted-foreground))",
+      },
+    } as ChartConfig,
+  );
 
   // ===== Bar de fornecedor =====
   const supplierChartData = bySupplier.map((item, index) => ({
     ...item,
     fill: `var(--color-sup-${index})`,
-    // 🔹 Esmaece se há filtro de supplier ativo e este não é ele
     opacity: isDimmed(filters.supplier, filters.supplierExact, item.supplier)
       ? 0.35
       : 1,
   }));
 
-  const supplierChartConfig = bySupplier.reduce((config, item, index) => {
-    config[`sup-${index}`] = {
-      label: item.supplier,
-      color: getChartColor(index),
-    };
-    return config;
-  }, {} as ChartConfig);
+  const supplierChartConfig = bySupplier.reduce(
+    (config, item, index) => {
+      config[`sup-${index}`] = {
+        label: item.supplier,
+        color: getChartColor(index),
+      };
+      return config;
+    },
+    {
+      totalUnits: {
+        label: "Unidades",
+        color: "hsl(var(--muted-foreground))",
+      },
+    } as ChartConfig,
+  );
 
   return (
     <div className="flex flex-col gap-4 w-full">

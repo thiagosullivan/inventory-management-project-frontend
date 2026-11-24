@@ -37,17 +37,25 @@ export function ConsumptionBySectorBarChart({
       fill: getChartColor(index),
     }));
 
-  const chartConfig = chartData.reduce((config, item, index) => {
-    config[item.sectorId] = {
-      label: item.sectorName,
-      color: getChartColor(index),
-    };
-    return config;
-  }, {} as ChartConfig);
+  const chartConfig = chartData.reduce(
+    (config, item, index) => {
+      config[item.sectorId] = {
+        label: item.sectorName,
+        color: getChartColor(index),
+      };
+      return config;
+    },
+    {
+      totalConsumedQty: {
+        label: "Quantidade consumida",
+        color: "hsl(var(--muted-foreground))",
+      },
+    } as ChartConfig,
+  );
 
   function handleBarClick(payload: { sectorId?: string } | null) {
     if (payload?.sectorId) {
-      navigate(`/reports/consumo/${payload.sectorId}`);
+      navigate(`/relatorios/consumo/${payload.sectorId}`);
     }
   }
 
