@@ -64,8 +64,8 @@ export function MovementDetailsDialog({
   function handleViewProduct() {
     if (!movement?.product) return;
 
-    // Confirme se a rota é /products/ (plural) ou /product/ (singular)
-    navigate(`/products/${movement.product.id}`, {
+    // Confirme se a rota é /produtos/ (plural) ou /product/ (singular)
+    navigate(`/produtos/${movement.product.id}`, {
       state: { from: location.pathname },
     });
   }

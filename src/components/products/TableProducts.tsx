@@ -70,7 +70,7 @@ export function TableProducts({ products }: TableProductsProps) {
                 <TableCell>
                   <div className="flex flex-col">
                     <Link
-                      to={`/products/${product.id}`}
+                      to={`/produtos/${product.id}`}
                       className="font-medium hover:text-primary duration-150"
                     >
                       {product.name}
@@ -116,7 +116,7 @@ export function TableProducts({ products }: TableProductsProps) {
                       <DropdownMenuItem
                         className="cursor-pointer hover:bg-gray-200/90! duration-150"
                         render={(props) => (
-                          <Link {...props} to={`/products/${product.id}`}>
+                          <Link {...props} to={`/produtos/${product.id}`}>
                             Ver detalhes
                           </Link>
                         )}

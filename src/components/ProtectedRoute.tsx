@@ -49,7 +49,7 @@ export function ManagerRoutes({ children }: ProtectedRouteProps) {
   if (user.role !== "MANAGER") {
     // STAFF não pode /admin → manda pro destino padrão dele
     const fallback =
-      user.sector?.isWarehouse === true ? "/dashboard" : "/requests";
+      user.sector?.isWarehouse === true ? "/dashboard" : "/pedidos";
     return <Navigate to={fallback} replace state={{ accessDenied: true }} />;
   }
 
@@ -83,7 +83,7 @@ export function WarehouseOnlyRoute({ children }: ProtectedRouteProps) {
   const canAccess = user.role === "MANAGER" || isWarehouse;
 
   if (!canAccess) {
-    return <Navigate to="/requests" replace state={{ accessDenied: true }} />;
+    return <Navigate to="/pedidos" replace state={{ accessDenied: true }} />;
   }
 
   return children ? <>{children}</> : <Outlet />;

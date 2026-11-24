@@ -5,7 +5,7 @@ import {
   ShoppingCart,
   Layers,
   // Activity,
-  // Megaphone,
+  Megaphone,
   ListClock,
   ListSortDescending,
   // PartyPopper,
@@ -37,37 +37,37 @@ const MenuList: MenuItemsProps[] = [
     warehouseOnly: true,
   },
   {
-    label: "Products",
+    label: "Produtos",
     icon: ShoppingCart,
-    href: "/products",
+    href: "/produtos",
     warehouseOnly: true,
   },
   {
-    label: "Stock",
+    label: "Estoque",
     icon: Layers,
-    href: "/stock",
+    href: "/estoque",
     warehouseOnly: true,
   },
   {
     label: "Pedidos",
     icon: ClipboardList,
-    href: "/requests",
+    href: "/pedidos",
   },
   {
     label: "Movimentações",
     icon: ArrowLeftRight,
-    href: "/movements",
+    href: "/movimentacoes",
   },
   {
-    label: "History",
+    label: "Histórico",
     icon: ListClock,
-    href: "/history",
+    href: "/historico",
     warehouseOnly: true,
   },
   {
-    label: "Categories",
+    label: "Categorias",
     icon: ListSortDescending,
-    href: "/categories",
+    href: "/categorias",
     warehouseOnly: true,
   },
   // 🔴 legado — sem tela (Fase 8)
@@ -75,13 +75,6 @@ const MenuList: MenuItemsProps[] = [
   //   label: "Activity",
   //   icon: Activity,
   //   href: "/activity",
-  //   warehouseOnly: true,
-  // },
-  // 🔴 legado — sem tela (Fase 8)
-  // {
-  //   label: "Alerts",
-  //   icon: Megaphone,
-  //   href: "/alerts",
   //   warehouseOnly: true,
   // },
   // 🔴 legado — sem tela (Fase 8)
@@ -95,13 +88,19 @@ const MenuList: MenuItemsProps[] = [
   {
     label: "Relatórios",
     icon: BarChart3,
-    href: "/reports",
+    href: "/relatorios",
     warehouseOnly: true,
   },
   {
     label: "Minha Conta",
     icon: UserRoundCog,
     href: "/minha-conta",
+  },
+  {
+    label: "Alerts",
+    icon: Megaphone,
+    href: "/alertas",
+    warehouseOnly: true,
   },
   {
     label: "Admin",

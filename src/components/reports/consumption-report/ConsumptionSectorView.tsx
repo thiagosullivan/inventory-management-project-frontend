@@ -83,8 +83,8 @@ export function ConsumptionSectorView({
   const backParams =
     serializeConsumptionSectorReportFilters(filters).toString();
   const backUrl = backParams
-    ? `/reports/consumption?${backParams}`
-    : "/reports/consumption";
+    ? `/reports/consumo?${backParams}`
+    : "/reports/consumo";
 
   return (
     <div className="flex flex-col gap-6">

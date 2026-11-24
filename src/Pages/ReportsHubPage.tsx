@@ -26,21 +26,21 @@ const CARDS: ReportCardConfig[] = [
     title: "Pedidos",
     description:
       "Auditoria de pedidos por status, setor e período. Comparativo pedido × enviado com percentual de atendimento.",
-    href: "/reports/requests",
+    href: "/relatorios/pedidos",
     icon: ClipboardList,
   },
   {
     title: "Consumo por setor",
     description:
       "Consumo agregado por setor no período. Ranking de produtos, valor consumido e itens prioritários.",
-    href: "/reports/consumption",
+    href: "/relatorios/consumo",
     icon: BarChart3,
   },
   {
     title: "Saídas manuais",
     description:
       "Movimentações de saída sem remessa vinculada. Origem, autor, motivo e valor.",
-    href: "/reports/manual-output",
+    href: "/relatorios/saidas-manuais",
     icon: PackageMinus,
   },
 ];

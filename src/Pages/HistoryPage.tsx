@@ -430,7 +430,7 @@ export default function HistoryPage() {
         </td>
         <td className="px-4 py-3">
           <div className="flex flex-col">
-            <Link className="font-medium" to={`/products/${m.product.id}`}>
+            <Link className="font-medium" to={`/produtos/${m.product.id}`}>
               {m.product.name}
             </Link>
             <span className="text-xs font-mono text-muted-foreground">

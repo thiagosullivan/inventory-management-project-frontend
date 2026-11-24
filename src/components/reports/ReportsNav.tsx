@@ -5,15 +5,15 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 type ReportTabValue = "requests" | "consumption" | "manual-output";
 
 const TAB_ROUTES: Record<ReportTabValue, string> = {
-  requests: "/reports/requests",
-  consumption: "/reports/consumption",
-  "manual-output": "/reports/manual-output",
+  requests: "/relatorios/pedidos",
+  consumption: "/relatorios/consumo",
+  "manual-output": "/relatorios/saidas-manuais",
 };
 
 function getActiveTab(pathname: string): ReportTabValue | undefined {
-  if (pathname.startsWith("/reports/requests")) return "requests";
-  if (pathname.startsWith("/reports/consumption")) return "consumption";
-  if (pathname.startsWith("/reports/manual-output")) return "manual-output";
+  if (pathname.startsWith("/relatorios/pedidos")) return "requests";
+  if (pathname.startsWith("/relatorios/consumo")) return "consumption";
+  if (pathname.startsWith("/relatorios/saidas-manuais")) return "manual-output";
   return undefined;
 }
 

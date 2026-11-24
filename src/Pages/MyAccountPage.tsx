@@ -363,7 +363,7 @@ export default function MinhaContaPage() {
           </p>
           {!profile.emailVerified && (
             <Button
-              onClick={() => navigate("/verify-email")}
+              onClick={() => navigate("/verificar-email")}
               className="cursor-pointer"
             >
               Verificar agora

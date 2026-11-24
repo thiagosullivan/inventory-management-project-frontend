@@ -45,7 +45,7 @@ export function EmailVerificationBanner() {
         <Button
           size="sm"
           variant="outline"
-          onClick={() => navigate("/verify-email")}
+          onClick={() => navigate("/verificar-email")}
           className="cursor-pointer"
         >
           Verificar agora

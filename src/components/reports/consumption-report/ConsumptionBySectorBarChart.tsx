@@ -47,7 +47,7 @@ export function ConsumptionBySectorBarChart({
 
   function handleBarClick(payload: { sectorId?: string } | null) {
     if (payload?.sectorId) {
-      navigate(`/reports/consumption/${payload.sectorId}`);
+      navigate(`/reports/consumo/${payload.sectorId}`);
     }
   }
 

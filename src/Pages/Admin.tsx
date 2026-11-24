@@ -52,13 +52,13 @@ export default function AdminPage() {
         <HubCard
           title="Usuários"
           description="Criar, editar, inativar e excluir usuários do sistema."
-          href="/admin/users"
+          href="/admin/usuarios"
           icon={<Users className="h-5 w-5" />}
         />
         <HubCard
           title="Setores"
           description="Gestão de setores e Almoxarifado."
-          href="/admin/sectors"
+          href="/admin/setores"
           icon={<Building2 className="h-5 w-5" />}
         />
         <HubCard

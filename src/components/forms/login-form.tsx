@@ -64,7 +64,7 @@ export default function LoginForm() {
 
       const isWarehouse = result.user.sector?.isWarehouse === true;
       const isManager = result.user.role === "MANAGER";
-      navigate(isManager || isWarehouse ? "/dashboard" : "/requests", {
+      navigate(isManager || isWarehouse ? "/dashboard" : "/pedidos", {
         replace: true,
       });
     } catch (error) {

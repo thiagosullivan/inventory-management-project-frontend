@@ -28,9 +28,9 @@ export function ProductCreatedDialog({
   function handleViewProduct() {
     if (!product) return;
 
-    // Ajuste para /products/ se sua rota for no plural
-    navigate(`/products/${product.id}`, {
-      state: { from: "/products/new" },
+    // Ajuste para /produtos/ se sua rota for no plural
+    navigate(`/produtos/${product.id}`, {
+      state: { from: "/produtos/new" },
       replace: true,
     });
   }

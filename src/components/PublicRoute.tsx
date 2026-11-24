@@ -23,7 +23,7 @@ export function PublicRoute({ children }: PublicRouteProps) {
     const isManager = user.role === "MANAGER";
     return (
       <Navigate
-        to={isManager || isWarehouse ? "/dashboard" : "/requests"}
+        to={isManager || isWarehouse ? "/dashboard" : "/pedidos"}
         replace
       />
     );

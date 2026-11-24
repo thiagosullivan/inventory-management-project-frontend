@@ -52,11 +52,11 @@ export const router = createBrowserRouter([
       {
         element: <RootLayout />,
         children: [
-          { path: "/movements", element: <MovementsPage /> },
-          { path: "/requests", element: <RequestsPage /> },
-          { path: "/verify-email", element: <VerifyEmailPage /> },
+          { path: "/movimentacoes", element: <MovementsPage /> },
+          { path: "/pedidos", element: <RequestsPage /> },
+          { path: "/verificar-email", element: <VerifyEmailPage /> },
           { path: "/minha-conta", element: <MinhaContaPage /> },
-          { path: "/alerts", element: <AlertsPage /> },
+          { path: "/alertas", element: <AlertsPage /> },
         ],
       },
 
@@ -68,27 +68,30 @@ export const router = createBrowserRouter([
             element: <RootLayout />,
             children: [
               { path: "/dashboard", element: <DashboardPage /> },
-              { path: "/categories", element: <CategoriesPage /> },
-              { path: "/products", element: <ProductsPage /> },
-              { path: "/products/new", element: <ProductNewPage /> },
-              { path: "/products/:id", element: <ProductDetailPage /> },
-              { path: "/stock", element: <StockPage /> },
-              { path: "/history", element: <HistoryPage /> },
+              { path: "/categorias", element: <CategoriesPage /> },
+              { path: "/produtos", element: <ProductsPage /> },
+              { path: "/produtos/novo", element: <ProductNewPage /> },
+              { path: "/produtos/:id", element: <ProductDetailPage /> },
+              { path: "/estoque", element: <StockPage /> },
+              { path: "/historico", element: <HistoryPage /> },
 
               // 🔹 novo (Fase 7) — Relatórios
-              { path: "/reports", element: <ReportsHubPage /> },
-              { path: "/reports/requests", element: <ReportsRequestsPage /> },
+              { path: "/relatorios", element: <ReportsHubPage /> },
+              {
+                path: "/relatorios/pedidos",
+                element: <ReportsRequestsPage />,
+              },
               // 🔹 rota específica antes do param genérico
               {
-                path: "/reports/consumption",
+                path: "/relatorios/consumo",
                 element: <ReportsConsumptionPage />,
               },
               {
-                path: "/reports/consumption/:sectorId",
+                path: "/relatorios/consumo/:sectorId",
                 element: <ReportsConsumptionPage />,
               },
               {
-                path: "/reports/manual-output",
+                path: "/relatorios/saidas-manuais",
                 element: <ReportsManualOutputPage />,
               },
             ],
@@ -104,8 +107,8 @@ export const router = createBrowserRouter([
             element: <RootLayout />,
             children: [
               { path: "/admin", element: <AdminPage /> },
-              { path: "/admin/users", element: <UsersPage /> },
-              { path: "/admin/sectors", element: <SectorsPage /> },
+              { path: "/admin/usuarios", element: <UsersPage /> },
+              { path: "/admin/setores", element: <SectorsPage /> },
             ],
           },
         ],

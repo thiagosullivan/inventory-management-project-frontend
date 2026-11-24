@@ -36,7 +36,7 @@ export function ProductFilters({ isLoading = false }: ProductFiltersProps) {
             render={(props) => (
               <Link
                 {...props}
-                to="/products/new"
+                to="/produtos/novo"
                 className="p-2 bg-primary text-white text-sm rounded-lg hover:bg-blue-700 inline-flex items-center cursor-pointer"
               >
                 Adicionar Produto
