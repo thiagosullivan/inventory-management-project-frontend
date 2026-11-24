@@ -4,6 +4,7 @@ import {
   BadgeCheck,
   BadgeAlert,
   Settings,
+  Bell,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { getInitials } from "@/utils/getInitials";
@@ -77,14 +78,18 @@ export default function NavUser() {
             >
               <Settings /> Minha Conta
             </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer">
-              Notifications
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => navigate("/alertas")}
+            >
+              <Bell />
+              Notificações
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={logout} className="cursor-pointer">
             <LogOutIcon className="mr-2 h-4 w-4" />
-            <span>Sign Out</span>
+            <span>Sair</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

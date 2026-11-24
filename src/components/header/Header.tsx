@@ -21,12 +21,12 @@ export default function Header() {
     <>
       <header className="flex justify-between items-center">
         <div className="text-foreground">
-          <p className="font-black text-xl">Hello, {firstName} 👋🏻</p>
-          <span className="text-muted-foreground text-sm">{greeting}</span>
+          <p className="font-black text-xl">Olá, {firstName} 👋🏻</p>
+          <span className="text-muted-foreground text-sm">{greeting}!</span>
         </div>
         <div className="flex items-center gap-x-5">
           <Link
-            to="/alerts"
+            to="/alertas"
             className={`relative ${buttonVariants({ size: "icon" })} w-12 h-12 bg-muted-foreground/30 text-foreground cursor-pointer`}
             aria-label="Notificações"
           >

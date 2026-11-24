@@ -2,9 +2,9 @@ const currentHour = new Date().getHours();
 export let greeting = "";
 
 if (currentHour >= 5 && currentHour < 12) {
-  greeting = "Good morning";
+  greeting = "Bom dia";
 } else if (currentHour >= 12 && currentHour < 18) {
-  greeting = "Good afternoon";
+  greeting = "Boa tarde";
 } else {
-  greeting = "Good evening";
+  greeting = "Boa noite";
 }

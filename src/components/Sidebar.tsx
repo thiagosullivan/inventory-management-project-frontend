@@ -5,7 +5,7 @@ import {
   ShoppingCart,
   Layers,
   // Activity,
-  Megaphone,
+  // Megaphone,
   ListClock,
   ListSortDescending,
   // PartyPopper,
@@ -14,6 +14,7 @@ import {
   ClipboardList,
   BarChart3,
   UserRoundCog,
+  Bell,
 } from "lucide-react";
 
 import { useTheme } from "./themeProvider";
@@ -97,8 +98,8 @@ const MenuList: MenuItemsProps[] = [
     href: "/minha-conta",
   },
   {
-    label: "Alerts",
-    icon: Megaphone,
+    label: "Alertas",
+    icon: Bell,
     href: "/alertas",
     warehouseOnly: true,
   },
