@@ -453,16 +453,19 @@ export default function HistoryPage() {
           </div>
         </td>
         <td className="px-4 py-3 text-right">
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => setMovementDetail(m)}
-            title="Ver detalhes"
-            className="cursor-pointer hover:text-primary"
-          >
-            <Eye size={16} />
-          </Button>
+          <div className="flex items-center justify-around">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setMovementDetail(m)}
+              title="Ver detalhes"
+              className="cursor-pointer hover:text-primary"
+            >
+              <Eye size={16} />
+            </Button>
+            <div className="block w-3.5 h-7 px-2.5 " />
+          </div>
         </td>
       </tr>
     );
@@ -540,7 +543,7 @@ export default function HistoryPage() {
               >
                 <Eye size={16} />
               </Button>
-              {movementsCount > 0 && (
+              {movementsCount > 0 ? (
                 <Button
                   type="button"
                   variant="ghost"
@@ -560,6 +563,8 @@ export default function HistoryPage() {
                     <ChevronRight size={16} />
                   )}
                 </Button>
+              ) : (
+                <div className="block w-7 h-9" />
               )}
             </div>
           </td>
