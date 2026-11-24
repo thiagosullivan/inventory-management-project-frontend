@@ -40,7 +40,7 @@ export default function DashboardPage() {
 
   return (
     <section className="flex items-start justify-center mx-auto">
-      <div className="flex flex-col max-w-[1180px] w-full gap-y-8">
+      <div className="flex flex-col max-w-295 w-full gap-y-8">
         <Last30Days summary={summary} />
 
         <div className="flex items-center gap-4">

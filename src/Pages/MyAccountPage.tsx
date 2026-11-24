@@ -106,7 +106,7 @@ export default function MinhaContaPage() {
   if (!profile) return null;
 
   return (
-    <section className="mx-auto w-full max-w-3xl space-y-6 px-4 py-8">
+    <section className="mx-auto w-full max-w-6xl space-y-6 px-4 py-8">
       <h1 className="text-2xl font-bold text-primary">Minha conta</h1>
 
       <Tabs defaultValue="perfil">
@@ -129,7 +129,7 @@ export default function MinhaContaPage() {
         <TabsContent value="perfil" className="space-y-6 pt-4">
           <div className="space-y-1">
             <Label>Nome</Label>
-            <div className="flex gap-2">
+            <div className="flex gap-2 max-w-xl">
               <Input
                 value={displayName}
                 onChange={(e) => setNameDraft(e.target.value)}
@@ -283,7 +283,7 @@ export default function MinhaContaPage() {
 
         {/* ========================= SEGURANÇA ========================= */}
         <TabsContent value="seguranca" className="space-y-4 pt-4">
-          <div className="space-y-1">
+          <div className="space-y-1 max-w-xl">
             <Label>Senha atual</Label>
             <div className="relative">
               <Input
@@ -302,7 +302,7 @@ export default function MinhaContaPage() {
               </button>
             </div>
           </div>
-          <div className="space-y-1">
+          <div className="space-y-1 max-w-xl">
             <Label>Nova senha</Label>
             <div className="relative">
               <Input
@@ -321,7 +321,7 @@ export default function MinhaContaPage() {
               </button>
             </div>
           </div>
-          <div className="space-y-1">
+          <div className="space-y-1 max-w-xl">
             <Label>Confirmar nova senha</Label>
             <div className="relative">
               <Input

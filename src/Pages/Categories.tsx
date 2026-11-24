@@ -38,16 +38,19 @@ export default function CategoriesPage() {
   }
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
+    <div className="max-w-6xl mx-auto py-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Categorias</h1>
+          <h1 className="text-2xl font-bold text-primary">Categorias</h1>
           <p className="text-sm text-muted-foreground">
             Gerencie as categorias usadas nos produtos.
           </p>
         </div>
-        <Button onClick={handleOpenCreate} className="cursor-pointer min-h-9 py-4 px-2">
+        <Button
+          onClick={handleOpenCreate}
+          className="cursor-pointer min-h-9 py-4 px-2"
+        >
           <Plus className="mr-2 h-4 w-4" />
           Nova categoria
         </Button>
@@ -62,7 +65,10 @@ export default function CategoriesPage() {
 
       {isError && (
         <div className="rounded-md border border-destructive/40 bg-destructive/5 p-8 text-center text-sm text-destructive">
-          {getApiErrorMessage(error, "Não foi possível carregar as categorias.")}
+          {getApiErrorMessage(
+            error,
+            "Não foi possível carregar as categorias.",
+          )}
         </div>
       )}
 
