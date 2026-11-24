@@ -9,12 +9,14 @@ export default function Last30Days({ summary }: Last30DaysProps) {
   return (
     <div className="border rounded-lg shadow-lg w-full p-5">
       <h3 className="text-center mb-10 text-xl">
-        {summary.movementsPeriod === "last_30_days" ? "Last 30 Days" : ""}
+        {summary.movementsPeriod === "last_30_days" ? "Últimos 30 Dias" : ""}
       </h3>
       <div className="flex items-center justify-around">
         <div className="text-center flex flex-col items-center gap-y-2">
           <Package color="#0080FC" />
-          <h4 className="uppercase text-base font-bold mb-4">Total Products</h4>
+          <h4 className="uppercase text-base font-bold mb-4">
+            Total de Produtos
+          </h4>
           <div className="text-3xl text-primary">{summary.totalProducts}</div>
         </div>
 
@@ -22,7 +24,9 @@ export default function Last30Days({ summary }: Last30DaysProps) {
 
         <div className="text-center flex flex-col items-center gap-y-2">
           <Boxes color="#FE005F" />
-          <h4 className="uppercase text-base font-bold mb-4">Total Units</h4>
+          <h4 className="uppercase text-base font-bold mb-4">
+            Total de Unidades
+          </h4>
           <div className="text-3xl text-logo-second">{summary.totalUnits}</div>
         </div>
 
@@ -31,7 +35,7 @@ export default function Last30Days({ summary }: Last30DaysProps) {
         <div className="text-center flex flex-col items-center gap-y-2">
           <MoveUpRight color="#FEB000" />
           <h4 className="uppercase text-base font-bold mb-4">
-            Total Movements
+            Total de Movimentações
           </h4>
           <div className="text-3xl text-logo-third">
             {summary.totalMovements}

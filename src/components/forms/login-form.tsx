@@ -92,13 +92,13 @@ export default function LoginForm() {
                   htmlFor="form-rhf-demo-email"
                   className="absolute text-primary text-xs font-light px-4 pt-1"
                 >
-                  Email Address
+                  E-mail
                 </FieldLabel>
                 <Input
                   {...field}
                   id="form-rhf-demo-email"
                   aria-invalid={fieldState.invalid}
-                  placeholder="example@email.com"
+                  placeholder="exemplo@email.com"
                   autoComplete="off"
                   className="px-4 pt-6 pb-1.5 h-[55px] border-primary font-medium"
                   type="email"
@@ -123,14 +123,14 @@ export default function LoginForm() {
                   htmlFor="form-rhf-demo-password"
                   className="absolute text-primary text-xs font-light px-4 pt-1"
                 >
-                  Password
+                  Senha
                 </FieldLabel>
                 <div>
                   <Input
                     {...field}
                     id="form-rhf-demo-password"
                     aria-invalid={fieldState.invalid}
-                    placeholder="Your password"
+                    placeholder="Sua senha"
                     className="px-4 pt-6 pb-1.5 h-[55px] border-primary font-medium"
                     type={showPassword ? "text" : "password"}
                     autoComplete="current-password"
@@ -178,7 +178,7 @@ export default function LoginForm() {
                   htmlFor="rememberMe"
                   className="text-base font-ligth cursor-pointer"
                 >
-                  Remember me
+                  Lembre-me
                 </FieldLabel>
 
                 {fieldState.invalid && (
@@ -193,7 +193,7 @@ export default function LoginForm() {
             to="/forgot-password"
             className="whitespace-nowrap text-primary font-light"
           >
-            Forgot Password?
+            Esqueceu a senha?
           </Link>
         </div>
       </div>

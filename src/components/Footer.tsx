@@ -4,9 +4,9 @@ export default function Footer() {
   return (
     <footer className="text-center py-3 border-t mt-10">
       <p>
-        &#169; {currentYear} | Developed by
+        &#169; {currentYear} | Desenvolvido por
         <a href="https://google.com.br">
-          <strong> ATS Web Solutions</strong>. All Rights Reserved
+          <strong> ATS Web Solutions</strong>. Todos os direitos reservados
         </a>
       </p>
     </footer>

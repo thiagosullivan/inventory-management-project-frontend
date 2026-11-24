@@ -32,8 +32,10 @@ export default function HomePage() {
       <div className="max-w-[445px] w-full">
         <div className="mb-8">
           <img src={getLogo()} className="mb-10" />
-          <h2 className="font-bold text-3xl mb-1">Welcome 👋</h2>
-          <p className="font-light text-muted-foreground">Please login here</p>
+          <h2 className="font-bold text-3xl mb-1">Bem-vindo 👋</h2>
+          <p className="font-light text-muted-foreground">
+            Por favor faça o login aqui
+          </p>
         </div>
         <LoginForm />
       </div>

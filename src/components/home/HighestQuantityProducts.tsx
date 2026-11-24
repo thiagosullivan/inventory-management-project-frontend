@@ -24,21 +24,23 @@ export const HighestQuantityProducts = ({
   return (
     <section className="w-full border rounded-lg shadow-lg p-5 mb-5">
       <div className="flex items-center justify-between">
-        <h3 className="font-medium text-lg">Highest Quantity Products</h3>
-        <Link to="/products" className="text-primary">
-          See All Products
+        <h3 className="font-medium text-lg">
+          Produtos com Maiores Quantidades
+        </h3>
+        <Link to="/produtos" className="text-primary">
+          Ver todos
         </Link>
       </div>
       <Table>
         <TableCaption>
-          A list of the products with the highest quantity on stock.
+          Uma lista dos produtos com a maior quantidade em estoque
         </TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead>Image</TableHead>
-            <TableHead>Name</TableHead>
+            <TableHead>Imagem</TableHead>
+            <TableHead>Nome</TableHead>
             <TableHead>SKU</TableHead>
-            <TableHead className="text-right">Quantity</TableHead>
+            <TableHead className="text-right">Quantidade</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

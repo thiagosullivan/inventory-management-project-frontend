@@ -24,21 +24,23 @@ export default function LowestQuantityProducts({
   return (
     <section className="w-full border rounded-lg shadow-lg p-5 mb-5">
       <div className="flex items-center justify-between">
-        <h3 className="font-medium text-lg">Lowest Quantity Products</h3>
-        <Link to="/products" className="text-primary">
-          See All Products
+        <h3 className="font-medium text-lg">
+          Produtos com Menores Quantidades
+        </h3>
+        <Link to="/produtos" className="text-primary">
+          Ver todos
         </Link>
       </div>
       <Table>
         <TableCaption>
-          A list of the products with the lowest quantity on stock
+          Uma lista dos produtos com menores quantidades no estoque
         </TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[100px]">Image</TableHead>
-            <TableHead>Name</TableHead>
+            <TableHead className="w-[100px]">Imagem</TableHead>
+            <TableHead>Nome</TableHead>
             <TableHead>SKU</TableHead>
-            <TableHead className="text-right">Quantity</TableHead>
+            <TableHead className="text-right">Quantidade</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
