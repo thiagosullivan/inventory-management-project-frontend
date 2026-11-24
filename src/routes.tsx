@@ -30,6 +30,7 @@ import UsersPage from "./pages/UsersPage.tsx";
 import SectorsPage from "./pages/SectorsPage.tsx";
 import VerifyEmailPage from "./pages/VerifyEmailPage.tsx";
 import MinhaContaPage from "./pages/MyAccountPage.tsx";
+import AlertsPage from "./pages/AlertsPage.tsx";
 
 export const router = createBrowserRouter([
   // Public
@@ -55,6 +56,7 @@ export const router = createBrowserRouter([
           { path: "/requests", element: <RequestsPage /> },
           { path: "/verify-email", element: <VerifyEmailPage /> },
           { path: "/minha-conta", element: <MinhaContaPage /> },
+          { path: "/alerts", element: <AlertsPage /> },
         ],
       },
 
