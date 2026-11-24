@@ -23,7 +23,7 @@ export function BooleanToggle({
       onClick={handleClick}
       aria-pressed={checked}
       className={cn(
-        "inline-block items-center rounded-full border px-3 py-1 text-sm transition-colors text-center w-full",
+        "inline-block items-center rounded-full border px-3 py-1 text-sm transition-colors text-center w-full cursor-pointer",
         checked
           ? "bg-primary text-primary-foreground border-primary"
           : "bg-background text-muted-foreground border-input hover:bg-accent hover:text-accent-foreground",

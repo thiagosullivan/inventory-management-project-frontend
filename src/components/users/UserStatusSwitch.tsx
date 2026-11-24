@@ -20,7 +20,10 @@ interface UserStatusSwitchProps {
   currentUserId: string;
 }
 
-export function UserStatusSwitch({ user, currentUserId }: UserStatusSwitchProps) {
+export function UserStatusSwitch({
+  user,
+  currentUserId,
+}: UserStatusSwitchProps) {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const mutation = useToggleUserStatus();
 
@@ -56,7 +59,7 @@ export function UserStatusSwitch({ user, currentUserId }: UserStatusSwitchProps)
 
   return (
     <>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 cursor-pointer">
         <Switch
           checked={user.isActive}
           disabled={isSelf || mutation.isPending}

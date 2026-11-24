@@ -260,7 +260,7 @@ export default function RequestsPage() {
       >
         <TabsList className="flex-wrap h-auto">
           {PURCHASE_REQUEST_STATUS_VALUES.map((s) => (
-            <TabsTrigger key={s} value={s}>
+            <TabsTrigger key={s} value={s} className="cursor-pointer">
               {STATUS_LABEL[s]}
             </TabsTrigger>
           ))}

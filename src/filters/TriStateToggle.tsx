@@ -35,7 +35,7 @@ export function TriStateToggle<T extends string | boolean | undefined>({
             onClick={() => onChange(opt.value)}
             aria-pressed={isActive}
             className={cn(
-              "px-3 py-1 text-sm rounded-sm transition-colors",
+              "px-3 py-1 text-sm rounded-sm transition-colors cursor-pointer",
               isActive
                 ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",

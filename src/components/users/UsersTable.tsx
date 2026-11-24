@@ -43,9 +43,7 @@ export function UsersTable({
           const deletable = canDeleteUser(user, currentUserId);
           return (
             <TableRow key={user.id}>
-              <TableCell className="font-medium">
-                {user.name ?? "—"}
-              </TableCell>
+              <TableCell className="font-medium">{user.name ?? "—"}</TableCell>
               <TableCell>{user.email}</TableCell>
               <TableCell>{user.sector?.name ?? "—"}</TableCell>
               <TableCell>
@@ -58,10 +56,7 @@ export function UsersTable({
               </TableCell>
               <TableCell>
                 <div className="flex items-center justify-end gap-2">
-                  <UserStatusSwitch
-                    user={user}
-                    currentUserId={currentUserId}
-                  />
+                  <UserStatusSwitch user={user} currentUserId={currentUserId} />
                   <Button
                     variant="ghost"
                     size="icon"
@@ -71,7 +66,7 @@ export function UsersTable({
                   >
                     <Pencil className="h-4 w-4" />
                   </Button>
-                  {deletable && (
+                  {deletable ? (
                     <Button
                       variant="ghost"
                       size="icon"
@@ -81,6 +76,8 @@ export function UsersTable({
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
+                  ) : (
+                    <div className="h-8 w-8" />
                   )}
                 </div>
               </TableCell>

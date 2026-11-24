@@ -188,7 +188,7 @@ export function ProductForm({
     <form
       id="product-form"
       onSubmit={form.handleSubmit(handleSubmit)}
-      className="space-y-6"
+      className="space-y-6 max-w-2xl"
       noValidate
     >
       {/* Identificação */}

@@ -24,7 +24,7 @@ export default function ProductNewPage() {
   return (
     <section className="flex flex-col mx-auto gap-6 w-full max-w-3xl px-4 py-8">
       <div>
-        <h1 className="text-2xl font-semibold">Novo produto</h1>
+        <h1 className="text-2xl font-bold text-primary">Novo produto</h1>
         <p className="text-sm text-muted-foreground mt-1">
           O SKU e o código de barras são gerados automaticamente ao salvar.
         </p>

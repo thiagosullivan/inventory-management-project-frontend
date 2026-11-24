@@ -31,7 +31,7 @@ export default function AlertsPage() {
     <div className="space-y-6 max-w-6xl mx-auto">
       <div className="flex justify-between items-center flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Alertas</h1>
+          <h1 className="text-2xl font-bold text-primary">Alertas</h1>
           <p className="text-muted-foreground text-sm">
             {unreadCount > 0
               ? `${unreadCount} não lida(s)`
