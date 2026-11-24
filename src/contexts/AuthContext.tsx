@@ -1,3 +1,4 @@
+// src/contexts/AuthContext.tsx
 import {
   createContext,
   useContext,
@@ -5,8 +6,12 @@ import {
   useEffect,
   type ReactNode,
 } from "react";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 import { getMe } from "../services/auth";
+import { getSocket } from "../lib/socket";
 import type { User } from "../types/auth.types";
+import type { Notification } from "../types/notification.types";
 
 interface AuthContextType {
   user: User | null;
@@ -19,7 +24,9 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const qc = useQueryClient();
 
+  // 🔹 Carrega /me uma vez
   useEffect(() => {
     let cancelled = false;
 
@@ -33,12 +40,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
 
         if (result.status === "inactive") {
-          // 🔹 user desativado: stub pra o ProtectedRoute redirecionar
           setUser({ isActive: false } as User);
           return;
         }
 
-        // unauthenticated
         setUser(null);
       })
       .finally(() => {
@@ -49,6 +54,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       cancelled = true;
     };
   }, []);
+
+  // 🔹 Fase 8 — Socket.io (conecta quando autenticado ativo)
+  useEffect(() => {
+    if (!user || user.isActive === false) return;
+
+    const socket = getSocket();
+
+    function handleNew(notification: Notification) {
+      qc.invalidateQueries({ queryKey: ["notifications"] });
+
+      if (
+        typeof document !== "undefined" &&
+        document.visibilityState === "visible"
+      ) {
+        toast.info(notification.title, {
+          description: notification.message,
+          action: notification.link
+            ? {
+                label: "Ver",
+                onClick: () => {
+                  window.location.href = notification.link as string;
+                },
+              }
+            : undefined,
+        });
+      }
+    }
+
+    socket.on("notification:new", handleNew);
+    if (!socket.connected) socket.connect();
+
+    return () => {
+      socket.off("notification:new", handleNew);
+      socket.disconnect();
+    };
+  }, [user, qc]);
 
   return (
     <AuthContext.Provider value={{ user, loading, setUser }}>
