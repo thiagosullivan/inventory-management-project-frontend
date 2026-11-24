@@ -1,8 +1,8 @@
 import LoginForm from "@/components/forms/login-form";
 import { useTheme } from "@/components/themeProvider";
-import HomeBackground from "../../public/home-bg.jpg";
-import logoLight from "../../public/logo-light.png";
-import logoDark from "../../public/logo-dark.png";
+import HomeBackground from "@/assets/home-bg.jpg";
+import logoLight from "@/assets/logo-light.png";
+import logoDark from "@/assets/logo-dark.png";
 
 export default function HomePage() {
   const { theme } = useTheme();

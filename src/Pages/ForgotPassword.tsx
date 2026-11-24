@@ -17,8 +17,8 @@ import {
 import { api } from "@/services/api";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { useTheme } from "@/components/themeProvider";
-import logoLight from "../../public/logo-light.png";
-import logoDark from "../../public/logo-dark.png";
+import logoLight from "@/assets/logo-light.png";
+import logoDark from "@/assets/logo-dark.png";
 import { ResendOtpButton } from "@/components/forgot-password/ResendOTPBtn";
 
 // Etapa 1 — e-mail

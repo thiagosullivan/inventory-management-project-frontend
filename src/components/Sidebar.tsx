@@ -4,11 +4,8 @@ import {
   LayoutDashboard,
   ShoppingCart,
   Layers,
-  // Activity,
-  // Megaphone,
   ListClock,
   ListSortDescending,
-  // PartyPopper,
   ShieldCogCorner,
   ArrowLeftRight,
   ClipboardList,
@@ -18,8 +15,8 @@ import {
 } from "lucide-react";
 
 import { useTheme } from "./themeProvider";
-import logoLight from "../../public/logo-light.png";
-import logoDark from "../../public/logo-dark.png";
+import logoLight from "@/assets/logo-light.png";
+import logoDark from "@/assets/logo-dark.png";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface MenuItemsProps {

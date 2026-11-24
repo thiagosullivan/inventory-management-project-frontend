@@ -2,10 +2,10 @@ import type { ReactElement } from "react";
 import { Link } from "react-router-dom";
 import { useTheme } from "@/components/themeProvider";
 
-import img404Light from "../../public/not-found-light.png";
-import img404Dark from "../../public/not-found-dark.png";
-import logoLight from "../../public/logo-light.png";
-import logoDark from "../../public/logo-dark.png";
+import img404Light from "@/assets/not-found-light.png";
+import img404Dark from "@/assets/not-found-dark.png";
+import logoLight from "@/assets/logo-light.png";
+import logoDark from "@/assets/logo-dark.png";
 
 export default function Page404(): ReactElement {
   const { theme } = useTheme();

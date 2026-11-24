@@ -1,6 +1,6 @@
 import { useTheme } from "@/components/themeProvider";
-import logoLight from "../../public/logo-light.png";
-import logoDark from "../../public/logo-dark.png";
+import logoLight from "@/assets/logo-light.png";
+import logoDark from "@/assets/logo-dark.png";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { signOut } from "@/services/auth";
@@ -26,15 +26,15 @@ function AccountSuspended() {
   };
 
   async function handleBack() {
-  try {
-    await signOut();          // 🔹 backend: revoga sessão + limpa cookie
-  } catch {
-    // mesmo se falhar, limpa local
-  } finally {
-    setUser(null);            // 🔹 limpa o stub { isActive: false }
-    navigate("/");            // 🔹 agora PublicRoute deixa passar
+    try {
+      await signOut(); // 🔹 backend: revoga sessão + limpa cookie
+    } catch {
+      // mesmo se falhar, limpa local
+    } finally {
+      setUser(null); // 🔹 limpa o stub { isActive: false }
+      navigate("/"); // 🔹 agora PublicRoute deixa passar
+    }
   }
-}
 
   return (
     <main className="flex items-center justify-center h-screen">
