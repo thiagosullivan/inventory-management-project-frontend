@@ -77,7 +77,7 @@ export default function AlertsPage() {
               key={n.id}
               className={cn(
                 "border rounded-lg p-4 transition-colors",
-                n.isRead ? "bg-background" : "bg-muted/50 border-primary/30",
+                n.isRead ? "bg-background" : "bg-primary/20 border-primary/90",
               )}
             >
               <div className="flex justify-between items-start gap-4">
@@ -95,6 +95,7 @@ export default function AlertsPage() {
                       size="sm"
                       onClick={() => markRead.mutate(n.id)}
                       disabled={markRead.isPending}
+                      className="cursor-pointer"
                     >
                       Marcar lida
                     </Button>
@@ -107,6 +108,7 @@ export default function AlertsPage() {
                         if (!n.isRead) markRead.mutate(n.id);
                         window.location.href = n.link as string;
                       }}
+                      className="cursor-pointer"
                     >
                       Ver
                     </Button>

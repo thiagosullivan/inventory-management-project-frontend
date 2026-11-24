@@ -383,10 +383,10 @@ function RequestDetailsBody({
       {/* Itens */}
       <Tabs defaultValue="items">
         <TabsList>
-          <TabsTrigger value="items">
+          <TabsTrigger value="items" className="cursor-pointer">
             Itens do pedido ({itemsCount})
           </TabsTrigger>
-          <TabsTrigger value="transfers">
+          <TabsTrigger value="transfers" className="cursor-pointer">
             Remessas ({transfersCount})
           </TabsTrigger>
         </TabsList>
