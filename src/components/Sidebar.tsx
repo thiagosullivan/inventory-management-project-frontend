@@ -107,12 +107,6 @@ const MenuList: MenuItemsProps[] = [
   },
 ];
 
-// 🔴 imports legados mantidos para quando as telas voltarem (Fase 8).
-//    O `tsc` não reclama de import não usado por causa do `noUnusedLocals`?
-//    Se reclamar, comente também as 3 linhas de import abaixo.
-
-// const _legacyIcons = { Activity, Megaphone, PartyPopper };
-
 export default function Sidebar() {
   const { theme } = useTheme();
   const location = useLocation();
@@ -140,17 +134,20 @@ export default function Sidebar() {
     return logoLight;
   };
 
-  // 🔹 Ativo se pathname === href OU começa com href + "/" (ex.: /reports/requests)
   const isItemActive = (href: string) => {
     if (location.pathname === href) return true;
     return location.pathname.startsWith(`${href}/`);
   };
 
   return (
-    <aside className="max-w-[280px] w-full bg-primary/20 rounded-lg h-full flex flex-col justify-between">
-      <div className="p-8">
-        <Link to="/dashboard" className="mb-8">
-          <img src={getLogo()} className="mb-10 w-full" alt="Logo" />
+    <aside className="hidden lg:flex w-[clamp(210px,20vw,280px)] shrink-0 bg-primary/20 rounded-lg h-[calc(100%-20px)] flex-col justify-between transition-all duration-200">
+      <div className="p-4 xl:p-8 overflow-y-auto">
+        <Link to="/dashboard" className="block mb-6 xl:mb-8">
+          <img
+            src={getLogo()}
+            className="mb-6 xl:mb-10 w-full max-w-[180px] xl:max-w-full object-contain"
+            alt="Logo"
+          />
         </Link>
         <nav>
           <ul>
@@ -161,14 +158,17 @@ export default function Sidebar() {
                 <li key={index}>
                   <Link
                     to={item.href}
-                    className={`mb-2.5 p-3 border-l-4 flex items-center tracking-wide rounded-tr-lg rounded-br-lg ${
+                    className={`mb-2 xl:mb-2.5 p-2.5 xl:p-3 border-l-4 flex items-center tracking-wide rounded-tr-lg rounded-br-lg text-sm xl:text-base transition-colors ${
                       isActive
                         ? "text-primary border-primary bg-primary/5 font-bold"
-                        : "text-foreground border-primary/0 font-light"
+                        : "text-foreground border-primary/0 font-light hover:bg-primary/5"
                     }`}
                   >
-                    <Icon size={24} className="mr-3 text-foreground" />
-                    {item.label}
+                    <Icon
+                      size={22}
+                      className="mr-2.5 xl:mr-3 shrink-0 text-foreground"
+                    />
+                    <span className="truncate">{item.label}</span>
                   </Link>
                 </li>
               );
