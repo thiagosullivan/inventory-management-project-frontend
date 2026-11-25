@@ -24,6 +24,9 @@ import type {
 } from "@/types/reports.types";
 import { flushSync } from "react-dom";
 
+import { PRINT_MAX_EVENTS } from "@/lib/print/print-utils";
+import { fetchRequestReport } from "@/services/reports";
+
 const PAGE_SIZE = REQUEST_REPORT_DEFAULTS.limit;
 
 export default function ReportsRequestsPage() {
@@ -98,34 +101,25 @@ export default function ReportsRequestsPage() {
       return;
     }
 
-    // 🔹 scope "all" = todos os filtros. Precisa refetch com limit grande.
-    //    Como R1 tem `items` inline, o backend aceita limit alto.
-    //    Simplificação: limit = total (cap em PRINT_MAX_EVENTS).
-    //    Se total > PRINT_MAX_EVENTS, o PrintDialog já bloqueia o "all".
-    import("@/lib/print/print-utils").then(({ PRINT_MAX_EVENTS }) => {
-      const safeLimit = Math.min(total, PRINT_MAX_EVENTS);
-      import("@/services/reports").then(({ fetchRequestReport }) => {
-        fetchRequestReport({ ...filters, page: 1, limit: safeLimit })
-          .then((full) => {
-            flushSync(() => {
-              setPrintPayload(full);
-              setPrintOpen(false);
+    const safeLimit = Math.min(total, PRINT_MAX_EVENTS);
+    fetchRequestReport({ ...filters, page: 1, limit: safeLimit })
+      .then((full) => {
+        flushSync(() => {
+          setPrintPayload(full);
+          setPrintOpen(false);
+        });
+        setTimeout(() => {
+          enterPrintMode("list");
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              window.print();
             });
-            setTimeout(() => {
-              enterPrintMode("list");
-              requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                  window.print();
-                });
-              });
-            }, 150);
-          })
-          .catch(() => {
-            // 🔹 erro silencioso: usuário pode tentar de novo
-            setPrintOpen(true);
           });
+        }, 150);
+      })
+      .catch(() => {
+        setPrintOpen(true);
       });
-    });
   }
 
   // limpa payload depois do print
