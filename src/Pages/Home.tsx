@@ -22,18 +22,20 @@ export default function HomePage() {
   };
 
   return (
-    <div className="flex items-center lexend-font h-screen">
-      <div className="p-8 h-full">
+    <div className="flex items-center lexend-font h-screen justify-center lg:justify-start">
+      <div className="hidden lg:flex min-w-0 p-6 xl:p-8 h-full items-center justify-center">
         <img
           src={HomeBackground}
-          className="max-w-[815px] h-full object-cover rounded-4xl"
+          className="w-full max-w-[815px] h-full object-cover rounded-4xl"
         />
       </div>
-      <div className="max-w-[445px] w-full">
+      <div className="max-w-[445px] w-full lg:pr-8">
         <div className="mb-8">
-          <img src={getLogo()} className="mb-10" />
-          <h2 className="font-bold text-3xl mb-1">Bem-vindo 👋</h2>
-          <p className="font-light text-muted-foreground">
+          <img src={getLogo()} className="mb-10 mx-auto lg:mx-0" />
+          <h2 className="font-bold text-3xl mb-1 text-center lg:text-left">
+            Bem-vindo 👋
+          </h2>
+          <p className="font-light text-muted-foreground text-center lg:text-left">
             Por favor faça o login aqui
           </p>
         </div>

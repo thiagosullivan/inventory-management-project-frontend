@@ -70,7 +70,9 @@ export default function LoginForm() {
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Erro ao fazer login";
-      toast.error(message);
+      toast.error(
+        message === "Invalid email or password" && "E-mail ou senha inválidos",
+      );
     } finally {
       setIsSubmitting(false);
     }
