@@ -18,6 +18,7 @@ import { useTheme } from "./themeProvider";
 import logoLight from "@/assets/logo-light.png";
 import logoDark from "@/assets/logo-dark.png";
 import { useAuth } from "@/contexts/AuthContext";
+import { SidebarMobile } from "./sidebar/SidebarMobile";
 
 interface MenuItemsProps {
   label: string;
@@ -107,7 +108,7 @@ const MenuList: MenuItemsProps[] = [
   },
 ];
 
-export default function Sidebar() {
+export default function SidebarDesktop() {
   const { theme } = useTheme();
   const location = useLocation();
   const { user } = useAuth();
