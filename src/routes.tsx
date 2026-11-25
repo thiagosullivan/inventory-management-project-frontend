@@ -1,36 +1,41 @@
+// src/routes.tsx
 import { createBrowserRouter } from "react-router-dom";
-import HomePage from "./pages/Home.tsx";
-import ForgotPasswordPage from "./pages/ForgotPassword.tsx";
 import { PublicRoute } from "./components/PublicRoute.tsx";
 import {
   ManagerRoutes,
   ProtectedRoute,
   WarehouseOnlyRoute,
 } from "./components/ProtectedRoute.tsx";
-import DashboardPage from "./pages/Dashboard.tsx";
-import ProductsPage from "./pages/Products.tsx";
-import RootLayout from "./components/layouts/RootLayout.tsx";
-import Page404 from "./pages/Page404.tsx";
-import AdminPage from "./pages/Admin.tsx";
-import CategoriesPage from "./pages/Categories.tsx";
-import StockPage from "./pages/Stock.tsx";
-import ProductNewPage from "./pages/ProductNewPage.tsx";
-import ProductDetailPage from "./pages/ProductDetailPage.tsx";
-import MovementsPage from "./pages/MovementsPage.tsx";
-import RequestsPage from "./pages/RequestsPage.tsx";
-import AccountSuspended from "./pages/AccountSuspended.tsx";
-import HistoryPage from "./pages/HistoryPage.tsx";
-// 🔹 novo (Fase 7)
 
-import ReportsHubPage from "./pages/ReportsHubPage.tsx";
-import ReportsRequestsPage from "./pages/ReportsRequestsPage.tsx";
-import ReportsConsumptionPage from "./pages/ReportsConsumptionPage.tsx";
-import ReportsManualOutputPage from "./pages/ReportsManualOutputPage.tsx";
-import UsersPage from "./pages/UsersPage.tsx";
-import SectorsPage from "./pages/SectorsPage.tsx";
+// 🔹 lazy pages vêm de arquivo separado
+import {
+  DashboardPage,
+  ProductsPage,
+  ProductNewPage,
+  ProductDetailPage,
+  StockPage,
+  HistoryPage,
+  ReportsHubPage,
+  ReportsRequestsPage,
+  ReportsConsumptionPage,
+  ReportsManualOutputPage,
+  UsersPage,
+  SectorsPage,
+} from "./lazy-pages";
+
+// estáticas continuam aqui
+import HomePage from "./pages/Home.tsx";
+import ForgotPasswordPage from "./pages/ForgotPassword.tsx";
+import Page404 from "./pages/Page404.tsx";
+import AccountSuspended from "./pages/AccountSuspended.tsx";
 import VerifyEmailPage from "./pages/VerifyEmailPage.tsx";
 import MinhaContaPage from "./pages/MyAccountPage.tsx";
 import AlertsPage from "./pages/AlertsPage.tsx";
+import MovementsPage from "./pages/MovementsPage.tsx";
+import RequestsPage from "./pages/RequestsPage.tsx";
+import CategoriesPage from "./pages/Categories.tsx";
+import AdminPage from "./pages/Admin.tsx";
+import RootLayout from "./components/layouts/RootLayout.tsx";
 
 export const router = createBrowserRouter([
   // Public
