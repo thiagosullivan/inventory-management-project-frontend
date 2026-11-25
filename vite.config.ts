@@ -19,7 +19,7 @@ export default defineConfig({
           groups: [
             {
               name: "vendor-react",
-              test: /node_modules[\\/](react|react-dom|scheduler)[\\/]/,
+              test: /node_modules[\\/](react|react-dom|scheduler|react-router|react-router-dom)[\\/]/,
               priority: 20,
             },
             {
@@ -29,7 +29,13 @@ export default defineConfig({
             },
             {
               name: "vendor-ui",
-              test: /node_modules[\\/](@radix-ui|class-variance-authority|clsx|tailwind-merge|lucide-react)[\\/]/,
+              // Trocado @radix-ui por @base-ui e adicionado sonner/next-themes
+              test: /node_modules[\\/](@base-ui|class-variance-authority|clsx|tailwind-merge|lucide-react|sonner|next-themes)[\\/]/,
+              priority: 10,
+            },
+            {
+              name: "vendor-forms",
+              test: /node_modules[\\/](react-hook-form|@hookform|zod|react-number-format|input-otp)[\\/]/,
               priority: 10,
             },
             {
