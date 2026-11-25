@@ -18,7 +18,6 @@ import { useTheme } from "./themeProvider";
 import logoLight from "@/assets/logo-light.png";
 import logoDark from "@/assets/logo-dark.png";
 import { useAuth } from "@/contexts/AuthContext";
-import { SidebarMobile } from "./sidebar/SidebarMobile";
 
 interface MenuItemsProps {
   label: string;
@@ -69,21 +68,6 @@ const MenuList: MenuItemsProps[] = [
     href: "/categorias",
     warehouseOnly: true,
   },
-  // 🔴 legado — sem tela (Fase 8)
-  // {
-  //   label: "Activity",
-  //   icon: Activity,
-  //   href: "/activity",
-  //   warehouseOnly: true,
-  // },
-  // 🔴 legado — sem tela (Fase 8)
-  // {
-  //   label: "Products Resolve",
-  //   icon: PartyPopper,
-  //   href: "/products-resolve",
-  //   warehouseOnly: true,
-  // },
-  // 🔹 novo (Fase 7)
   {
     label: "Relatórios",
     icon: BarChart3,
