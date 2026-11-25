@@ -39,7 +39,7 @@ export function CategoryDonutChart({ data }: CategoryDonutChartProps) {
   }, {} as ChartConfig);
 
   return (
-    <Card className="flex flex-col flex-1 min-h-[400px] shadow-lg">
+    <Card className="w-full h-full flex flex-col min-h-[400px] shadow-lg">
       <CardHeader className="items-center pb-0">
         <CardTitle className="font-medium text-lg">
           Produtos por Categoria

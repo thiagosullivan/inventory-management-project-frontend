@@ -35,19 +35,25 @@ export default function DashboardPage() {
   if (isLoading) return <div>Carregando indicadores do dashboard...</div>;
   if (isError || !data) return <div>Erro ao carregar dados do painel.</div>;
 
-  // 🔹 agora `data` é o DashboardOverviewResponse direto (sem `.data` duplo)
   const { summary, topItems, trends } = data;
 
   return (
-    <section className="flex items-start justify-center mx-auto">
-      <div className="flex flex-col max-w-295 w-full gap-y-8">
+    <section className="w-full max-w-295 mx-auto">
+      <div className="flex flex-col w-full gap-y-6">
         <Last30Days summary={summary} />
 
-        <div className="flex items-center gap-4">
-          <MovementLineChart data={trends.dailyMovements} />
-          <CategoryDonutChart data={topItems.categoryDistribution} />
+        {/* Gráficos: 1 coluna até 1024px, 2 colunas iguais acima disso */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 w-full items-stretch">
+          <div className="min-w-0 lg:col-span-8">
+            <MovementLineChart data={trends.dailyMovements} />
+          </div>
+          <div className="min-w-0 lg:col-span-4">
+            <CategoryDonutChart data={topItems.categoryDistribution} />
+          </div>
         </div>
-        <div className="flex justify-between items-center gap-4">
+
+        {/* Tabelas: 1 coluna até 1280px, 2 colunas iguais (50% cada) acima disso */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 w-full">
           <HighestQuantityProducts data={topItems.highestQuantityProducts} />
           <LowestQuantityProducts data={topItems.lowestQuantityProducts} />
         </div>

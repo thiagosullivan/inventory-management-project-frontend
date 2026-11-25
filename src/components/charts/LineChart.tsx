@@ -49,7 +49,7 @@ export function MovementLineChart({ data }: MovementLineChartProps) {
   const hasNoMovements = totalMovements === 0;
 
   return (
-    <Card className="w-full max-w-[70%] min-h-[400px] shadow-lg">
+    <Card className="w-full h-full min-h-[400px] shadow-lg flex flex-col">
       <CardHeader>
         <CardTitle className="font-medium text-lg">
           Movimentação dos Últimos 7 Dias
@@ -58,7 +58,7 @@ export function MovementLineChart({ data }: MovementLineChartProps) {
           Comparativo diário entre entradas e saídas
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex max-h-[300px] min-h-[250px]  flex-col items-center justify-center">
+      <CardContent className="flex-1 flex flex-col items-center justify-center">
         {hasNoMovements ? (
           <div className="flex flex-col items-center justify-center text-center p-6 animate-fade-in">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
@@ -73,10 +73,7 @@ export function MovementLineChart({ data }: MovementLineChartProps) {
             </p>
           </div>
         ) : (
-          <ChartContainer
-            config={lineChartConfig}
-            className="min-h-[300px] w-full"
-          >
+          <ChartContainer config={lineChartConfig} className="h-[280px] w-full">
             <LineChart
               data={last7DaysData}
               margin={{ left: 12, right: 12, top: 10 }}
