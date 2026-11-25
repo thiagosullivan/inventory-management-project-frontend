@@ -1,6 +1,6 @@
 import LoginForm from "@/components/forms/login-form";
 import { useTheme } from "@/components/themeProvider";
-import HomeBackground from "@/assets/home-bg.jpg";
+import HomeBackground from "@/assets/home-bg.webp";
 import logoLight from "@/assets/logo-light.png";
 import logoDark from "@/assets/logo-dark.png";
 
