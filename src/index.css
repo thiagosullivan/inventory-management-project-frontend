@@ -96,6 +96,8 @@
   --color-logo-second: var(--color-logo-second);
 
   --color-logo-third: var(--color-logo-third);
+
+  --color-blue-solid: var(--color-blue-solid);
 }
 
 :root {
@@ -175,6 +177,8 @@
   --color-logo-second: #fe005f;
 
   --color-logo-third: #feb000;
+
+  --color-blue-solid: #cce2f3;
 }
 
 .dark {
@@ -248,6 +252,8 @@
   --sidebar-ring: oklch(0.556 0 0);
 
   --color-primary: #1e90ff;
+
+  --color-blue-solid: #193049;
 }
 
 @layer base {
@@ -292,5 +298,7 @@ textarea:focus-visible {
   --tw-ring-offset-shadow: 0 0 #0000 !important;
   border-width: 1px !important;
   border-style: solid !important;
-  border-color: var(--color-primary) !important; /* <-- Aqui estava o detalhe da cor */
+  border-color: var(
+    --color-primary
+  ) !important; /* <-- Aqui estava o detalhe da cor */
 }

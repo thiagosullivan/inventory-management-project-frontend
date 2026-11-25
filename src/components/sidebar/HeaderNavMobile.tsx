@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../themeProvider";
 
@@ -12,21 +11,10 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
 } from "@/components/ui/sidebar";
 import shortLogo from "@/assets/short-logo.png";
 
-export function TeamSwitcher({
-  teams,
-}: {
-  teams: {
-    name: string;
-    logo: React.ElementType;
-    plan: string;
-  }[];
-}) {
-  const { isMobile } = useSidebar();
-  const [activeTeam, setActiveTeam] = React.useState(teams[0]);
+export function HeaderNavMobile() {
   const { theme } = useTheme();
   const navigate = useNavigate();
 
@@ -41,10 +29,6 @@ export function TeamSwitcher({
     }
     return shortLogo;
   };
-
-  if (!activeTeam) {
-    return null;
-  }
 
   return (
     <SidebarMenu>

@@ -48,7 +48,7 @@ export function NavUserMobile() {
             render={
               <SidebarMenuButton
                 size="lg"
-                className="data-[popup-open]:bg-primary/20 data-[popup-open]:text-sidebar-accent-foreground cursor-pointer hover:bg-primary/20"
+                className="data-[popup-open]:bg-primary/20 data-[popup-open]:text-sidebar-accent-foreground cursor-pointer hover:bg-primary/20 rounded-full!"
               />
             }
           >
@@ -65,7 +65,7 @@ export function NavUserMobile() {
             <ChevronsUpDown className="ml-auto size-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-(--anchor-width) min-w-56 rounded-lg bg-[#cce2f3]"
+            className="w-(--anchor-width) min-w-56 rounded-lg bg-blue-solid"
             side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}
@@ -83,9 +83,13 @@ export function NavUserMobile() {
                     </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 min-w-0 text-left text-sm leading-tight">
-                    <span className="truncate font-medium">{user.name}</span>
+                    <span className="truncate font-medium text-foreground">
+                      {user.name}
+                    </span>
                     <div className="text-sm flex items-center gap-x-1 py-1 min-w-0">
-                      <span className="truncate text-xs">{user.email}</span>
+                      <span className="truncate text-xs text-foreground">
+                        {user.email}
+                      </span>
                       <Tooltip>
                         <TooltipTrigger>
                           {user.emailVerified === true ? (
