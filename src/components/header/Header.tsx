@@ -19,7 +19,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="flex justify-between items-center">
+      <header className="flex justify-between items-center px-5">
         <div className="text-foreground">
           <p className="font-black text-xl">Olá, {firstName} 👋🏻</p>
           <span className="text-muted-foreground text-sm">{greeting}!</span>
