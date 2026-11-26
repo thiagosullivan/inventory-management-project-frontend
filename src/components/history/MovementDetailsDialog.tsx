@@ -59,7 +59,7 @@ export function MovementDetailsDialog({
   const navigate = useNavigate();
   const location = useLocation();
 
-  const isProductPage = /^\/products\/[^/]+$/.test(location.pathname);
+  const isProductPage = /^\/produtos\/[^/]+$/.test(location.pathname);
 
   function handleViewProduct() {
     if (!movement?.product) return;

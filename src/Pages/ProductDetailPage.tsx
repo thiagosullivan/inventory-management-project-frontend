@@ -87,7 +87,7 @@ export default function ProductDetailPage() {
     return (
       <div className="flex flex-col items-center gap-4 py-12">
         <p className="text-destructive">Produto não encontrado.</p>
-        <Button variant="outline" onClick={() => navigate("/products")}>
+        <Button variant="outline" onClick={() => navigate("/produtos")}>
           Voltar para produtos
         </Button>
       </div>
@@ -202,7 +202,7 @@ export default function ProductDetailPage() {
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
         product={product}
-        onDeleted={() => navigate("/products")}
+        onDeleted={() => navigate("/produtos")}
       />
 
       <LabelPrintDialog

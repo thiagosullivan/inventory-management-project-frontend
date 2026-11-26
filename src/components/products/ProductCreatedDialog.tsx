@@ -71,7 +71,7 @@ export function ProductCreatedDialog({
           <Button
             onClick={() => {
               onOpenChange(false);
-              navigate("/products");
+              navigate("/produtos");
             }}
             className="cursor-pointer"
           >

@@ -144,7 +144,7 @@ export function TableProducts({ products }: TableProductsProps) {
         open={!!productToDelete}
         onOpenChange={(open) => !open && setProductToDelete(null)}
         product={productToDelete}
-        onDeleted={() => navigate("/products")}
+        onDeleted={() => navigate("/produtos")}
       />
     </div>
   );

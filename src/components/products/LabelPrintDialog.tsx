@@ -59,7 +59,7 @@ export function LabelPrintDialog({
   function handleClose() {
     onOpenChange(false);
     onDone?.();
-    navigate("/products");
+    navigate("/produtos");
   }
 
   return (

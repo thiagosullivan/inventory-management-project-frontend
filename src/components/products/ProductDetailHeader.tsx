@@ -44,16 +44,16 @@ export function ProductDetailHeader({
     if (state?.from === "/history") {
       navigate(-1);
     } else {
-      navigate("/products");
+      navigate("/produtos");
     }
   }
 
   // function handleBack() {
   //   if (window.history.length > 1) {
   //     navigate(-1);
-  //     navigate("/products");
+  //     navigate("/produtos");
   //   } else {
-  //     navigate("/products");
+  //     navigate("/produtos");
   //   }
   // }
 
