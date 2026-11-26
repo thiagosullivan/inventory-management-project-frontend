@@ -24,6 +24,7 @@ import { NavMain } from "./NavMain";
 import { HeaderNavMobile } from "./HeaderNavMobile";
 import { NavUserMobile } from "./NavUserMobile";
 import { ModeToggle } from "../modeToggle";
+import { NotificationButton } from "../header/NotificationButton";
 
 const data = {
   navLinks: [
@@ -116,6 +117,10 @@ export function SidebarMobile({
           <NavMain items={data.navLinks} />
         </SidebarContent>
         <SidebarFooter>
+          <div className="ml-auto">
+            <NotificationButton />
+            <ModeToggle />
+          </div>
           <NavUserMobile />
         </SidebarFooter>
         <SidebarRail />
