@@ -25,6 +25,7 @@ import { HeaderNavMobile } from "./HeaderNavMobile";
 import { NavUserMobile } from "./NavUserMobile";
 import { ModeToggle } from "../modeToggle";
 import { NotificationButton } from "../header/NotificationButton";
+import { Separator } from "../ui/separator";
 
 const data = {
   navLinks: [
@@ -113,6 +114,7 @@ export function SidebarMobile({
         <SidebarHeader>
           <HeaderNavMobile />
         </SidebarHeader>
+        <Separator className="bg-primary/20" />
         <SidebarContent>
           <NavMain items={data.navLinks} />
         </SidebarContent>
@@ -121,6 +123,7 @@ export function SidebarMobile({
             <NotificationButton />
             <ModeToggle />
           </div>
+          <Separator className="bg-primary/20" />
           <NavUserMobile />
         </SidebarFooter>
         <SidebarRail />
