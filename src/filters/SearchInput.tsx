@@ -42,7 +42,9 @@ export function SearchInput({
   };
 
   return (
-    <div className={cn("relative w-full max-w-[340px]", className)}>
+    <div
+      className={cn("relative w-full max-w-full md:max-w-[340px]", className)}
+    >
       <Search
         className="absolute top-1/2 -translate-y-1/2 left-4 text-muted-foreground pointer-events-none"
         size={24}
@@ -52,7 +54,7 @@ export function SearchInput({
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
         placeholder={placeholder}
-        className="pr-9 h-12.5 rounded-lg pl-11 text-muted-foreground"
+        className="pr-9 h-9 lg:h-12.5 rounded-lg pl-11 text-muted-foreground"
       />
 
       <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center">

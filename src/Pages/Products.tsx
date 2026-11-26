@@ -101,7 +101,7 @@ export default function ProductsPage() {
     try {
       const collected: Product[] = [];
       let p = 1;
-      const fetchLimit = 100; // usa o max do backend
+      const fetchLimit = 100;
 
       while (true) {
         const res = await fetchProducts({
@@ -155,7 +155,7 @@ export default function ProductsPage() {
 
   return (
     <section className="flex flex-col items-center justify-center mx-auto gap-6 w-full max-w-6xl px-4 py-8">
-      <div className="w-full flex items-start justify-between">
+      <div className="w-full flex items-start justify-between flex-col xs:flex-row ">
         <ProductFilters isLoading={isFetching} />
 
         {/* 🔹 Botão de Imprimir */}
@@ -163,7 +163,7 @@ export default function ProductsPage() {
           variant="outline"
           onClick={() => setPrintDialogOpen(true)}
           disabled={isEmpty}
-          className="cursor-pointer ml-auto ml-4 min-h-9 p-2"
+          className="cursor-pointer mt-2 xs:mt-0 xs:ml-4 min-h-9 p-2"
         >
           <Printer size={16} className="mr-2" />
           Imprimir

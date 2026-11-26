@@ -98,6 +98,8 @@
   --color-logo-third: var(--color-logo-third);
 
   --color-blue-solid: var(--color-blue-solid);
+
+  --breakpoint-xs: 30rem; /* 480px */
 }
 
 :root {
