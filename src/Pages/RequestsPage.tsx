@@ -223,7 +223,7 @@ export default function RequestsPage() {
 
   return (
     <section className="flex flex-col mx-auto gap-6 w-full max-w-6xl px-4 py-8">
-      <header className="flex items-center justify-between gap-4">
+      <header className="flex xs:items-center justify-between gap-4 flex-col xs:flex-row">
         <div>
           <h1 className="text-2xl font-bold text-primary">Pedidos</h1>
           <p className="text-sm text-muted-foreground">
@@ -231,7 +231,7 @@ export default function RequestsPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 ml-auto xs:ml-0">
           <Button
             variant="outline"
             onClick={() => setPrintDialogOpen(true)}
@@ -252,15 +252,19 @@ export default function RequestsPage() {
           )}
         </div>
       </header>
-
       {/* Tabs por status */}
       <Tabs
         value={filters.status}
         onValueChange={(v) => setStatusTab(v as PurchaseRequestStatus)}
+        className="w-full"
       >
-        <TabsList className="flex-wrap h-auto">
+        <TabsList className="flex! flex-wrap! w-full sm:w-fit h-auto! gap-1 justify-start">
           {PURCHASE_REQUEST_STATUS_VALUES.map((s) => (
-            <TabsTrigger key={s} value={s} className="cursor-pointer">
+            <TabsTrigger
+              key={s}
+              value={s}
+              className="cursor-pointer flex-none! w-auto! whitespace-nowrap"
+            >
               {STATUS_LABEL[s]}
             </TabsTrigger>
           ))}
