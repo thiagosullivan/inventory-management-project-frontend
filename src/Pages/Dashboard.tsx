@@ -38,8 +38,8 @@ export default function DashboardPage() {
   const { summary, topItems, trends } = data;
 
   return (
-    <section className="w-full max-w-295 mx-auto">
-      <div className="flex flex-col w-full gap-y-6">
+    <section className="w-full max-w-295 mx-auto px-4 py-8">
+      <div className="flex flex-col w-full gap-y-6 lg:pr-0">
         <Last30Days summary={summary} />
 
         {/* Gráficos: 1 coluna até 1024px, 2 colunas iguais acima disso */}
