@@ -53,24 +53,19 @@ export const router = createBrowserRouter([
   {
     element: <ProtectedRoute />,
     children: [
-      // páginas acessíveis a qualquer logado
       {
         element: <RootLayout />,
         children: [
+          // páginas acessíveis a qualquer logado
           { path: "/movimentacoes", element: <MovementsPage /> },
           { path: "/pedidos", element: <RequestsPage /> },
           { path: "/verificar-email", element: <VerifyEmailPage /> },
           { path: "/minha-conta", element: <MinhaContaPage /> },
           { path: "/alertas", element: <AlertsPage /> },
-        ],
-      },
 
-      // 🔒 Só Almoxarifado/MANAGER (guard antes do layout)
-      {
-        element: <WarehouseOnlyRoute />,
-        children: [
+          // 🔒 Só Almoxarifado/MANAGER
           {
-            element: <RootLayout />,
+            element: <WarehouseOnlyRoute />,
             children: [
               { path: "/dashboard", element: <DashboardPage /> },
               { path: "/categorias", element: <CategoriesPage /> },
@@ -79,14 +74,11 @@ export const router = createBrowserRouter([
               { path: "/produtos/:id", element: <ProductDetailPage /> },
               { path: "/estoque", element: <StockPage /> },
               { path: "/historico", element: <HistoryPage /> },
-
-              // 🔹 novo (Fase 7) — Relatórios
               { path: "/relatorios", element: <ReportsHubPage /> },
               {
                 path: "/relatorios/pedidos",
                 element: <ReportsRequestsPage />,
               },
-              // 🔹 rota específica antes do param genérico
               {
                 path: "/relatorios/consumo",
                 element: <ReportsConsumptionPage />,
@@ -101,15 +93,10 @@ export const router = createBrowserRouter([
               },
             ],
           },
-        ],
-      },
 
-      // 🔒 Só MANAGER
-      {
-        element: <ManagerRoutes />,
-        children: [
+          // 🔒 Só MANAGER
           {
-            element: <RootLayout />,
+            element: <ManagerRoutes />,
             children: [
               { path: "/admin", element: <AdminPage /> },
               { path: "/admin/usuarios", element: <UsersPage /> },

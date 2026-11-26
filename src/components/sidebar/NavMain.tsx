@@ -7,6 +7,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -21,6 +22,7 @@ export interface NavItem {
 }
 
 export function NavMain({ items }: { items: NavItem[] }) {
+  const { setOpenMobile } = useSidebar();
   const { user } = useAuth();
 
   const isManager = user?.role === "MANAGER";
@@ -44,6 +46,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
               render={
                 <Link
                   to={item.href}
+                  onClick={() => setOpenMobile(false)}
                   className="bg-transparent! hover:bg-primary/20! text-base! mb-2"
                 />
               }
