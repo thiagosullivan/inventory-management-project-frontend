@@ -79,7 +79,7 @@ export function FilterShell({ children }: FilterShellProps) {
       <DrawerTrigger render={triggerElement} />
       <DrawerContent>
         <DrawerHeader className="text-left">
-          <DrawerTitle>Filtros drawer</DrawerTitle>
+          <DrawerTitle>Filtros</DrawerTitle>
           <DrawerDescription>Refine a sua busca abaixo.</DrawerDescription>
         </DrawerHeader>
         <div className="px-4 py-2 max-h-[70vh] overflow-y-auto">{children}</div>
