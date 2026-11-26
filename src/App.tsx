@@ -14,7 +14,6 @@ const queryClient = new QueryClient();
 
 function App() {
   return (
-    // 🔹 QueryClientProvider PRIMEIRO (AuthProvider usa useQueryClient)
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
         <AuthProvider>
