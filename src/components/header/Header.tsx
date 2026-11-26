@@ -15,7 +15,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="hidden lg:flex justify-between items-center px-5">
+      <header className="hidden lg:flex justify-between items-center px-5 py-2.5">
         <div className="text-foreground">
           <p className="font-black text-xl">Olá, {firstName} 👋🏻</p>
           <span className="text-muted-foreground text-sm">{greeting}!</span>
@@ -27,7 +27,7 @@ export default function Header() {
         </div>
       </header>
 
-      <div className="mb-12 hidden lg:block" />
+      {/* <div className="mb-12 hidden lg:block" /> */}
     </>
   );
 }
