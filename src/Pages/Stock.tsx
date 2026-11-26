@@ -91,7 +91,7 @@ export default function StockPage() {
 
   return (
     <section className="flex flex-col items-center justify-center mx-auto gap-6 w-full max-w-6xl px-4 py-8">
-      <div className="w-full flex items-center justify-between gap-4">
+      <div className="w-full flex items-center justify-between gap-4 flex-col sm:flex-row">
         <StockFilters isLoading={isFetching} />
         <Button
           variant="outline"
