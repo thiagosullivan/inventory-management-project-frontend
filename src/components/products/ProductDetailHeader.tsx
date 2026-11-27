@@ -48,15 +48,6 @@ export function ProductDetailHeader({
     }
   }
 
-  // function handleBack() {
-  //   if (window.history.length > 1) {
-  //     navigate(-1);
-  //     navigate("/produtos");
-  //   } else {
-  //     navigate("/produtos");
-  //   }
-  // }
-
   return (
     <div className="flex flex-col gap-4 w-full">
       <div className="flex items-center gap-2">
@@ -108,7 +99,7 @@ export function ProductDetailHeader({
         </div>
 
         {/* Ações */}
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button
             variant="outline"
             onClick={onPrint}
