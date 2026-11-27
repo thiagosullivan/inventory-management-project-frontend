@@ -41,7 +41,7 @@ export default function SectorsPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto">
+    <div className="space-y-6 max-w-6xl mx-auto px-4 py-8">
       <Button
         variant="outline"
         onClick={() => navigate(-1)}
@@ -50,7 +50,7 @@ export default function SectorsPage() {
         <ArrowLeft className="h-4 w-4 mr-1" />
         Voltar
       </Button>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-primary">Setores</h1>
           <p className="text-sm text-muted-foreground">
@@ -58,7 +58,10 @@ export default function SectorsPage() {
             excluídos — apenas inativados.
           </p>
         </div>
-        <Button onClick={openCreate} className="cursor-pointer min-h-9 p-2">
+        <Button
+          onClick={openCreate}
+          className="cursor-pointer min-h-9 p-2 ml-auto mt-2 md:mt-0"
+        >
           <Plus className="h-4 w-4 mr-2" />
           Novo setor
         </Button>

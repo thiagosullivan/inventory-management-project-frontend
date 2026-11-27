@@ -132,17 +132,26 @@ export function SectorFormDialog({
           )}
 
           {isEdit && (
-            <div className="flex items-center justify-between rounded border p-3">
-              <div>
-                <Label>Ativo</Label>
-                <p className="text-xs text-muted-foreground">
-                  Setores inativos não podem ser escolhidos em novos cadastros.
-                </p>
+            <div className="rounded border p-3">
+              <div className="flex items-center justify-between mb-2">
+                <div>
+                  <Label>Ativo</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Setores inativos não podem ser escolhidos em novos
+                    cadastros.
+                  </p>
+                </div>
+                <Switch
+                  checked={isActive}
+                  onCheckedChange={(v) => setIsActive(v === true)}
+                  disabled={sector?.isWarehouse}
+                />
               </div>
-              <Switch
-                checked={isActive}
-                onCheckedChange={(v) => setIsActive(v === true)}
-              />
+              {sector?.isWarehouse && (
+                <p className="text-xs text-red-500">
+                  O Almoxarifado não pode ser desativado
+                </p>
+              )}
             </div>
           )}
         </div>
