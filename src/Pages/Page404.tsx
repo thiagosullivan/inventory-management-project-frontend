@@ -46,7 +46,10 @@ export default function Page404(): ReactElement {
         </Link>
       </div>
       <div className="text-center flex-1 max-w-[460px] w-full  mx-auto">
-        <img src={getImg()} className="max-w-[400px] w-full mx-auto" />
+        <img
+          src={getImg()}
+          className="max-w-[200px] sm:max-w-[400px] w-full mx-auto"
+        />
         <div className="mt-8">
           <h1 className="text-primary font-bold text-2xl mb-5">Erro 404 😢</h1>
           <p>Ops! A página que você está procurando não existe.</p>
