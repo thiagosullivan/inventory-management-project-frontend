@@ -29,7 +29,7 @@ export default function Last30Days({ summary }: Last30DaysProps) {
           <h4 className="uppercase text-xs sm:text-base font-bold mb-1 sm:mb-4">
             Total de Unidades
           </h4>
-          <div className="text-lg sm:text-3xl text-primary">
+          <div className="text-lg sm:text-3xl text-logo-second">
             {summary.totalUnits}
           </div>
         </div>
