@@ -38,10 +38,10 @@ export default function CategoriesPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto py-6 space-y-6">
+    <div className="max-w-6xl mx-auto space-y-6 px-4 py-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex flex-col md:flex-row md:items-center justify-between">
+        <div className="mb-3 md:mb-0">
           <h1 className="text-2xl font-bold text-primary">Categorias</h1>
           <p className="text-sm text-muted-foreground">
             Gerencie as categorias usadas nos produtos.
@@ -49,7 +49,7 @@ export default function CategoriesPage() {
         </div>
         <Button
           onClick={handleOpenCreate}
-          className="cursor-pointer min-h-9 py-4 px-2"
+          className="cursor-pointer min-h-9 py-4 px-2 ml-auto"
         >
           <Plus className="mr-2 h-4 w-4" />
           Nova categoria
