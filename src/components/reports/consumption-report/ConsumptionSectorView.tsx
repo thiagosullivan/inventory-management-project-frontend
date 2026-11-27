@@ -16,6 +16,7 @@ import type {
   ProductConsumptionMonthly,
 } from "@/types/reports.types";
 import { formatCentsToBRL } from "@/utils/currency";
+import { cn } from "cn";
 
 interface ConsumptionSectorViewProps {
   sectorId: string;
@@ -83,15 +84,21 @@ export function ConsumptionSectorView({
   const backParams =
     serializeConsumptionSectorReportFilters(filters).toString();
   const backUrl = backParams
-    ? `/reports/consumo?${backParams}`
-    : "/reports/consumo";
+    ? `/relatorios/consumo?${backParams}`
+    : "/relatorios/consumo";
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <Link to={backUrl} className={buttonVariants({ variant: "ghost" })}>
-          <ChevronLeft size={16} className="mr-2" />
-          Voltar para o consumo global
+        <Link
+          to={backUrl}
+          className={cn(
+            buttonVariants({ variant: "ghost" }),
+            "h-auto min-w-0 max-w-full whitespace-normal break-words text-left justify-start py-2",
+          )}
+        >
+          <ChevronLeft size={16} className="mr-2 shrink-0" />
+          <span>Voltar</span>
         </Link>
         <span className="text-sm text-muted-foreground">
           Setor: <strong>{data.sector.name}</strong>

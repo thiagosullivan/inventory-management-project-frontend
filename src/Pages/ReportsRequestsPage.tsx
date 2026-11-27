@@ -152,10 +152,7 @@ export default function ReportsRequestsPage() {
 
       {data && <RequestsReportSummary summary={data.summary} />}
 
-      <div className="flex items-center justify-between gap-4">
-        <span className="text-sm text-muted-foreground">
-          {total === 0 ? "0 resultados" : `${from}–${to} de ${total}`}
-        </span>
+      <div className="ml-auto">
         <Button
           type="button"
           variant="outline"
@@ -175,27 +172,32 @@ export default function ReportsRequestsPage() {
       />
 
       {/* Paginação */}
-      <div className="flex items-center justify-end gap-2">
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          disabled={page <= 1}
-          onClick={() => goToPage(page - 1)}
-          className="cursor-pointer"
-        >
-          Anterior
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          disabled={page >= totalPages}
-          onClick={() => goToPage(page + 1)}
-          className="cursor-pointer"
-        >
-          Próxima
-        </Button>
+      <div className="flex justify-between">
+        <span className="text-sm text-muted-foreground">
+          {total === 0 ? "0 resultados" : `${from}–${to} de ${total}`}
+        </span>
+        <div className="flex items-center justify-end gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={page <= 1}
+            onClick={() => goToPage(page - 1)}
+            className="cursor-pointer"
+          >
+            Anterior
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={page >= totalPages}
+            onClick={() => goToPage(page + 1)}
+            className="cursor-pointer"
+          >
+            Próxima
+          </Button>
+        </div>
       </div>
 
       {/* Dialog de impressão — key força reset do state interno do dialog */}

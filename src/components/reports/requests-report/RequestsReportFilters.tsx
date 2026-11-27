@@ -56,7 +56,7 @@ export function RequestsReportFilters({
   return (
     <div className="flex flex-wrap items-end gap-4">
       {/* Setor */}
-      <div className="flex flex-col gap-1 min-w-[200px]">
+      <div className="flex flex-col gap-1 min-w-[120px]">
         <Label htmlFor="r1-sector">Setor</Label>
         <Select
           value={filters.sectorId ?? ALL_VALUE}
@@ -85,7 +85,7 @@ export function RequestsReportFilters({
       </div>
 
       {/* Status */}
-      <div className="flex flex-col gap-1 min-w-[200px]">
+      <div className="flex flex-col gap-1 min-w-[120px]">
         <Label htmlFor="r1-status">Status</Label>
         <Select
           value={filters.status ?? ALL_VALUE}
@@ -114,29 +114,33 @@ export function RequestsReportFilters({
       </div>
 
       {/* Período */}
-      <div className="flex flex-col gap-1">
-        <Label htmlFor="r1-date-from">De</Label>
-        <Input
-          id="r1-date-from"
-          type="date"
-          value={toDateOnlyInputValue(filters.dateFrom)}
-          onChange={(e) => onChange({ dateFrom: e.target.value || undefined })}
-          className="w-[170px]"
-        />
-      </div>
-      <div className="flex flex-col gap-1">
-        <Label htmlFor="r1-date-to">Até</Label>
-        <Input
-          id="r1-date-to"
-          type="date"
-          value={toDateOnlyInputValue(filters.dateTo)}
-          onChange={(e) => onChange({ dateTo: e.target.value || undefined })}
-          className="w-[170px]"
-        />
+      <div className="flex gap-x-4">
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="r1-date-from">De</Label>
+          <Input
+            id="r1-date-from"
+            type="date"
+            value={toDateOnlyInputValue(filters.dateFrom)}
+            onChange={(e) =>
+              onChange({ dateFrom: e.target.value || undefined })
+            }
+            className="w-[140px] text-sm md:text-base md:w-[170px]"
+          />
+        </div>
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="r1-date-to">Até</Label>
+          <Input
+            id="r1-date-to"
+            type="date"
+            value={toDateOnlyInputValue(filters.dateTo)}
+            onChange={(e) => onChange({ dateTo: e.target.value || undefined })}
+            className="w-[140px] text-sm md:text-base md:w-[170px]"
+          />
+        </div>
       </div>
 
       {/* Ordenação */}
-      <div className="flex flex-col gap-1 min-w-[200px]">
+      <div className="flex flex-col gap-1 min-w-[120px]">
         <Label htmlFor="r1-sort-by">Ordenar por</Label>
         <Select
           value={sortBy}
