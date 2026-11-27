@@ -651,7 +651,7 @@ export default function HistoryPage() {
 
   return (
     <section className="flex flex-col mx-auto gap-6 w-full max-w-6xl px-4 py-8">
-      <header className="flex items-center justify-between gap-4">
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-primary">Histórico</h1>
           <p className="text-sm text-muted-foreground">
@@ -663,7 +663,7 @@ export default function HistoryPage() {
           variant="outline"
           onClick={handlePrintClick}
           disabled={total === 0}
-          className="cursor-pointer min-h-9 p-2"
+          className="cursor-pointer min-h-9 p-2 ml-auto"
         >
           <Printer size={16} className="mr-2" />
           Imprimir
@@ -671,8 +671,8 @@ export default function HistoryPage() {
       </header>
 
       {/* Filtros */}
-      <div className="flex flex-wrap items-end gap-3">
-        <div className="flex flex-col gap-1 max-w-[260px] min-w-[160px] flex-1">
+      <div className="grid md:flex md:flex-wrap md:items-end gap-3">
+        <div className="flex flex-col gap-1 md:max-w-65 min-w-0 sm:min-w-40 flex-1">
           <Label htmlFor="filter-search">Buscar</Label>
           <Input
             id="filter-search"
@@ -683,119 +683,128 @@ export default function HistoryPage() {
           />
         </div>
 
-        <div className="flex flex-col gap-1 min-w-[110px]">
-          <Label htmlFor="filter-event">Eventos</Label>
-          <Select
-            value={eventMode}
-            onValueChange={(v) => {
-              if (v === null) return;
-              setEventMode(v as EventMode);
-            }}
-          >
-            <SelectTrigger id="filter-event">
-              <SelectValue placeholder="Todos">
-                {EVENT_MODE_LABEL[eventMode]}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos</SelectItem>
-              <SelectItem value="movements">Movimentações</SelectItem>
-              <SelectItem value="transfers">Transferências</SelectItem>
-            </SelectContent>
-          </Select>
+        {/* Adicionado flex-wrap e gap-y-3 para quebrar apenas se não couber */}
+        <div className="flex flex-wrap items-center w-full md:w-auto gap-x-3 gap-y-3">
+          <div className="flex flex-col gap-1 min-w-0 flex-1 min-[400px]:flex-initial min-[400px]:min-w-15 md:min-w-25">
+            <Label htmlFor="filter-event">Eventos</Label>
+            <Select
+              value={eventMode}
+              onValueChange={(v) => {
+                if (v === null) return;
+                setEventMode(v as EventMode);
+              }}
+            >
+              <SelectTrigger id="filter-event" className="w-full">
+                <SelectValue placeholder="Todos">
+                  {EVENT_MODE_LABEL[eventMode]}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos</SelectItem>
+                <SelectItem value="movements">Movimentações</SelectItem>
+                <SelectItem value="transfers">Transferências</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex flex-col gap-1 min-w-0 flex-1 min-[400px]:flex-initial min-[400px]:min-w-15 md:min-w-25">
+            <Label htmlFor="filter-type">Tipo</Label>
+            <Select
+              value={filters.type ?? ALL_VALUE}
+              onValueChange={(v) => {
+                if (v === null) return;
+                updateFilters({
+                  type: v === ALL_VALUE ? undefined : (v as MovementType),
+                });
+              }}
+            >
+              <SelectTrigger id="filter-type" className="w-full">
+                <SelectValue placeholder="Todos">
+                  {filters.type ? TYPE_LABEL[filters.type] : "Todos"}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={ALL_VALUE}>Todos</SelectItem>
+                {MOVEMENT_TYPE_VALUES.map((t) => (
+                  <SelectItem key={t} value={t}>
+                    {TYPE_LABEL[t]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex flex-col gap-1 min-w-0 flex-1 min-[400px]:flex-initial min-[400px]:min-w-15 md:min-w-25">
+            <Label htmlFor="filter-status">Status</Label>
+            <Select
+              value={filters.status ?? ALL_VALUE}
+              onValueChange={(v) => {
+                if (v === null) return;
+                updateFilters({
+                  status:
+                    v === ALL_VALUE ? undefined : (v as HistoryStatusFilter),
+                });
+              }}
+            >
+              <SelectTrigger id="filter-status" className="w-full">
+                <SelectValue placeholder="Todos">
+                  {filters.status
+                    ? filters.status === "RECUSADO"
+                      ? "Recusado"
+                      : STATUS_LABEL[filters.status]
+                    : "Todos"}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={ALL_VALUE}>Todos</SelectItem>
+                {HISTORY_STATUS_VALUES.map((s) => (
+                  <SelectItem key={s} value={s}>
+                    {s === "RECUSADO" ? "Recusado" : STATUS_LABEL[s]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
-        <div className="flex flex-col gap-1 min-w-[110px]">
-          <Label htmlFor="filter-type">Tipo</Label>
-          <Select
-            value={filters.type ?? ALL_VALUE}
-            onValueChange={(v) => {
-              if (v === null) return;
-              updateFilters({
-                type: v === ALL_VALUE ? undefined : (v as MovementType),
-              });
-            }}
-          >
-            <SelectTrigger id="filter-type">
-              <SelectValue placeholder="Todos">
-                {filters.type ? TYPE_LABEL[filters.type] : "Todos"}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={ALL_VALUE}>Todos</SelectItem>
-              {MOVEMENT_TYPE_VALUES.map((t) => (
-                <SelectItem key={t} value={t}>
-                  {TYPE_LABEL[t]}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        {/* Adicionado flex-wrap e min-w-[140px] apenas a partir de 400px */}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-3 md:flex-nowrap">
+          <div className="flex flex-col gap-1 min-w-0 flex-1 min-[400px]:flex-initial min-[400px]:min-w-[140px]">
+            <Label htmlFor="filter-dateFrom">De</Label>
+            <Input
+              id="filter-dateFrom"
+              type="date"
+              value={filters.dateFrom?.slice(0, 10) ?? ""}
+              onChange={(e) => {
+                const v = e.target.value;
+                updateFilters({
+                  dateFrom: v ? `${v}T00:00:00.000Z` : undefined,
+                });
+              }}
+            />
+          </div>
 
-        <div className="flex flex-col gap-1 min-w-[140px]">
-          <Label htmlFor="filter-status">Status</Label>
-          <Select
-            value={filters.status ?? ALL_VALUE}
-            onValueChange={(v) => {
-              if (v === null) return;
-              updateFilters({
-                status:
-                  v === ALL_VALUE ? undefined : (v as HistoryStatusFilter),
-              });
-            }}
-          >
-            <SelectTrigger id="filter-status">
-              <SelectValue placeholder="Todos">
-                {filters.status
-                  ? filters.status === "RECUSADO"
-                    ? "Recusado"
-                    : STATUS_LABEL[filters.status]
-                  : "Todos"}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={ALL_VALUE}>Todos</SelectItem>
-              {HISTORY_STATUS_VALUES.map((s) => (
-                <SelectItem key={s} value={s}>
-                  {s === "RECUSADO" ? "Recusado" : STATUS_LABEL[s]}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="flex flex-col gap-1 min-w-[140px]">
-          <Label htmlFor="filter-dateFrom">De</Label>
-          <Input
-            id="filter-dateFrom"
-            type="date"
-            value={filters.dateFrom?.slice(0, 10) ?? ""}
-            onChange={(e) => {
-              const v = e.target.value;
-              updateFilters({
-                dateFrom: v ? `${v}T00:00:00.000Z` : undefined,
-              });
-            }}
-          />
-        </div>
-
-        <div className="flex flex-col gap-1 min-w-[140px]">
-          <Label htmlFor="filter-dateTo">Até</Label>
-          <Input
-            id="filter-dateTo"
-            type="date"
-            value={filters.dateTo?.slice(0, 10) ?? ""}
-            onChange={(e) => {
-              const v = e.target.value;
-              updateFilters({
-                dateTo: v ? `${v}T23:59:59.999Z` : undefined,
-              });
-            }}
-          />
+          <div className="flex flex-col gap-1 min-w-0 flex-1 min-[400px]:flex-initial min-[400px]:min-w-[140px]">
+            <Label htmlFor="filter-dateTo">Até</Label>
+            <Input
+              id="filter-dateTo"
+              type="date"
+              value={filters.dateTo?.slice(0, 10) ?? ""}
+              onChange={(e) => {
+                const v = e.target.value;
+                updateFilters({
+                  dateTo: v ? `${v}T23:59:59.999Z` : undefined,
+                });
+              }}
+            />
+          </div>
         </div>
 
         <div className="flex flex-col gap-1">
-          <span className="text-transparent text-sm select-none" aria-hidden>
+          <span
+            className="hidden md:inline text-transparent text-sm select-none"
+            aria-hidden
+          >
             &nbsp;
           </span>
           <Button
@@ -815,9 +824,9 @@ export default function HistoryPage() {
         <table className="w-full text-sm">
           <thead className="bg-muted/50 text-left">
             <tr>
-              <th className="px-4 py-3 font-semibold">Data</th>
-              <th className="px-4 py-3 font-semibold">Status / Tipo</th>
               <th className="px-4 py-3 font-semibold">Produto / Remessa</th>
+              <th className="px-4 py-3 font-semibold">Status / Tipo</th>
+              <th className="px-4 py-3 font-semibold">Data</th>
               <th className="px-4 py-3 font-semibold">Setores</th>
               <th className="px-4 py-3 font-semibold">Qtd</th>
               <th className="px-4 py-3 font-semibold">Autor / Valor</th>

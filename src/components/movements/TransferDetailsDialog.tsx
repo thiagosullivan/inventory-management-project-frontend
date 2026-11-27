@@ -86,7 +86,7 @@ interface TransferDetailsDialogProps {
 export function TransferDetailsDialog(props: TransferDetailsDialogProps) {
   return (
     <Dialog open={props.open} onOpenChange={props.onOpenChange}>
-      <DialogContent className="sm:max-w-[680px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[680px] max-h-[90vh] flex flex-col overflow-hidden">
         {props.open && props.transferId && (
           <TransferDetailsBody
             key={props.transferId}
@@ -379,8 +379,8 @@ function TransferDetailsBody({
         </dl>
 
         {/* Itens */}
-        <div className="rounded border">
-          <div className="bg-muted/50 px-3 py-2 text-xs font-semibold uppercase tracking-wide">
+        <div className="rounded border flex flex-col min-h-0">
+          <div className="bg-muted/50 px-3 py-2 text-xs font-semibold uppercase tracking-wide shrink-0">
             Itens ({items.length})
           </div>
           {items.length === 0 ? (
@@ -388,46 +388,50 @@ function TransferDetailsBody({
               Sem itens carregados.
             </p>
           ) : (
-            <table className="w-full text-sm">
-              <thead className="text-left border-b">
-                <tr>
-                  <th className="px-3 py-2 font-semibold"></th>
-                  <th className="px-3 py-2 font-semibold">Produto</th>
-                  <th className="px-3 py-2 font-semibold">SKU</th>
-                  <th className="px-3 py-2 font-semibold">Barcode</th>
-                  <th className="px-3 py-2 font-semibold text-right">Qtd</th>
-                </tr>
-              </thead>
-              <tbody>
-                {items.map((it) => (
-                  <tr key={it.id} className="border-t">
-                    <td className="px-3 py-2">
-                      {it.product.imageUrl ? (
-                        <img
-                          src={it.product.imageUrl}
-                          className="w-15 h-15"
-                          alt={it.product.name}
-                        />
-                      ) : (
-                        <div className="w-15 h-15 flex items-center justify-center border border-gray-300 rounded-md">
-                          <ImageOff />
-                        </div>
-                      )}
-                    </td>
-                    <td className="px-3 py-2">{it.product.name}</td>
-                    <td className="px-3 py-2 font-mono text-xs">
-                      {it.product.sku}
-                    </td>
-                    <td className="px-3 py-2 font-mono text-xs">
-                      {it.product.barcode}
-                    </td>
-                    <td className="px-3 py-2 text-right font-mono">
-                      {it.quantity}
-                    </td>
+            <div className="overflow-auto max-h-[300px]">
+              <table className="w-full min-w-[600px] text-sm">
+                <thead className="text-left border-b">
+                  <tr>
+                    <th className="px-3 py-2 font-semibold"></th>
+                    <th className="px-3 py-2 font-semibold">Produto</th>
+                    <th className="px-3 py-2 font-semibold">SKU</th>
+                    <th className="px-3 py-2 font-semibold">Barcode</th>
+                    <th className="px-3 py-2 font-semibold text-right">Qtd</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {items.map((it) => (
+                    <tr key={it.id} className="border-t">
+                      <td className="px-3 py-2">
+                        {it.product.imageUrl ? (
+                          <img
+                            src={it.product.imageUrl}
+                            className="w-15 h-15 shrink-0 object-cover rounded"
+                            alt={it.product.name}
+                          />
+                        ) : (
+                          <div className="w-15 h-15 shrink-0 flex items-center justify-center border border-gray-300 rounded-md">
+                            <ImageOff />
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-3 py-2 whitespace-nowrap">
+                        {it.product.name}
+                      </td>
+                      <td className="px-3 py-2 font-mono text-xs whitespace-nowrap">
+                        {it.product.sku}
+                      </td>
+                      <td className="px-3 py-2 font-mono text-xs whitespace-nowrap">
+                        {it.product.barcode}
+                      </td>
+                      <td className="px-3 py-2 text-right font-mono whitespace-nowrap">
+                        {it.quantity}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
 
