@@ -31,8 +31,11 @@ export default function HomePage() {
       </div>
       <div className="max-w-[445px] w-full px-4 md:px-0 lg:pr-8">
         <div className="mb-8">
-          <img src={getLogo()} className="mb-10 mx-auto lg:mx-0" />
-          <h2 className="font-bold text-3xl mb-1 text-center lg:text-left">
+          <img
+            src={getLogo()}
+            className="w-2/3 sm:w-auto mb-6 sm:mb-10 mx-auto lg:mx-0"
+          />
+          <h2 className="font-bold text-xl sm:text-3xl mb-1 text-center lg:text-left">
             Bem-vindo 👋
           </h2>
           <p className="font-light text-muted-foreground text-center lg:text-left">

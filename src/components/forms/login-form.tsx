@@ -51,7 +51,7 @@ export default function LoginForm() {
       const result = await getMe();
 
       if (result.status === "inactive") {
-        navigate("/account-suspended", { replace: true });
+        navigate("/conta-suspensa", { replace: true });
         return;
       }
 
@@ -178,7 +178,7 @@ export default function LoginForm() {
 
                 <FieldLabel
                   htmlFor="rememberMe"
-                  className="text-base font-ligth cursor-pointer"
+                  className="text-sm sm:text-base font-ligth cursor-pointer"
                 >
                   Lembre-me
                 </FieldLabel>
@@ -193,7 +193,7 @@ export default function LoginForm() {
         <div>
           <Link
             to="/recuperar-senha"
-            className="whitespace-nowrap text-primary font-light"
+            className="text-sm sm:text-base whitespace-nowrap text-primary font-light"
           >
             Esqueceu a senha?
           </Link>
@@ -202,7 +202,7 @@ export default function LoginForm() {
 
       <Button
         type="submit"
-        className="w-full h-[55px] cursor-pointer"
+        className="w-full h-10 sm:h-13.75 cursor-pointer"
         disabled={isSubmitting}
       >
         {isSubmitting ? "Entrando..." : "Login"}
