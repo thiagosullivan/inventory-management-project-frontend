@@ -40,9 +40,12 @@ function AccountSuspended() {
     <main className="flex items-center justify-center h-screen">
       <div className="max-w-[445px] w-full">
         <div className="mb-8">
-          <img src={getLogo()} className="mb-15 mx-auto" />
-          <div className="text-center mb-15">
-            <h2 className="font-bold text-3xl mb-4">
+          <img
+            src={getLogo()}
+            className="w-1/2 sm:w-auto mb-8 sm:mb-15 mx-auto"
+          />
+          <div className="text-center mb-8 sm:mb-15">
+            <h2 className="font-bold text-xl sm:text-3xl mb-2 sm:mb-4">
               Sua conta está <span className="underline">suspensa</span>!
             </h2>
             <p className="font-light text-muted-foreground">
