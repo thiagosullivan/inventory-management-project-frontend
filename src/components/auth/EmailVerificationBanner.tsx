@@ -36,7 +36,7 @@ export function EmailVerificationBanner() {
   }
 
   return (
-    <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+    <div className="mx-4 my-2 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
       <div className="flex items-center gap-2">
         <AlertTriangle size={16} className="shrink-0" />
         <span>Confirme seu e-mail para garantir a segurança da conta.</span>
