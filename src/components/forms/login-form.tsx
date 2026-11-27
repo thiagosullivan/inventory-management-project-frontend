@@ -88,11 +88,11 @@ export default function LoginForm() {
             render={({ field, fieldState }) => (
               <Field
                 data-invalid={fieldState.invalid}
-                className="relative h-[55px]"
+                className="relative h-10 sm:h-13.75"
               >
                 <FieldLabel
                   htmlFor="form-rhf-demo-email"
-                  className="absolute text-primary text-xs font-light px-4 pt-1"
+                  className="absolute text-primary text-[10px] md:text-xs font-light px-4 pt-1"
                 >
                   E-mail
                 </FieldLabel>
@@ -102,7 +102,7 @@ export default function LoginForm() {
                   aria-invalid={fieldState.invalid}
                   placeholder="exemplo@email.com"
                   autoComplete="off"
-                  className="px-4 pt-6 pb-1.5 h-[55px] border-primary font-medium"
+                  className="px-4 pt-6 pb-1.5 h-10 sm:h-13.75 border-primary font-medium text-sm md:text-base"
                   type="email"
                 />
                 {fieldState.invalid && (
@@ -119,7 +119,7 @@ export default function LoginForm() {
             render={({ field, fieldState }) => (
               <Field
                 data-invalid={fieldState.invalid}
-                className="relative h-[55px]"
+                className="relative h-10 sm:h-13.75"
               >
                 <FieldLabel
                   htmlFor="form-rhf-demo-password"
@@ -133,7 +133,7 @@ export default function LoginForm() {
                     id="form-rhf-demo-password"
                     aria-invalid={fieldState.invalid}
                     placeholder="Sua senha"
-                    className="px-4 pt-6 pb-1.5 h-[55px] border-primary font-medium"
+                    className="px-4 pt-6 pb-1.5 h-10 sm:h-13.75 border-primary font-medium text-sm md:text-base"
                     type={showPassword ? "text" : "password"}
                     autoComplete="current-password"
                   />

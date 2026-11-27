@@ -29,7 +29,7 @@ export default function HomePage() {
           className="w-full max-w-[815px] h-full object-cover rounded-4xl"
         />
       </div>
-      <div className="max-w-[445px] w-full lg:pr-8">
+      <div className="max-w-[445px] w-full px-4 md:px-0 lg:pr-8">
         <div className="mb-8">
           <img src={getLogo()} className="mb-10 mx-auto lg:mx-0" />
           <h2 className="font-bold text-3xl mb-1 text-center lg:text-left">
