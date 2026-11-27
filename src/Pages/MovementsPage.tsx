@@ -201,8 +201,8 @@ export default function MovementsPage() {
   return (
     <section className="flex flex-col mx-auto gap-6 w-full max-w-6xl px-4 py-8">
       {/* Header */}
-      <header className="flex items-center justify-between gap-4">
-        <div>
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between">
+        <div className="mb-3 sm:mb-0">
           <h1 className="text-2xl font-bold text-primary">Movimentações</h1>
           <p className="text-sm text-muted-foreground">
             Remessas entre setores.
@@ -211,7 +211,7 @@ export default function MovementsPage() {
         {canCreate && (
           <Button
             onClick={() => setCreateOpen(true)}
-            className="py-5 cursor-pointer"
+            className="py-5 cursor-pointer ml-auto"
           >
             <Plus size={16} className="mr-2" />
             Nova remessa
@@ -221,7 +221,7 @@ export default function MovementsPage() {
 
       {/* Filtros */}
       <div className="flex flex-wrap items-end gap-4">
-        <div className="flex flex-col gap-1 min-w-[180px]">
+        <div className="flex flex-col gap-1 min-w-[120px]">
           <Label htmlFor="filter-status">Status</Label>
           <Select
             value={filters.status ?? ALL_VALUE}
@@ -252,7 +252,7 @@ export default function MovementsPage() {
 
         {isManager && (
           <>
-            <div className="flex flex-col gap-1 min-w-[200px]">
+            <div className="flex flex-col gap-1 min-w-[120px]">
               <Label htmlFor="filter-from">Origem</Label>
               <Select
                 value={filters.fromSectorId ?? ALL_VALUE}
@@ -283,7 +283,7 @@ export default function MovementsPage() {
               </Select>
             </div>
 
-            <div className="flex flex-col gap-1 min-w-[200px]">
+            <div className="flex flex-col gap-1 min-w-[120px]">
               <Label htmlFor="filter-to">Destino</Label>
               <Select
                 value={filters.toSectorId ?? ALL_VALUE}
