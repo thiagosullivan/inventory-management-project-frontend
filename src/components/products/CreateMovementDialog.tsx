@@ -132,7 +132,7 @@ export function CreateMovementDialog({
           noValidate
         >
           <FieldGroup>
-            <div className="flex gap-x-4">
+            <div className="flex flex-col xs:flex-row gap-x-4">
               <Controller
                 name="type"
                 control={form.control}

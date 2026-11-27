@@ -389,20 +389,28 @@ function TransferDetailsBody({
             </p>
           ) : (
             <div className="overflow-auto max-h-[300px]">
-              <table className="w-full min-w-[600px] text-sm">
+              <table className="w-full min-w-[500px] sm:min-w-[600px] text-sm">
                 <thead className="text-left border-b">
                   <tr>
-                    <th className="px-3 py-2 font-semibold"></th>
-                    <th className="px-3 py-2 font-semibold">Produto</th>
-                    <th className="px-3 py-2 font-semibold">SKU</th>
-                    <th className="px-3 py-2 font-semibold">Barcode</th>
-                    <th className="px-3 py-2 font-semibold text-right">Qtd</th>
+                    <th className="px-2 py-1 sm:px-3 sm:py-2 font-semibold"></th>
+                    <th className="px-2 py-1 sm:px-3 sm:py-2 font-semibold">
+                      Produto
+                    </th>
+                    <th className="px-2 py-1 sm:px-3 sm:py-2 font-semibold">
+                      SKU
+                    </th>
+                    <th className="px-2 py-1 sm:px-3 sm:py-2 font-semibold">
+                      Barcode
+                    </th>
+                    <th className="px-2 py-1 sm:px-3 sm:py-2 font-semibold text-right">
+                      Qtd
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {items.map((it) => (
                     <tr key={it.id} className="border-t">
-                      <td className="px-3 py-2">
+                      <td className="px-2 py-1 sm:px-3 sm:py-2">
                         {it.product.imageUrl ? (
                           <img
                             src={it.product.imageUrl}
@@ -415,16 +423,16 @@ function TransferDetailsBody({
                           </div>
                         )}
                       </td>
-                      <td className="px-3 py-2 whitespace-nowrap">
+                      <td className="px-2 py-1 sm:px-3 sm:py-2 whitespace-nowrap">
                         {it.product.name}
                       </td>
-                      <td className="px-3 py-2 font-mono text-xs whitespace-nowrap">
+                      <td className="px-2 py-1 sm:px-3 sm:py-2 font-mono text-xs whitespace-nowrap">
                         {it.product.sku}
                       </td>
-                      <td className="px-3 py-2 font-mono text-xs whitespace-nowrap">
+                      <td className="px-2 py-1 sm:px-3 sm:py-2 font-mono text-xs whitespace-nowrap">
                         {it.product.barcode}
                       </td>
-                      <td className="px-3 py-2 text-right font-mono whitespace-nowrap">
+                      <td className="px-2 py-1 sm:px-3 sm:py-2 text-right font-mono whitespace-nowrap">
                         {it.quantity}
                       </td>
                     </tr>
@@ -437,7 +445,7 @@ function TransferDetailsBody({
 
         {/* Ações */}
         {(canConfirmOrRefuse || canCancel) && (
-          <div className="flex flex-wrap gap-2 pt-2 border-t">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-2 pt-2 border-t">
             {canConfirmOrRefuse && (
               <>
                 <Button
