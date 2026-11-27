@@ -14,7 +14,7 @@ export function PublicRoute({ children }: PublicRouteProps) {
 
   // 🔹 user desativado logado → deixa a página de suspensão cuidar
   if (user && user.isActive === false) {
-    return <Navigate to="/account-suspended" replace />;
+    return <Navigate to="/conta-suspensa" replace />;
   }
 
   if (user) {

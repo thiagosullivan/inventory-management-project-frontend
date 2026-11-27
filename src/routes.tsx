@@ -39,7 +39,7 @@ import RootLayout from "./components/layouts/RootLayout.tsx";
 
 export const router = createBrowserRouter([
   // Public
-  { path: "/account-suspended", element: <AccountSuspended /> },
+  { path: "/conta-suspensa", element: <AccountSuspended /> },
 
   {
     element: <PublicRoute />,

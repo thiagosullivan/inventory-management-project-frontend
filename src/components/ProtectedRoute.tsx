@@ -24,7 +24,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   // usuário desativado
   if (user.isActive === false) {
-    return <Navigate to="/account-suspended" replace />;
+    return <Navigate to="/conta-suspensa" replace />;
   }
 
   return children ? <>{children}</> : <Outlet />;
