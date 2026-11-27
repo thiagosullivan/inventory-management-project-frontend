@@ -28,7 +28,7 @@ export default function AlertsPage() {
   const unreadCount = data?.unreadCount ?? 0;
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto">
+    <div className="space-y-6 max-w-6xl mx-auto px-4 py-8">
       <div className="flex justify-between items-center flex-wrap gap-4">
         <div>
           <h1 className="text-2xl font-bold text-primary">Alertas</h1>
