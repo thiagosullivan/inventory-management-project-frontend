@@ -11,6 +11,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { getMe } from "@/services/auth";
 import { sendEmailVerificationOtp, verifyEmailOtp } from "@/services/email-otp";
+import { ArrowLeft } from "lucide-react";
 
 export default function VerifyEmailPage() {
   const { user, setUser } = useAuth();
@@ -65,7 +66,15 @@ export default function VerifyEmailPage() {
   }
 
   return (
-    <div className="mx-auto max-w-md space-y-6 py-12">
+    <div className="mx-auto max-w-md space-y-6 px-4 py-8">
+      <Button
+        variant="outline"
+        onClick={() => navigate(-1)}
+        className="cursor-pointer"
+      >
+        <ArrowLeft className="h-4 w-4 mr-1" />
+        Voltar
+      </Button>
       <div>
         <h1 className="text-2xl font-bold text-primary">Confirmar e-mail</h1>
         <p className="text-sm text-muted-foreground">
@@ -99,13 +108,6 @@ export default function VerifyEmailPage() {
           className="cursor-pointer"
         >
           {countdown > 0 ? `Reenviar em ${countdown}s` : "Reenviar código"}
-        </Button>
-        <Button
-          variant="ghost"
-          onClick={() => navigate(-1)}
-          className="cursor-pointer"
-        >
-          Voltar
         </Button>
       </div>
     </div>
