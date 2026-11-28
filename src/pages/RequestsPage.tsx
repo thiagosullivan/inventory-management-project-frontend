@@ -1,7 +1,7 @@
 // src/pages/RequestsPage.tsx
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Plus, Eye, Printer } from "lucide-react";
+import { Plus, Eye, Printer, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -273,6 +273,13 @@ export default function RequestsPage() {
 
       {/* Tabela */}
       <div className="overflow-x-auto rounded-lg border">
+        {requestsQuery.isFetching && !requestsQuery.isLoading && (
+          <div className="flex items-center gap-2 border-b bg-muted/40 px-4 py-2 text-xs text-muted-foreground">
+            <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+            <span>Atualizando pedidos...</span>
+          </div>
+        )}
+
         <table className="w-full text-sm">
           <thead className="bg-muted/50 text-left">
             <tr>
@@ -284,14 +291,23 @@ export default function RequestsPage() {
               <th className="px-4 py-3 font-semibold text-right">Ações</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody
+            className={
+              requestsQuery.isFetching && !requestsQuery.isLoading
+                ? "opacity-50 transition-opacity pointer-events-none"
+                : "transition-opacity"
+            }
+          >
             {requestsQuery.isLoading && (
               <tr>
                 <td
                   colSpan={6}
                   className="px-4 py-8 text-center text-muted-foreground"
                 >
-                  Carregando pedidos...
+                  <div className="flex items-center justify-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Carregando pedidos...</span>
+                  </div>
                 </td>
               </tr>
             )}
