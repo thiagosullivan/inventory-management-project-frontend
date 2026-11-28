@@ -1,6 +1,6 @@
 // src/components/products/ProductHistoryTab.tsx
 import { useMemo, useState } from "react";
-import { Eye } from "lucide-react";
+import { Eye, Loader2 } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -85,7 +85,12 @@ export function ProductHistoryTab({ productId }: ProductHistoryTabProps) {
   );
 
   if (isLoading) {
-    return <p className="text-sm text-muted-foreground py-6">Carregando...</p>;
+    return (
+      <div className="text-sm text-muted-foreground px-4 py-6 flex items-center gap-x-2">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        Carregando...
+      </div>
+    );
   }
 
   if (isError || !data) {

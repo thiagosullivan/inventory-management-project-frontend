@@ -10,6 +10,7 @@ import { HighestQuantityProducts } from "@/components/home/HighestQuantityProduc
 import LowestQuantityProducts from "@/components/home/LowestQuantityProducts";
 
 import { fetchDashboardOverview } from "@/services/dashboard";
+import { Loader2 } from "lucide-react";
 
 export default function DashboardPage() {
   const { data, isLoading, isError } = useQuery({
@@ -32,7 +33,13 @@ export default function DashboardPage() {
     }
   }, [location, navigate]);
 
-  if (isLoading) return <div>Carregando indicadores do dashboard...</div>;
+  if (isLoading)
+    return (
+      <div className="text-sm text-muted-foreground px-4 py-6 flex justify-center items-center gap-x-2">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        Carregando indicadores do dashboard...
+      </div>
+    );
   if (isError || !data) return <div>Erro ao carregar dados do painel.</div>;
 
   const { summary, topItems, trends } = data;

@@ -1,4 +1,4 @@
-import { Plus } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -36,7 +36,12 @@ export function ProductMovementsTab({
   const { data, isLoading, isError } = useProductMovements(productId);
 
   if (isLoading) {
-    return <p className="text-sm text-muted-foreground py-6">Carregando...</p>;
+    return (
+      <div className="text-sm text-muted-foreground px-4 py-6 flex items-center gap-x-2">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        Carregando...
+      </div>
+    );
   }
 
   if (isError || !data) {
