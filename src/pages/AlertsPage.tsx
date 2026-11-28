@@ -11,8 +11,10 @@ import {
 } from "@/hooks/useNotifications";
 import { cn } from "@/lib/utils";
 import { formatDateTime } from "@/lib/format-date";
+import { useNavigate } from "react-router-dom";
 
 export default function AlertsPage() {
+  const navigate = useNavigate();
   const [unreadOnly, setUnreadOnly] = useState(false);
   const [page, setPage] = useState(1);
   const { data, isLoading, isFetching } = useNotifications({
@@ -106,7 +108,7 @@ export default function AlertsPage() {
                       size="sm"
                       onClick={() => {
                         if (!n.isRead) markRead.mutate(n.id);
-                        window.location.href = n.link as string;
+                        navigate(n.link as string);
                       }}
                       className="cursor-pointer"
                     >
