@@ -4,6 +4,7 @@ import {
   useContext,
   useState,
   useEffect,
+  useRef,
   type ReactNode,
 } from "react";
 import { toast } from "sonner";
@@ -25,6 +26,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const qc = useQueryClient();
+  const prevUserIdRef = useRef<string | undefined>(undefined);
+
+  // 🔹 Limpa todo o cache do React Query ao deslogar ou trocar de conta
+  useEffect(() => {
+    const currentUserId = user?.id;
+    if (prevUserIdRef.current !== currentUserId) {
+      qc.clear();
+      prevUserIdRef.current = currentUserId;
+    }
+  }, [user?.id, qc]);
 
   // 🔹 Carrega /me uma vez
   useEffect(() => {
